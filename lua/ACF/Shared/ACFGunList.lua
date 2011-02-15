@@ -538,7 +538,7 @@ local GLauncher = {}
 	GLauncher.spread = 2
 	GLauncher.name = "Grenade Launcher"
 	GLauncher.muzzleflash = "40mm_muzzleflash_noscale"
-	GLauncher.rofmod = 0.5
+	GLauncher.rofmod = 1
 	GLauncher.sound = "weapons/grenade_launcher1.wav"
 GunClass["GL"] = GLauncher	
 

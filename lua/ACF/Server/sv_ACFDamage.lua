@@ -194,7 +194,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			else
 				local phys = Tar.Entity:GetPhysicsObject() 
 				if (phys:IsValid()) then 
-					phys:ApplyForceOffset( Table.Vec * PowerFraction * 350 ,  Hitpos )	--Assuming about a third of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 3)
+					phys:ApplyForceOffset( Table.Vec * PowerFraction * 100 ,  Hitpos )	--Assuming about a tenth of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 10)
 				end
 			end
 			

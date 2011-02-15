@@ -67,8 +67,6 @@ function ENT:Animate( Class, ReloadTime )
 	self:SetPlaybackRate( self.Rate )
 	self.LastFire = CurTime()
 	self.Reload = ReloadTime
-
-	self:EmitSound(ACF.Classes["GunClass"][Class]["sound"],500,50)
 	
 end
 
