@@ -37,7 +37,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_gun") then return false end
 	
 	local Gun = ents.Create("ACF_Gun")
-	local List = list.Get("ACFWeapons")
+	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Gun:IsValid() then return false end
 	Gun:SetAngles(Angle)
@@ -142,12 +142,19 @@ end
 
 function ENT:Unlink( Target )
 
+	local Success = false
 	for Key,Value in pairs(self.AmmoLink) do
 		if Value == Target then
 			table.remove(self.AmmoLink,Key)
+			Success = true
 		end
 	end
-	return true
+	
+	if Success then
+		return false
+	else
+		return "Didn't find the crate to unlink"
+	end
 	
 end
 

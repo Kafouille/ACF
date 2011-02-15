@@ -47,7 +47,7 @@ function EFFECT:Init( data )
 		BulletData.SimFlight = data:GetStart()*10
 		BulletData.SimPos = data:GetOrigin()
 		BulletData.Caliber = Crate:GetNetworkedInt( "Caliber" ) or 10
-		BulletData.RoundMass = Crate:GetNetworkedInt( "RoundMass" ) or 10
+		BulletData.RoundMass = Crate:GetNetworkedInt( "ProjMass" ) or 10
 		BulletData.FillerMass = Crate:GetNetworkedInt( "FillerMass" ) or 0
 		BulletData.DragCoef = Crate:GetNetworkedInt( "DragCoef" ) or 1
 		BulletData.AmmoType = Crate:GetNetworkedString( "AmmoType" )

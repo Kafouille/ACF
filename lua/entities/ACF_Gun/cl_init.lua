@@ -74,31 +74,32 @@ end
 
 function ACFGunGUICreate( Table )
 		
-	acfmenupanel.CData.Name = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Name = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Name:SetText( Table.name )
 		acfmenupanel.CData.Name:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Name )
 	
-	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel" )
+	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 70 , 70 , 30 ) )
+		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250 , 500 , 250 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-		acfmenupanel.CData.DisplayModel:SetFOV( 90 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel.WeaponDisplay:GetWide(),100)
+		acfmenupanel.CData.DisplayModel:SetFOV( 20 )
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide()*0.6)
+		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
-	
-	acfmenupanel.CData.Desc = vgui.Create( "DLabel" )
+		
+	acfmenupanel.CData.Desc = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Desc:SetText( Table.desc )
-		acfmenupanel.CData.Desc:SetSize(acfmenupanel.WeaponDisplay:GetWide(),100)
+		acfmenupanel.CData.Desc:SetSize(acfmenupanel:GetWide(),100)
 		acfmenupanel.CData.Desc:SizeToContentsY()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Desc )
 	
-	acfmenupanel.CData.Caliber = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Caliber = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Caliber:SetText( "Caliber : "..(Table.caliber*10).."mm" )
 		acfmenupanel.CData.Caliber:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Caliber )
 	
-	acfmenupanel.CData.Weight = vgui.Create( "DLabel" )
+	acfmenupanel.CData.Weight = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.Weight:SetText( "Weight : "..Table.weight.."kg" )
 		acfmenupanel.CData.Weight:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Weight )
