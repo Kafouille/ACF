@@ -22,7 +22,7 @@ cleanup.Register( "acfmenu" )
 if CLIENT then
 	language.Add( "Tool_acfmenu_name", "Armored Combat Framework" )
 	language.Add( "Tool_acfmenu_desc", "Spawn the Armored Combat Framework weapons and ammo" )
-	language.Add( "Tool_acfmenu_0", "Left click to spawn the entity of your choice, Right click to link sensors to a pod" )
+	language.Add( "Tool_acfmenu_0", "Left click to spawn the entity of your choice, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool_acfmenu_1", "Right click to link the selected sensor to a pod" )
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
@@ -92,23 +92,56 @@ function TOOL:RightClick( trace )
 
 	if (CLIENT) then return true end
 	
-	if (self:GetStage() == 0) and trace.Entity.IsMaster then
-		self.Master = trace.Entity
-		self:SetStage(1)
-		return true
-	elseif self:GetStage() == 1 then
-		local Error = self.Master:Link( trace.Entity )
-		if !Error then
-			self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Succesful', NOTIFY_GENERIC, 7);" )
+	if self:GetOwner():KeyDown( IN_USE ) then
+	
+		if (self:GetStage() == 0) and trace.Entity.IsMaster then
+			self.Master = trace.Entity
+			self:SetStage(1)
+			return true
+		elseif self:GetStage() == 1 then
+			local Error = self.Master:Unlink( trace.Entity )
+			if !Error then
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Unlink Succesful', NOTIFY_GENERIC, 7);" )
+			elseif Error != nil then
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('"..Error.."', NOTIFY_GENERIC, 7);" )
+			else
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Unlink Failed', NOTIFY_GENERIC, 7);" )
+			end
+			self:SetStage(0)
+			self.Master = nil
+			return true
 		else
-			self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Failed', NOTIFY_GENERIC, 7);" )
+			return false
 		end
-		self:SetStage(0)
-		self.Master = nil
-		return true
+		
 	else
-		return false
+	
+		if (self:GetStage() == 0) and trace.Entity.IsMaster then
+			self.Master = trace.Entity
+			self:SetStage(1)
+			return true
+		elseif self:GetStage() == 1 then
+			local Error = self.Master:Link( trace.Entity )
+			if !Error then
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Succesful', NOTIFY_GENERIC, 7);" )
+			elseif Error != nil then
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('"..Error.."', NOTIFY_GENERIC, 7);" )
+			else
+				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Failed', NOTIFY_GENERIC, 7);" )
+			end
+			self:SetStage(0)
+			self.Master = nil
+			return true
+		else
+			return false
+		end
+
 	end
+	
+end
+
+function TOOL:Reload( trace )
+	
 	
 end
 

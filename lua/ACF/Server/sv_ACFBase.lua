@@ -105,8 +105,8 @@ function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor )
 		local Driver = Entity:GetDriver()
 		if Driver:IsValid() then
 			local Damage = (math.min( MaxPenetration*100 , 300 ) * FrAera)
-			Driver:TakeDamage( Damage , Inflictor )
-			local Health = Driver:Health() - Damage*10
+			Driver:TakeDamage( Damage/20 , Inflictor )
+			local Health = Driver:Health() - Damage/20
 			if Health <= 0 then
 				Driver:Kill( Inflictor )
 			else
@@ -136,7 +136,7 @@ function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor )
 		local Penetration = math.min( MaxPenetration , Armour*100 )			--Clamp penetration to the armour thickness (Multipled by 100 because you aren't steel)
 		local Crush = (Energy.Momentum * math.min(MaxPenetration/Penetration,1)) * ACF.KEtoCrush / Entity.ACF.Density
 		local Damage = (Penetration/Armour * FrAera) + Crush 	-- This is the volume of the hole caused by our projectile 
-		Entity:TakeDamage( Damage+Crush/100 , Inflictor )
+		Entity:TakeDamage(Damage/20 , Inflictor )
 		
 		local HitRes = {}
 			HitRes.Overkill = (MaxPenetration - Penetration)

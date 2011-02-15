@@ -98,13 +98,13 @@ function SWEP:PrimaryAttack()
 	local ent = tr.Entity
 	if ent:IsValid() then
 		if ent:IsPlayer() || ent:IsNPC() then
-			local PlayerHealth = tr.Entity:Health() --get the health
-			local PlayerMaxHealth = tr.Entity:GetMaxHealth()--and max health too
-			local PlayerArmour = tr.Entity:Armor()
+			local PlayerHealth = ent:Health() --get the health
+			local PlayerMaxHealth = ent:GetMaxHealth()--and max health too
+			local PlayerArmour = ent:Armor()
 			local PlayerMaxArmour = 100
 			if ( PlayerHealth >= PlayerMaxHealth ) then return end --if the player is healthy or somehow dead, move right along.
 			PlayerHealth = PlayerHealth + 1 --otherwise add 1 HP
-			tr.Entity:SetHealth( PlayerHealth ) --and boost the player's HP to that.
+			ent:SetHealth( PlayerHealth ) --and boost the player's HP to that.
 			
 			self.Weapon:SetNetworkedInt( "HP", PlayerHealth ) --Output to the HUD bar
 			self.Weapon:SetNetworkedInt( "Armour", PlayerArmour )
@@ -117,21 +117,19 @@ function SWEP:PrimaryAttack()
 			effect:SetNormal( userid:GetAimVector() )
 			effect:SetEntity( self.Weapon )
 			util.Effect( "thruster_ring", effect, true, true ) --("The 2 booleans control clientside override, by default it doesn't display it since it'll lag a bit behind inputs in MP, same for sounds" Kaf)
-			tr.Entity:EmitSound( "items/medshot4.wav", true, true )--and play a sound.
+			ent:EmitSound( "items/medshot4.wav", true, true )--and play a sound.
 		else
-			local Valid = ACF_Check ( tr.Entity )
-			if Valid then
-				if ( tr.Entity.ACF.Health < tr.Entity.ACF.MaxHealth ) then
-					tr.Entity.ACF.Health = math.min(tr.Entity.ACF.Health + (30/tr.Entity.ACF.MaxArmour),tr.Entity.ACF.MaxHealth)
-					tr.Entity.ACF.Armour = tr.Entity.ACF.MaxArmour * (0.5 + tr.Entity.ACF.Health/tr.Entity.ACF.MaxHealth/2)
-					tr.Entity:EmitSound( "ambient/energy/NewSpark0" ..tostring( math.random( 3, 5 ) ).. ".wav", true, true )--Welding noise here, gotte figure out how to do a looped sound.
-					TeslaSpark(tr.HitPos , 1 )
-				end
-				self.Weapon:SetNetworkedInt( "HP", tr.Entity.ACF.Health )
-				self.Weapon:SetNetworkedInt( "Armour", tr.Entity.ACF.Armour )
-				self.Weapon:SetNetworkedInt( "MaxHP", tr.Entity.ACF.MaxHealth )
-				self.Weapon:SetNetworkedInt( "MaxArmour", tr.Entity.ACF.MaxArmour )
+			local Valid = ACF_Check ( ent )
+			if ( Valid and ent.ACF.Health < ent.ACF.MaxHealth ) then
+				ent.ACF.Health = math.min(ent.ACF.Health + (30/ent.ACF.MaxArmour),ent.ACF.MaxHealth)
+				ent.ACF.Armour = ent.ACF.MaxArmour * (0.5 + ent.ACF.Health/ent.ACF.MaxHealth/2)
+				ent:EmitSound( "ambient/energy/NewSpark0" ..tostring( math.random( 3, 5 ) ).. ".wav", true, true )--Welding noise here, gotte figure out how to do a looped sound.
+				TeslaSpark(tr.HitPos , 1 )
 			end
+			self.Weapon:SetNetworkedInt( "HP", ent.ACF.Health )
+			self.Weapon:SetNetworkedInt( "Armour", ent.ACF.Armour )
+			self.Weapon:SetNetworkedInt( "MaxHP", ent.ACF.MaxHealth )
+			self.Weapon:SetNetworkedInt( "MaxArmour", ent.ACF.MaxArmour )
 		end
 	else 
 		self.Weapon:SetNetworkedInt( "HP", 0 )
@@ -156,18 +154,18 @@ self.Weapon:SetNextPrimaryFire( CurTime() + 0.05 )
 		if CLIENT then return end
 	local ent = tr.Entity
 	if ent:IsValid() then
-		local Valid = ACF_Check ( tr.Entity )
+		local Valid = ACF_Check ( ent )
 		if Valid then
-			self.Weapon:SetNetworkedInt( "HP", tr.Entity.ACF.Health )
-			self.Weapon:SetNetworkedInt( "Armour", tr.Entity.ACF.Armour )
-			self.Weapon:SetNetworkedInt( "MaxHP", tr.Entity.ACF.MaxHealth )
-			self.Weapon:SetNetworkedInt( "MaxArmour", tr.Entity.ACF.MaxArmour )
-			local HitRes = ACF_Damage ( tr.Entity , {Kinetic = 5,Momentum = 0,Penetration = 5} , 2 , 0 , self.Owner )--We can use the damage function instead of direct access here since no numbers are negative.
+			self.Weapon:SetNetworkedInt( "HP", ent.ACF.Health )
+			self.Weapon:SetNetworkedInt( "Armour", ent.ACF.Armour )
+			self.Weapon:SetNetworkedInt( "MaxHP", ent.ACF.MaxHealth )
+			self.Weapon:SetNetworkedInt( "MaxArmour", ent.ACF.MaxArmour )
+			local HitRes = ACF_Damage ( ent , {Kinetic = 5,Momentum = 0,Penetration = 5} , 2 , 0 , self.Owner )--We can use the damage function instead of direct access here since no numbers are negative.
 			if HitRes.Kill then
-				constraint.RemoveAll( tr.Entity )
-				tr.Entity:SetParent(nil)
-				tr.Entity:SetCollisionGroup( COLLISION_GROUP_NONE ) 
-				local Phys = tr.Entity:GetPhysicsObject()
+				constraint.RemoveAll( ent )
+				ent:SetParent(nil)
+				ent:SetCollisionGroup( COLLISION_GROUP_NONE ) 
+				local Phys = ent:GetPhysicsObject()
 				Phys:EnableMotion( true )
 				Phys:Wake()
 			else
@@ -178,7 +176,7 @@ self.Weapon:SetNextPrimaryFire( CurTime() + 0.05 )
 				effectdata:SetStart( userid:GetShootPos() )
 				effectdata:SetOrigin( tr.HitPos )
 				util.Effect( "Sparks", effectdata , true , true )
-				tr.Entity:EmitSound( "weapons/physcannon/superphys_small_zap" ..tostring( math.random( 1, 4 ) ).. ".wav", true , true ) --old annoyinly loud sounds
+				ent:EmitSound( "weapons/physcannon/superphys_small_zap" ..tostring( math.random( 1, 4 ) ).. ".wav", true , true ) --old annoyinly loud sounds
 			end
 		else 
 			self.Weapon:SetNetworkedInt( "HP", 0 )

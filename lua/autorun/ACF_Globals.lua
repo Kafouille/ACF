@@ -5,8 +5,8 @@ print("ACF Loaded")
 
 ACF.Threshold = 250	--Health Divisor
 ACF.PenAreaMod = 0.85
-ACF.KinFudgeFactor = 2.15	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
-ACF.KEtoRHA = 0.4		--Empirical conversion from (kinetic energy in KJ)/(Aera in Cm2) to RHA penetration
+ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
+ACF.KEtoRHA = 0.25		--Empirical conversion from (kinetic energy in KJ)/(Aera in Cm2) to RHA penetration
 ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soil is about 0.15
 ACF.KEtoCrush = 0.9
 ACF.KEtoSpall = 1
@@ -27,6 +27,7 @@ ACF.Year = 1945
 
 CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
+CreateConVar('sbox_max_acf_misc', 32)
 
 AddCSLuaFile( "ACF_Globals.lua" )
 AddCSLuaFile( "ACF/Client/cl_ACFBallistics.lua" )
@@ -50,14 +51,17 @@ end
 
 include("ACF/Shared/Rounds/RoundAP.lua")
 include("ACF/Shared/Rounds/RoundHE.lua")
+include("ACF/Shared/Rounds/RoundHP.lua")
 include("ACF/Shared/Rounds/RoundRefill.lua")
-include("ACF/Shared/ACFGunTypes.lua")
+include("ACF/Shared/Rounds/RoundFunctions.lua")
 
-ACF.Weapons = list.Get("ACFWeapons")
-table.SortByMember(ACF.Weapons["Guns"],"caliber")
+include("ACF/Shared/ACFGunList.lua")
+include("ACF/Shared/ACFMobilityList.lua")
+include("ACF/Shared/ACFSensorList.lua")
+
+ACF.Weapons = list.Get("ACFEnts")
 	
 ACF.Classes = list.Get("ACFClasses")
-table.SortByMember(ACF.Classes["GunClass"],"name")
 
 ACF.RoundTypes = list.Get("ACFRoundTypes")
 
@@ -86,8 +90,10 @@ function ACF_Kinetic( Speed , Mass, LimitVel )
 		Energy.Kinetic = ((Mass) * ((Speed)^2))/2000 --Energy in KiloJoules
 		Energy.Momentum = (Speed * Mass)
 		
-		local KE = (Mass * (Speed^ACF.KinFudgeFactor))/2000
+		local KE = (Mass * (Speed^ACF.KinFudgeFactor))/2000 + Energy.Momentum
 		Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
+		--Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
+		--Energy.Penetration = math.max(Energy.Momentum^ACF.KinFudgeFactor - math.max(Speed-LimitVel,0)/(LimitVel*5) * Energy.Momentum , Energy.Momentum*0.1)
 	
 	return Energy
 end

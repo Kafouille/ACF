@@ -1,4 +1,4 @@
-AddCSLuaFile( "ACF/Shared/ACFGunTypes.lua" )
+AddCSLuaFile( "ACF/Shared/ACFGunList.lua" )
 
 
 -- local Exemple = {}  --That name is just a variable name and doesn't have much meaning
@@ -403,10 +403,10 @@ local GL40mm = {}
 	GL40mm.ent = "acf_gun"
 	GL40mm.type = "Guns"
 	GL40mm.name = "40mm Grenade Machine Gun"
-	GL40mm.desc = " Machineguns are light guns that fire \n equally light bullets at a fast rate"
+	GL40mm.desc = " Grenade launchers are able to \n fire large caliber rounds fast \n at the cost of velocity"
 	GL40mm.model = "models/launcher/40mmgl.mdl"
 	GL40mm.caliber = 4.0
-	GL40mm.gunclass = "MO"
+	GL40mm.gunclass = "GL"
 	GL40mm.weight = 55
 	GL40mm.year = 1970
 		GL40mm.round = {}
@@ -424,7 +424,7 @@ local MO80mm = {}
 	MO80mm.ent = "acf_gun"
 	MO80mm.type = "Guns"
 	MO80mm.name = "80mm Mortar"
-	MO80mm.desc = " The very low velocity enables heavy shells \n in small ammo, enabling mortars to fire \n very heavy shells fast"
+	MO80mm.desc = " The very low velocity enables firing heavy shells \n from a relatively light gun"
 	MO80mm.model = "models/mortar/mortar_80mm.mdl"
 	MO80mm.caliber = 8.0
 	MO80mm.gunclass = "MO"
@@ -445,11 +445,11 @@ local MO120mm = {}
 	MO120mm.ent = "acf_gun"
 	MO120mm.type = "Guns"
 	MO120mm.name = "120mm Mortar"
-	MO120mm.desc = " The very low velocity enables heavy shells \n in small ammo, enabling mortars to fire \n very heavy shells fast"
+	MO120mm.desc = " The very low velocity enables firing heavy shells \n from a relatively light gun"
 	MO120mm.model = "models/mortar/mortar_120mm.mdl"
 	MO120mm.caliber = 12.0
 	MO120mm.gunclass = "MO"
-	MO120mm.weight = 285
+	MO120mm.weight = 640
 	MO120mm.year = 1935
 		MO120mm.round = {}
 		MO120mm.round.id = "120mmM"
@@ -466,11 +466,11 @@ local MO200mm = {}
 	MO200mm.ent = "acf_gun"
 	MO200mm.type = "Guns"
 	MO200mm.name = "200mm Mortar"
-	MO200mm.desc = " The very low velocity enables heavy shells \n in small ammo, enabling mortars to fire \n very heavy shells fast"
+	MO200mm.desc = " The very low velocity enables firing heavy shells \n from a relatively light gun"
 	MO200mm.model = "models/mortar/mortar_200mm.mdl"
 	MO200mm.caliber = 20.0
 	MO200mm.gunclass = "MO"
-	MO200mm.weight = 2630
+	MO200mm.weight = 2850
 	MO200mm.year = 1940
 		MO200mm.round = {}
 		MO200mm.round.id = "200mmM"
@@ -482,7 +482,7 @@ local MO200mm = {}
 	end
 GunTable["200mmM"] = MO200mm
 	
-list.Set( "ACFWeapons", "Guns", GunTable )
+list.Set( "ACFEnts", "Guns", GunTable )
 
 local GunClass = {}	--Start gun classes listing
 
@@ -527,12 +527,20 @@ local Howitzer = {}
 GunClass["HW"] = Howitzer
 	
 local Mortar = {}
-	Mortar.spread = 3
+	Mortar.spread = 4
 	Mortar.name = "Mortar"
 	Mortar.muzzleflash = "40mm_muzzleflash_noscale"
-	Mortar.rofmod = 1.2
+	Mortar.rofmod = 2
 	Mortar.sound = "weapons/grenade_launcher1.wav"
 GunClass["MO"] = Mortar	
+
+local GLauncher = {}
+	GLauncher.spread = 2
+	GLauncher.name = "Grenade Launcher"
+	GLauncher.muzzleflash = "40mm_muzzleflash_noscale"
+	GLauncher.rofmod = 0.5
+	GLauncher.sound = "weapons/grenade_launcher1.wav"
+GunClass["GL"] = GLauncher	
 
 list.Set( "ACFClasses", "GunClass", GunClass )	--End gun classes listing
 
@@ -778,24 +786,4 @@ local Ammo4x4x8 = {}
 	Ammo4x4x8.weight = 480
 AmmoTable["Ammo4x4x6"] = Ammo4x4x6
 	
-list.Set( "ACFWeapons", "Ammo", AmmoTable )	--end ammo containers listing
-
-local EngineTable = {}  --Start engines listing
-
-local EngineCarV8 = {}
-	EngineCarV8.id = "CarV8"
-	EngineCarV8.ent = "acf_engine"
-	EngineCarV8.type = "Engines"
-	EngineCarV8.name = "V8"
-	EngineCarV8.desc = "Car sized V8 engine"
-	EngineCarV8.model = "models/vehicle/vehicle_engine_block.mdl"
-	EngineCarV8.weight = 200
-	if ( CLIENT ) then
-		EngineCarV8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		EngineCarV8.guiupdate = function() return end
-	end
-EngineTable["CarV8"] = EngineCarV8
-	
-list.Set( "ACFWeapons", "Engines", EngineTable )	--end engines listing
-
-
+list.Set( "ACFEnts", "Ammo", AmmoTable )	--end ammo containers listing

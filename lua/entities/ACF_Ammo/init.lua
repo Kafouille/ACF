@@ -115,8 +115,8 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	local PlayerData = {}
 		PlayerData["Id"] = self.RoundId
 		PlayerData["Type"] = self.RoundType
-		PlayerData["PropLenght"] = self.RoundPropellant
-		PlayerData["ProjLenght"] = self.RoundProjectile
+		PlayerData["PropLength"] = self.RoundPropellant
+		PlayerData["ProjLength"] = self.RoundProjectile
 		PlayerData["Data5"] = self.RoundData5
 		PlayerData["Data6"] = self.RoundData6
 		PlayerData["Data7"] = self.RoundData7
