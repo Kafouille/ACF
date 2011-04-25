@@ -299,9 +299,10 @@ function ENT:MuzzleEffect( MuzzlePos , MuzzleVec )
 	
 	local Effect = EffectData()
 		Effect:SetEntity( self.Entity )
+		Effect:SetRadius( self.BulletData["PropMass"]*50 )
 		Effect:SetScale( self.ReloadTime )
 		Effect:SetMagnitude( ACF.RoundTypes[self.BulletData["Type"]]["id"]  )	--Encoding the ammo type into a table index
-	util.Effect( "ACF_MuzzleFlash", Effect )
+	util.Effect( "ACF_MuzzleFlash", Effect, true, true )
 
 end
 
