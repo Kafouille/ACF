@@ -10,10 +10,11 @@ function ACF_CreateBullet( BulletData )
 	end
 	
 	BulletData["Accel"] = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)			--Those are BulletData settings that are global and shouldn't change round to round
-	BulletData["LastThink"] = CurTime() - 0.015
+	BulletData["TimeScale"] = server_settings.Int( "phys_timescale", 1 )
+	BulletData["LastThink"] = SysTime() --Uses SysTime due to some weird effects when CurTime is called by some hooks, probably linked to lag compensation
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
-		
+	
 	ACF.Bullet[ACF.CurBulletIndex] = table.Copy(BulletData)		--Place the bullet at the current index pos
 	ACF_BulletClient( ACF.CurBulletIndex, ACF.Bullet[ACF.CurBulletIndex], "Init" , 0 )
 	ACF_CalcBulletFlight( ACF.CurBulletIndex, ACF.Bullet[ACF.CurBulletIndex] )
@@ -39,9 +40,10 @@ function ACF_CalcBulletFlight( Index, Bullet )
 	--print("Bullet CalcFlight")
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
-	local Time = CurTime()
-	local DeltaTime = Time - Bullet.LastThink
+	local Time = SysTime()
+	local DeltaTime = (Time - Bullet.LastThink) * Bullet.TimeScale
 	Bullet.LastThink = Time
+	print(DeltaTime)
 	
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
@@ -92,7 +94,7 @@ function ACF_BulletClient( Index, Bullet, Type, Hit, HitPos )
 				Effect:SetOrigin( Bullet.Pos )
 			end
 			Effect:SetScale( Hit )	--Hit Type 
-		util.Effect( "ACF_BulletEffect", Effect )
+		util.Effect( "ACF_BulletEffect", Effect, true, true )
 
 	else
 		local Effect = EffectData()
@@ -103,7 +105,7 @@ function ACF_BulletClient( Index, Bullet, Type, Hit, HitPos )
 			Effect:SetOrigin( Bullet.Pos )
 			Effect:SetMagnitude( Bullet["Crate"] ) --Encodes the crate the ammo originates from so clientside knows the crate from wich to pull ammo data
 			Effect:SetScale( 0 )
-		util.Effect( "ACF_BulletEffect", Effect )
+		util.Effect( "ACF_BulletEffect", Effect, true, true )
 
 	end
 
