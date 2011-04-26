@@ -34,5 +34,8 @@ end
 
 function ACF_RoundShellCapacity( Momentum, FrAera, Caliber, ProjLength )
 	local MinWall = 0.2+((Momentum/FrAera)^0.7)/50 --The minimal shell wall thickness required to survive firing at the current energy level	
-	return  (3.1416*math.max((Caliber/2)-MinWall,0)^2) * math.max(ProjLength-MinWall*2,0) --Returning the cavity volume
+	local Length = math.max(ProjLength-MinWall,0)
+	local Radius = math.max((Caliber/2)-MinWall,0)
+	local Volume = 3.1416*Radius^2 * Length
+	return  Volume, Length, Radius --Returning the cavity volume and the minimum wall thickness
 end

@@ -10,11 +10,10 @@ function ACF_CreateBullet( BulletData )
 	end
 	
 	BulletData["Accel"] = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)			--Those are BulletData settings that are global and shouldn't change round to round
-	BulletData["TimeScale"] = server_settings.Int( "phys_timescale", 1 )
-	BulletData["LastThink"] = SysTime() --Uses SysTime due to some weird effects when CurTime is called by some hooks, probably linked to lag compensation
+	BulletData["LastThink"] = SysTime()
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
-	
+		
 	ACF.Bullet[ACF.CurBulletIndex] = table.Copy(BulletData)		--Place the bullet at the current index pos
 	ACF_BulletClient( ACF.CurBulletIndex, ACF.Bullet[ACF.CurBulletIndex], "Init" , 0 )
 	ACF_CalcBulletFlight( ACF.CurBulletIndex, ACF.Bullet[ACF.CurBulletIndex] )
@@ -41,9 +40,8 @@ function ACF_CalcBulletFlight( Index, Bullet )
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
 	local Time = SysTime()
-	local DeltaTime = (Time - Bullet.LastThink) * Bullet.TimeScale
+	local DeltaTime = Time - Bullet.LastThink
 	Bullet.LastThink = Time
-	print(DeltaTime)
 	
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
