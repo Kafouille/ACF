@@ -168,10 +168,6 @@ function ENT:TriggerInput( iname , value )
 		end
 	elseif (iname == "Ammo") then
 		self.SetAmmo = math.max(math.floor(value),0)
-		self.Ready = false
-		Wire_TriggerOutput(self.Entity, "Ready", 1)
-		self:LoadAmmo()	
-		self:EmitSound("weapons/357/357_reload4.wav",500,100)
 	elseif ( iname == "Fire" and value > 0 ) then
 		if self.Entity.NextFire < CurTime() then
 			self.Entity:FireShell()
@@ -265,7 +261,6 @@ function ENT:LoadAmmo()
 		self.CurAmmo = self.CurAmmo + 1
 		if self.CurAmmo > table.getn(self.AmmoLink) then self.CurAmmo = 1 end
 	end
-	Wire_TriggerOutput(self.Entity, "Next Load", AmmoType)
 		
 	local AmmoEnt = self.AmmoLink[AmmoType]
 	if AmmoEnt and AmmoEnt:IsValid() and AmmoEnt.Ammo > 0 then
@@ -295,11 +290,23 @@ function ENT:LoadAmmo()
 	
 end
 
+function ENT:UnloadAmmo()
+
+	local Crate = Entity( self.BulletData["Crate"] )
+	if Crate and Crate:IsValid() and self.BulletData["Type"] == Crate.BulletData["Type"] then
+		Crate.Ammo = Crate.Ammo+1
+	end
+	
+	self.Ready = false
+	Wire_TriggerOutput(self.Entity, "Ready", 0)
+	self:LoadAmmo()	
+
+end
+
 function ENT:MuzzleEffect( MuzzlePos , MuzzleVec )
 	
 	local Effect = EffectData()
 		Effect:SetEntity( self.Entity )
-		Effect:SetRadius( self.BulletData["PropMass"]*50 )
 		Effect:SetScale( self.ReloadTime )
 		Effect:SetMagnitude( ACF.RoundTypes[self.BulletData["Type"]]["id"]  )	--Encoding the ammo type into a table index
 	util.Effect( "ACF_MuzzleFlash", Effect, true, true )

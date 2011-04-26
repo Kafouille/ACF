@@ -2,7 +2,7 @@ AddCSLuaFile( "ACF/Shared/Rounds/RoundAP.lua" )
 
 local DefTable = {}
 	DefTable.type = "Ammo"										--Tells the spawn menu what entity to spawn
-	DefTable.name = "Armour Piercing"							--Human readable name
+	DefTable.name = "Armour Piercing (AP)"							--Human readable name
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
 	DefTable.desc = "A shell made out of a solid piece of steel, meant to penetrate armour"
 	DefTable.netid = 1											--Unique ammotype ID for network transmission
@@ -12,20 +12,22 @@ local DefTable = {}
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APCreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_APConvert( Crate, Table ) return Result end
+	DefTable.network = function( Crate, BulletData ) ACF_APNetworkData( Crate, BulletData ) end	
+	DefTable.cratetxt = function( Crate ) local Result =  ACF_APCrateDisplay( Crate ) return Result end	
 	
 	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_APPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end
 	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_APWorldImpact( Bullet, Index, HitPos, HitNormal ) end
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_APEndFlight( Bullet, Index, HitPos, HitNormal ) end
 	
-	DefTable.endeffect = function( Effect, Pos, Flight, RoundMass, FillerMass ) ACF_APEndEffect( Effect, Pos, Flight, RoundMass, FillerMass ) end
-	DefTable.pierceeffect = function( Effect, Pos, Flight, RoundMass, FillerMass ) ACF_APPierceEffect( Effect, Pos, Flight, RoundMass, FillerMass ) end
-	DefTable.ricocheteffect = function( Effect, Pos, Flight, RoundMass, FillerMass ) ACF_APRicochetEffect( Effect, Pos, Flight, RoundMass, FillerMass ) end
+	DefTable.endeffect = function( Effect, Bullet ) ACF_APEndEffect( Effect, Bullet ) end
+	DefTable.pierceeffect = function( Effect, Bullet ) ACF_APPierceEffect( Effect, Bullet ) end
+	DefTable.ricocheteffect = function( Effect, Bullet ) ACF_APRicochetEffect( Effect, Bullet ) end
 	
 	DefTable.guicreate = function( Panel, Table ) ACF_APGUICreate( Panel, Table ) end	--References the function to use to draw that round menu
 	DefTable.guiupdate = function( Panel, Table ) ACF_APGUIUpdate( Panel, Table ) end	--References the function to use to update that round menu
 
 list.Set( "ACFRoundTypes", "AP", DefTable )  --Set the round properties
-list.Set( "ACFIdRounds", 1 , "AP" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
+list.Set( "ACFIdRounds", DefTable.netid , "AP" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
 
 
 function ACF_APConvert( Crate, PlayerData )		--Function to convert the player's slider data into the complete round data
@@ -71,40 +73,18 @@ end
 function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be called from other round types
 
 	if ACF_Check( Target ) then
-		local Type = Bullet["Type"]
-		local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
+	
 		local Speed = Bullet["Flight"]:Length()
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Type]["limitvel"] )
-		local Ricochet = 0
-		local MinAngle = ACF.RoundTypes[Type]["ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
-		if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
-			Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
-			Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
-		end
-		local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
-		local NewSpeed = (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5
-		local phys = Target:GetPhysicsObject() 
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		
-		if (Target:GetParent():IsValid()) then
-			phys = Target:GetParent():GetPhysicsObject() 
-		end
-		if (phys:IsValid()) then	
-			phys:ApplyForceOffset( Bullet["Flight"]:GetNormal() * (Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"]), HitPos )
-		end
-		
-		if HitRes.Kill then
-			local Debris = ACF_APKill( Target , (Bullet["Flight"]):GetNormalized() , Energy.Kinetic )
-			table.insert( Bullet["Filter"] , Debris )
-		end	
 		if HitRes.Overkill > 0 then
 			table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 			ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
-			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * NewSpeed * 39.37
+			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
 			ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 			return "Penetrated"
-		elseif Ricochet > 0 then
-			Bullet["Pos"] = HitPos
-			Bullet["Flight"] = (Bullet["Flight"]:GetNormalized() + HitNormal*(1-Ricochet+0.05) + VectorRand()*0.05):GetNormalized() * Speed * Ricochet
+		elseif HitRes.Ricochet then
 			ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 			return "Ricochet"
 		else
@@ -113,53 +93,18 @@ function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be c
 	else 
 		table.insert( Bullet["Filter"] , Target )
 	return "Penetrated" end
-	
-	ACF_RemoveBullet( Index )
-	return false
-	
+		
 end
 
 function ACF_APWorldImpact( Index, Bullet, HitPos, HitNormal )
 	
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length(), Bullet["ProjMass"], ACF.RoundTypes["AP"]["limitvel"] )
-	local MaxDig = ((Energy.Penetration/Bullet["PenAera"])*ACF.KEtoRHA/ACF.GroundtoRHA)/25.4
-	local CurDig = 0
-	local DigStep = math.min(50,MaxDig)
-	--print(MaxDig/DigStep)
-	--print(MaxDig)
-	
-	for i = 1,MaxDig/DigStep do
-		--Msg("Step : ")
-		--print(i)
-		CurDig = DigStep*i
-		local DigTr = { }
-			DigTr.start = HitPos + (Bullet["Flight"]):GetNormalized()*CurDig
-			DigTr.endpos = HitPos
-			DigTr.filter = Bullet["Filter"]
-			DigTr.mask = 16395
-		local DigRes = util.TraceLine(DigTr)					--Trace to see if it will hit anything
-		
-		if DigRes.Hit then
-			if DigRes.Fraction > 0.01 and DigRes.Fraction < 0.99 then 							
-				local Powerloss = (MaxDig - (CurDig - DigStep*DigRes.Fraction))/MaxDig
-				--print(Powerloss)
-				Bullet["Flight"] = Bullet["Flight"] * Powerloss
-				
-				--Msg("Penetrated the wall\n")
-				ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
-				Bullet["Pos"] = DigRes.HitPos
-				ACF_CalcBulletFlight( Index, Bullet )
-				return true
-			else
-				ACF_APEndFlight( Index, Bullet, HitPos )	
-				--Msg("Failed to penetrate the wall\n") 
-			return end
-		else
-			--Msg("Didn't Hit\n")
-		end
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length(), Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
+		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
+		ACF_CalcBulletFlight( Index, Bullet )
+	else
+		ACF_APEndFlight( Index, Bullet, HitPos )
 	end
-	
-	ACF_APEndFlight( Index, Bullet, HitPos )
 
 end
 
@@ -171,36 +116,61 @@ function ACF_APEndFlight( Index, Bullet, HitPos )
 	
 end
 
+--Ammocrate stuff
+function ACF_APNetworkData( Crate, BulletData )
+
+	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
+	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
+	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
+	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
+	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
+	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
+
+end
+
+function ACF_APCrateDisplay( Crate )
+
+	local Tracer = ""
+	if Crate:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
+	
+	local ProjMass = math.floor(Crate:GetNetworkedString("ProjMass")*1000)
+	local PropMass = math.floor(Crate:GetNetworkedString("PropMass")*1000)
+	
+	local txt = "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g"
+	
+	return txt
+end
+
 --Clientside effects, called from ACF_Bulleteffect
-function ACF_APEndEffect( Effect, Pos, Flight, RoundMass, FillerMass )	--Bullet stops here, do what you  have to do clientside
+function ACF_APEndEffect( Effect, Bullet )	--Bullet stops here, do what you  have to do clientside
 	
 	local Spall = EffectData()
-		Spall:SetOrigin( Pos )
-		Spall:SetNormal( (Flight):GetNormalized() )
-		Spall:SetScale( Flight:Length() )
-		Spall:SetMagnitude( RoundMass )
+		Spall:SetOrigin( Bullet.SimPos )
+		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
+		Spall:SetScale( Bullet.SimFlight:Length() )
+		Spall:SetMagnitude( Bullet.RoundMass )
 	util.Effect( "ACF_AP_Impact", Spall )
 
 end
 
-function ACF_APPierceEffect( Effect, Pos, Flight, RoundMass, FillerMass )	--Bullet penetrated something, do what you have to clientside
+function ACF_APPierceEffect( Effect, Bullet )	--Bullet penetrated something, do what you have to clientside
 
 	local Spall = EffectData()
-		Spall:SetOrigin( Pos )
-		Spall:SetNormal( (Flight):GetNormalized() )
-		Spall:SetScale( Flight:Length() )
-		Spall:SetMagnitude( RoundMass )
+		Spall:SetOrigin( Bullet.SimPos )
+		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
+		Spall:SetScale( Bullet.SimFlight:Length() )
+		Spall:SetMagnitude( Bullet.RoundMass )
 	util.Effect( "ACF_AP_Penetration", Spall )
 
 end
 
-function ACF_APRicochetEffect( Effect, Pos, Flight, RoundMass, FillerMass )	--Bullet ricocheted off something, do what you have to clientside
+function ACF_APRicochetEffect( Effect, Bullet )	--Bullet ricocheted off something, do what you have to clientside
 
 	local Spall = EffectData()
-		Spall:SetOrigin( Pos )
-		Spall:SetNormal( (Flight):GetNormalized() )
-		Spall:SetScale( Flight:Length() )
-		Spall:SetMagnitude( RoundMass )
+		Spall:SetOrigin( Bullet.SimPos )
+		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
+		Spall:SetScale( Bullet.SimFlight:Length() )
+		Spall:SetMagnitude( Bullet.RoundMass )
 	util.Effect( "ACF_AP_Ricochet", Spall )
 	
 end
@@ -210,15 +180,16 @@ function ACF_APGUICreate( Panel, Table )
 
 	acfmenupanel:AmmoSelect()
 	
-	acfmenupanel:AmmoText("LengthDisplay", "")	--Total round length (Name, Desc)
+	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
+	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)
 	
 	acfmenupanel:AmmoSlider("PropLength",0,0,1000,3, "Propellant Length", "")	--Propellant Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",0,0,1000,3, "Projectile Length", "")	--Projectile Length Slider (Name, Value, Min, Max, Decimals, Title, Desc)
 	
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer", "")			--Tracer checkbox (Name, Title, Desc)
 	
-	acfmenupanel:AmmoText("VelocityDisplay", "")	--Proj muzzle velocity (Name, Desc)
-	acfmenupanel:AmmoText("PenetrationDisplay", "")	--Proj muzzle penetration (Name, Desc)
+	acfmenupanel:CPanelText("VelocityDisplay", "")	--Proj muzzle velocity (Name, Desc)
+	acfmenupanel:CPanelText("PenetrationDisplay", "")	--Proj muzzle penetration (Name, Desc)
 	
 	ACF_APGUIUpdate( Panel, Table )
 
@@ -243,7 +214,7 @@ function ACF_APGUIUpdate( Panel, Table )
 	local Data = ACF_APConvert( Panel, PlayerData )
 	
 	RunConsoleCommand( "acfmenu_data1", acfmenupanel.AmmoData["Data"]["id"] )
-	RunConsoleCommand( "acfmenu_data2", "AP" )					--Hardcoded, match ACFRoundTypes table index
+	RunConsoleCommand( "acfmenu_data2", PlayerData["Type"] )
 	RunConsoleCommand( "acfmenu_data3", Data.PropLength )		--For Gun ammo, Data3 should always be Propellant
 	RunConsoleCommand( "acfmenu_data4", Data.ProjLength )		--And Data4 total round mass
 	RunConsoleCommand( "acfmenu_data10", Data.Tracer )
@@ -253,8 +224,9 @@ function ACF_APGUIUpdate( Panel, Table )
 
 	acfmenupanel:AmmoCheckbox("Tracer", "Tracer : "..(math.floor(Data.Tracer*10)/10).."cm\n", "" )			--Tracer checkbox (Name, Title, Desc)
 	
-	acfmenupanel:AmmoText("LengthDisplay", "Round Length : "..(math.floor((Data.PropLength+Data.ProjLength+Data.Tracer)*100)/100).."/"..(Data.MaxTotalLength).." cm")	--Total round length (Name, Desc)
-	acfmenupanel:AmmoText("VelocityDisplay", "Muzzle Velocity : "..math.floor(Data.MuzzleVel*ACF.VelScale).." m\s")	--Proj muzzle velocity (Name, Desc)
-	acfmenupanel:AmmoText("PenetrationDisplay", "Maximum Penetration : "..math.floor(Data.MaxPen).." mm RHA")	--Proj muzzle penetration (Name, Desc)
+	acfmenupanel:CPanelText("Desc", ACF.RoundTypes[PlayerData["Type"]]["desc"])	--Description (Name, Desc)
+	acfmenupanel:CPanelText("LengthDisplay", "Round Length : "..(math.floor((Data.PropLength+Data.ProjLength+Data.Tracer)*100)/100).."/"..(Data.MaxTotalLength).." cm")	--Total round length (Name, Desc)
+	acfmenupanel:CPanelText("VelocityDisplay", "Muzzle Velocity : "..math.floor(Data.MuzzleVel*ACF.VelScale).." m\s")	--Proj muzzle velocity (Name, Desc)
+	acfmenupanel:CPanelText("PenetrationDisplay", "Maximum Penetration : "..math.floor(Data.MaxPen).." mm RHA")	--Proj muzzle penetration (Name, Desc)
 	
 end

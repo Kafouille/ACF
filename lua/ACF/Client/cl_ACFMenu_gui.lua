@@ -38,6 +38,14 @@ function PANEL:Init( )
 		
 	end
 	
+	local RoundAttribs = list.Get("ACFRoundTypes")
+	self.RoundAttribs = {}
+	for ID,Table in pairs(RoundAttribs) do
+		Table.id = ID
+		table.insert(self.RoundAttribs, Table)
+	end
+	table.sort(self.RoundAttribs, function(a,b) return a.id < b.id end )
+	
 	local Guns = self.WeaponSelect:AddNode( "Guns" )
 	for ClassID,Class in pairs(self.Classes["GunClass"]) do
 	
@@ -57,7 +65,6 @@ function PANEL:Init( )
 		
 	end
 
-	self.RoundAttribs = list.Get("ACFRoundTypes")
 	local Ammo = self.WeaponSelect:AddNode( "Ammo" )
 	for AmmoID,AmmoTable in pairs(self.RoundAttribs) do
 		
@@ -70,7 +77,33 @@ function PANEL:Init( )
 		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
 		
 	end
-
+	
+	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
+	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
+		
+		local EndNode = Mobility:AddNode( MobilityTable.name or "No Name" )
+		EndNode.mytable = MobilityTable
+		function EndNode:DoClick()
+			RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			acfmenupanel:UpdateDisplay( self.mytable )
+		end
+		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		
+	end
+	
+	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
+	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
+		
+		-- local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
+		-- EndNode.mytable = SensorsTable
+		-- function EndNode:DoClick()
+			-- RunConsoleCommand( "acfmenu_type", self.mytable.type )
+			-- acfmenupanel:UpdateDisplay( self.mytable )
+		-- end
+		-- EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		
+	-- end
+	
 end
 
 /*------------------------------------
@@ -111,7 +144,7 @@ function PANEL:UpdateDisplay( Table )
 end
 
 function PANEL:CreateAttribs( Table )
-	--You overwrite this with your own function, defined in the ammo definition file, so each ammotype creates it's own menu	
+	--You overwrite this with your own function, defined in the ammo definition file, so each ammotype creates it's own menu
 end
 
 function PANEL:UpdateAttribs( Table )
@@ -204,11 +237,11 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 	
 end
 
@@ -235,23 +268,25 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsX()
 	
 end
 
-function PANEL:AmmoText(Name, Desc)
+function PANEL:CPanelText(Name, Desc)
 
 	if not acfmenupanel["CData"][Name.."_text"] then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+			acfmenupanel["CData"][Name.."_text"]:SetWrap(true)
+			acfmenupanel["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
-	acfmenupanel["CData"][Name.."_text"]:SizeToContents()
+	acfmenupanel["CData"][Name.."_text"]:SetSize( acfmenupanel.CustomDisplay:GetWide(), 10 )
+	acfmenupanel["CData"][Name.."_text"]:SizeToContentsY()
 
 end

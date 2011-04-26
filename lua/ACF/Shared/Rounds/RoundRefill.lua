@@ -7,6 +7,8 @@ local DefTable = {}
 	DefTable.desc = "Ammo Refill"
 	
 	DefTable.convert = function( Crate, Table ) local Result = ACF_RefillConvert( Crate, Table ) return Result end
+	DefTable.network = function( Crate, BulletData ) ACF_RefillNetworkData( Crate, BulletData ) end
+	DefTable.cratetxt = function( Crate ) local Result =  ACF_RefillCrateDisplay( Crate ) return Result end	
 	
 	DefTable.guicreate = function( Panel, Table ) ACF_RefillGUICreate( Panel, Table ) end	--References the function to use to draw that round menu
 	DefTable.guiupdate = function( Panel, Table ) ACF_RefillGUIUpdate( Panel, Table ) end	--References the function to use to update that round menu
@@ -28,45 +30,31 @@ function ACF_RefillConvert( Crate, PlayerData )		--Function to convert the playe
 	
 end
 
+--Ammocrate stuff
+function ACF_RefillNetworkData( Crate, BulletData )
+
+	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
+	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
+	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
+	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
+	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
+	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
+	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
+
+end
+
+function ACF_RefillCrateDisplay( Crate )
+
+	local txt = ""
+	
+	return txt
+end
+
 --GUI stuff after this
 function ACF_RefillGUICreate( Panel, Table )
 
-	acfmenupanel.CData["Id"] = "AmmoMedium"
-	acfmenupanel.CData["Type"] = "Ammo"
-	acfmenupanel.CData["AmmoId"] = "12.7mmMG"
-
-	--Creating the ammo crate selection
-	acfmenupanel.CData.CrateSelect = vgui.Create( "DMultiChoice" )	--Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
-		acfmenupanel.CData.CrateSelect:SetSize(100, 30)
-		table.SortByMember(acfmenupanel.WeaponData["Ammo"],"caliber")
-		for Key, Value in pairs( acfmenupanel.WeaponData["Ammo"] ) do
-			acfmenupanel.CData.CrateSelect:AddChoice( Value.id , Key )
-		end
-		acfmenupanel.CData.CrateSelect.OnSelect = function( index , value , data )
-			RunConsoleCommand( "acfmenu_id", data )
-		end
-		if acfmenupanel.CData["Id"] then
-			acfmenupanel.CData.CrateSelect:SetText(acfmenupanel.CData["Id"])
-			RunConsoleCommand( "acfmenu_id", acfmenupanel.CData["Id"] )
-		else
-			acfmenupanel.CData.CrateSelect:SetText("AmmoSmall")
-			RunConsoleCommand( "acfmenu_id", "AmmoSmall" )
-		end
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CrateSelect )	
-	
-	--Create the caliber selection display
-	acfmenupanel.CData.CaliberSelect = vgui.Create( "DMultiChoice" )	
-		acfmenupanel.CData.CaliberSelect:SetSize(100, 30)
-		for Key, Value in pairs( acfmenupanel.WeaponData["Guns"] ) do
-			acfmenupanel.CData.CaliberSelect:AddChoice( Value.id , Key )
-		end
-		acfmenupanel.CData.CaliberSelect.OnSelect = function( index , value , data )
-			acfmenupanel.CData["AmmoId"] = acfmenupanel.WeaponData["Guns"][data]["round"]["id"]
-			ACF_RefillGUIUpdate()
-		end
-		acfmenupanel.CData.CaliberSelect:SetText(acfmenupanel.CData["AmmoId"])
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CaliberSelect )	
-		
+	acfmenupanel:AmmoSelect()
+	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)		
 	ACF_RefillGUIUpdate( Panel, Table )
 
 end

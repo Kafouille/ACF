@@ -12,14 +12,21 @@ function ENT:DoNormalDraw()
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		local Tracer = ""
 		if self:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
-		local txt = self:GetNetworkedString("AmmoID").." : " ..self:GetNetworkedString("Ammo").. "\nRound Type : "..self:GetNetworkedString("AmmoType")..Tracer.."\nRound Mass : "..(math.floor(self:GetNetworkedString("ProjMass")*1000)/1000).."\nPropellant : "..(math.floor(self:GetNetworkedString("PropMass")*1000)/1000)
+		local txt = self:GetNetworkedString("AmmoID").." : " ..self:GetNetworkedString("Ammo").. "\nRound Type : "..self:GetNetworkedString("AmmoType")..Tracer.."\n"
+		self.AmmoString = ACF.RoundTypes[self:GetNetworkedString("AmmoType")]["cratetxt"]
+		local Ammotxt = self:AmmoString()
 		if (not SinglePlayer()) then
 			local PlayerName = self:GetPlayerName()
-			txt = txt .. "\n(" .. PlayerName .. ")"
+			txt = txt .."".. Ammotxt .. "\n(" .. PlayerName .. ")"
 		end
 		AddWorldTip(e:EntIndex(),txt,0.5,e:GetPos(),e)
 	end
 	e:DrawModel()
+end
+
+function ENT:AmmoString()
+
+	return ""
 end
 
 function ENT:Think()

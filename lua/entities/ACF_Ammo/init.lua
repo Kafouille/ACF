@@ -69,12 +69,14 @@ duplicator.RegisterEntityClass("acf_ammo", MakeACF_Ammo, "Pos", "Angle", "Id", "
 
 function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
 
+	local Feedback = "Ammocrate updated succesfully"
+	
 	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		ArgsTable[1]:SendLua( "GAMEMODE:AddNotify('You don't own that ammo crate !', NOTIFY_GENERIC, 7);" )
+		Feedback = "You don't own that ammo crate !"
 	return end
 	
 	if ( ArgsTable[6] == "Refill" ) then --Argtable[6] is the round type. If it's refill it shouldn't be loaded into guns, so we refuse to change to it
-		ArgsTable[1]:SendLua( "GAMEMODE:AddNotify('Refill ammo type is only avaliable for new crates', NOTIFY_GENERIC, 7);" )
+		Feedback = "Refill ammo type is only avaliable for new crates"
 	return end
 	
 	if ( ArgsTable[5] != self.RoundId ) then --Argtable[5] is the weapon ID the new ammo loads into
@@ -83,9 +85,8 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 				Gun:Unlink( self.Entity )
 			end
 		end
-		ArgsTable[1]:SendLua( "GAMEMODE:AddNotify('New ammo type, crate unlinked', NOTIFY_GENERIC, 7);" )
+		Feedback = "New ammo type loaded, crate unlinked"
 	end
-	
 	
 	local AmmoPercent = self.Ammo/self.Capacity
 	
@@ -93,9 +94,8 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
 	self.Mass = self.EmptyMass + math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Ammo * 2 )
-	
-	ArgsTable[1]:SendLua( "GAMEMODE:AddNotify('Crate updated', NOTIFY_GENERIC, 7);" )
-	
+		
+	return FeedBack
 end
 
 function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
@@ -134,13 +134,9 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	self:SetNetworkedString("AmmoID",self.BulletData["Id"])		--Set all the networked variables so the client knows what that crate is shooting.
 	self:SetNetworkedString("AmmoType",self.RoundType)
 	self:SetNetworkedString("Ammo",self.Ammo)
-	self:SetNetworkedInt("Caliber",self.BulletData["Caliber"])	
-	self:SetNetworkedInt("ProjMass",self.BulletData["ProjMass"])
-	self:SetNetworkedInt("FillerMass",self.BulletData["FillerMass"])
-	self:SetNetworkedInt("PropMass",self.BulletData["PropMass"])
-	self:SetNetworkedInt("DragCoef",self.BulletData["DragCoef"])
-	self:SetNetworkedInt("MuzzleVel",self.BulletData["MuzzleVel"])
-	self:SetNetworkedInt("Tracer",self.BulletData["Tracer"])
+		
+	self.NetworkData = ACF.RoundTypes[self.RoundType]["network"]
+	self:NetworkData( self.BulletData )
 
 end
 
@@ -193,6 +189,10 @@ function ENT:Think()
 end
 
 function ENT:ConvertData()
+	--You overwrite this with your own function, defined in the ammo definition file
+end
+
+function ENT:NetworkData()
 	--You overwrite this with your own function, defined in the ammo definition file
 end
 

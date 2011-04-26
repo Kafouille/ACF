@@ -14,7 +14,7 @@ function EFFECT:Init( data )
 	local Hit = data:GetScale()
 	local Bullet = ACF.BulletEffect[self.Index]
 	
-	if (Hit > 0 and Bullet) then	--Scale encodes the hit type, so if it's 0 it's a new bullet, else it's an update so we need to remove the old effect
+	if (Hit > 0 and Bullet) then	--Scale encodes the hit type, so if it's 0 it's a new bullet, else it's an update so we need to remove the effect
 	
 		--print("Updating Bullet Effect")
 		Bullet.SimFlight = data:GetStart()*10		--Updating old effect with new values
@@ -23,18 +23,18 @@ function EFFECT:Init( data )
 		if (Hit == 1) then		--Bullet has reached end of flight, remove old effect
 			
 			self.HitEnd = ACF.RoundTypes[Bullet.AmmoType]["endeffect"]
-			self:HitEnd( Bullet.SimPos, Bullet.SimFlight, Bullet.RoundMass, Bullet.FillerMass )
+			self:HitEnd( Bullet )
 			ACF.BulletEffect[self.Index] = nil			--This is crucial, to effectively remove the bullet flight model from the client
 			
 		elseif (Hit == 2) then		--Bullet penetrated, don't remove old effect
 	
 			self.HitPierce = ACF.RoundTypes[Bullet.AmmoType]["pierceeffect"]
-			self:HitPierce( Bullet.SimPos, Bullet.SimFlight, Bullet.RoundMass, Bullet.FillerMass )
+			self:HitPierce( Bullet )
 			
 		elseif (Hit == 3) then		--Bullet ricocheted, don't remove old effect
 			
 			self.HitRicochet = ACF.RoundTypes[Bullet.AmmoType]["ricocheteffect"]
-			self:HitRicochet( Bullet.SimPos, Bullet.SimFlight, Bullet.RoundMass, Bullet.FillerMass )
+			self:HitRicochet( Bullet )
 			
 		end	
 		ACF_SimBulletFlight( Bullet, self.Index )
@@ -43,19 +43,19 @@ function EFFECT:Init( data )
 	else
 		--print("Creating Bullet Effect")
 		local BulletData = {}
-		local Crate = Entity(data:GetMagnitude())
+		BulletData.Crate = Entity(data:GetMagnitude())
 		BulletData.SimFlight = data:GetStart()*10
 		BulletData.SimPos = data:GetOrigin()
-		BulletData.Caliber = Crate:GetNetworkedInt( "Caliber" ) or 10
-		BulletData.RoundMass = Crate:GetNetworkedInt( "ProjMass" ) or 10
-		BulletData.FillerMass = Crate:GetNetworkedInt( "FillerMass" ) or 0
-		BulletData.DragCoef = Crate:GetNetworkedInt( "DragCoef" ) or 1
-		BulletData.AmmoType = Crate:GetNetworkedString( "AmmoType" )
+		BulletData.Caliber = BulletData.Crate:GetNetworkedInt( "Caliber" ) or 10
+		BulletData.RoundMass = BulletData.Crate:GetNetworkedInt( "ProjMass" ) or 10
+		BulletData.FillerMass = BulletData.Crate:GetNetworkedInt( "FillerMass" ) or 0
+		BulletData.DragCoef = BulletData.Crate:GetNetworkedInt( "DragCoef" ) or 1
+		BulletData.AmmoType = BulletData.Crate:GetNetworkedString( "AmmoType" )
 		if BulletData.AmmoType == "" then BulletData.AmmoType = "AP" end
 		
-		if Crate:GetNetworkedInt( "Tracer" ) > 0 then
+		if BulletData.Crate:GetNetworkedInt( "Tracer" ) > 0 then
 			BulletData.Tracer = ParticleEmitter( BulletData.SimPos )
-			local r,g,b,a = Crate:GetColor()
+			local r,g,b,a = BulletData.Crate:GetColor()
 			BulletData.TracerColour = Vector(r,g,b)
 		end
 		

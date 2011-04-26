@@ -69,13 +69,19 @@ function TOOL:LeftClick( trace )
 		for Number, Key in pairs( ArgList[ACF.Weapons[Type][Id]["ent"]] ) do 		--Reading the list packaged with the ent to see what client CVar it needs
 			ArgTable[ Number+2 ] = self:GetClientInfo( Key )
 		end
+		
+		local Feedback = nil
 		if ( trace.Entity:GetClass() == ACF.Weapons[Type][Id]["ent"] and trace.Entity.CanUpdate ) then
 			table.insert(ArgTable,1,ply)
-			trace.Entity:Update( ArgTable )
+			local Feedback = trace.Entity:Update( ArgTable )
 		else
 			local Ent = DupeClass.Func(ply, unpack(ArgTable))		--Using the Duplicator entity register to find the right factory function
 			Ent:Activate()
 			Ent:GetPhysicsObject():Wake() 
+		end
+		
+		if Feedback != nil then
+			self:GetOwner():SendLua( string.format( "GAMEMODE:AddNotify(%q,%s,7)", Feedback, "NOTIFY_ERROR" ) )
 		end
 			
 		return true
@@ -103,7 +109,7 @@ function TOOL:RightClick( trace )
 			if !Error then
 				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Unlink Succesful', NOTIFY_GENERIC, 7);" )
 			elseif Error != nil then
-				self:GetOwner():SendLua( "GAMEMODE:AddNotify('"..Error.."', NOTIFY_GENERIC, 7);" )
+				self:GetOwner():SendLua( string.format( "GAMEMODE:AddNotify(%q,%s,7)", Error, "NOTIFY_ERROR" ) )
 			else
 				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Unlink Failed', NOTIFY_GENERIC, 7);" )
 			end
@@ -125,7 +131,7 @@ function TOOL:RightClick( trace )
 			if !Error then
 				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Succesful', NOTIFY_GENERIC, 7);" )
 			elseif Error != nil then
-				self:GetOwner():SendLua( "GAMEMODE:AddNotify('"..Error.."', NOTIFY_GENERIC, 7);" )
+				self:GetOwner():SendLua( string.format( "GAMEMODE:AddNotify(%q,%s,7)", Error, "NOTIFY_ERROR" ) )
 			else
 				self:GetOwner():SendLua( "GAMEMODE:AddNotify('Link Failed', NOTIFY_GENERIC, 7);" )
 			end

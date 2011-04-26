@@ -1,78 +1,4 @@
 -- This file is meant for the advanced damage functions used by the Armored Combat Framework
-function ACF_HEAT( Self , HitPos , FlightVector , Power , AP , Radius )
-
-	if !Self or !Self:IsValid() then return end
-	local PenFilter = { Self }
-	local CanPen = true
-	local HitPosOrig = HitPos
-	util.BlastDamage(Self, Self, HitPos, Radius/2, Power)  
-	
-	while ( CanPen ) do	 -- If the shell has enough energy left, continue tracing	
-		CanPen = false	
-		local PenTrace =  {}                                -- Do a trace forward of the shell, ignoring any previously hit entity
-			PenTrace.start = HitPos
-			PenTrace.endpos = HitPos + FlightVector:GetNormal() * Radius
-			PenTrace.filter = PenFilter
-		local PenTrc = util.TraceLine( PenTrace )
-			
-		if ( PenTrc.HitNonWorld ) then				
-			table.insert( PenFilter , PenTrc.Entity )  -- Adds the entity we just traced to the trace filter table		
-			if ACF_Check( PenTrc.Entity ) then  -- Check if the target we just hit is valid	
-				local Falloff = (Radius - HitPosOrig:Distance(PenTrc.HitPos))/Radius						
-				local Angle = ACF_GetHitAngle( PenTrc.HitNormal , FlightVector )
-				local Penetration = ACF_Damage( PenTrc.Entity , Power*Falloff , AP*Falloff , Angle , Self )
-				if Penetration > 30 then
-					CanPen = true
-					if Penetration == 101 then
-						local Debris = ACF_HEKill( PenTrc.Entity , FlightVector:GetNormal() )
-						table.insert( PenFilter , Debris )
-					end
-				end
-			end	
-		elseif ( PenTrc.HitWorld ) then
-			
-			util.Decal("FadingScorch", PenTrc.HitPos+PenTrc.HitNormal, PenTrc.HitPos-PenTrc.HitNormal) 
-			local MaxDig = math.min((Power * AP)/2,Radius)
-			local CurDig = 0
-			local DigStep = 50
-			local i = 0
-			
-			while i < MaxDig/DigStep and !CanPen do
-				i = i+1
-				--Msg("Step : ")
-				--print(i)
-				CurDig = DigStep*i
-				local DigTr = { }
-					DigTr.start = HitPos + FlightVector*CurDig
-					DigTr.endpos = HitPos
-					DigTr.filter = PenFilter
-					DigTr.mask = 16395
-				local DigRes = util.TraceLine(DigTr)					--Trace to see if it will hit anything
-				
-				if DigRes.Hit then			
-					if DigRes.Fraction < 0.01 then 
-						--Msg("Failed to penetrate the wall\n") 	
-					elseif DigRes.Fraction > 0.95 then
-						--Msg("Paperthin wall\n")
-					else				
-						HitPos = DigRes.HitPos
-						CanPen = true					
-						local Powerloss = (MaxDig - (CurDig - DigStep*DigRes.Fraction))/MaxDig
-						--print(Powerloss)
-						Power = Power*Powerloss					--Apply penalties for the loss of power sustained during the penetration
-						AP = AP*Powerloss		
-						util.Decal("FadingScorch", DigRes.HitPos+DigRes.HitNormal, DigRes.HitPos-DigRes.HitNormal) 			
-						--Msg("Penetrated the wall\n")	
-					end
-				else
-					--Msg("Didn't Hit\n")			
-				end
-			end
-		end	
-	end
-	
-end
-
 function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	--HitPos = Detonation center, FillerMass = mass of TNT being detonated in KG, FragMass = Mass of the round casing for fragmentation purposes, Inflictor owner of said TNT
 
 	local Power = FillerMass * ACF.HEPower					--Power in KiloJoules of the filler mass of  TNT 
@@ -242,6 +168,84 @@ function ACF_SpallTrace( HitVec , SpallTr , SpallEnergy , SpallAera , Inflictor 
 			ACF_SpallTrace( HitVec , SpallTr , SpallEnergy , SpallAera , Inflictor )
 		end
 		
+	end
+	
+end
+
+function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )	--Simulate a round impacting on a prop
+
+	local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
+		
+	local Ricochet = 0
+	local MinAngle = ACF.RoundTypes[Bullet["Type"]]["ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
+	if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
+		Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
+		Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
+	end
+	local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
+	
+	ACF_KEShove(Target, HitPos, Bullet["Flight"]:GetNormal(), Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"] )
+	
+	if HitRes.Kill then
+		local Debris = ACF_APKill( Target , (Bullet["Flight"]):GetNormalized() , Energy.Kinetic )
+		table.insert( Bullet["Filter"] , Debris )
+	end	
+	
+	HitRes.Ricochet = false
+	if Ricochet > 0 then
+		Bullet["Pos"] = HitPos
+		Bullet["Flight"] = (Bullet["Flight"]:GetNormalized() + HitNormal*(1-Ricochet+0.05) + VectorRand()*0.05):GetNormalized() * Speed * Ricochet
+		HitRes.Ricochet = true
+	end
+	
+	return HitRes
+end
+
+function ACF_PenetrateGround( Bullet, Energy, HitPos )
+
+	local MaxDig = ((Energy.Penetration/Bullet["PenAera"])*ACF.KEtoRHA/ACF.GroundtoRHA)/25.4
+	local CurDig = 0
+	local DigStep = math.min(50,MaxDig)
+	
+	for i = 1,MaxDig/DigStep do
+		--Msg("Step : ")
+		--print(i)
+		CurDig = DigStep*i
+		local DigTr = { }
+			DigTr.start = HitPos + (Bullet["Flight"]):GetNormalized()*CurDig
+			DigTr.endpos = HitPos
+			DigTr.filter = Bullet["Filter"]
+			DigTr.mask = 16395
+		local DigRes = util.TraceLine(DigTr)					--Trace to see if it will hit anything
+		
+		if DigRes.Hit then
+			if DigRes.Fraction > 0.01 and DigRes.Fraction < 0.99 then 							
+				local Powerloss = (MaxDig - (CurDig - DigStep*DigRes.Fraction))/MaxDig
+				--print(Powerloss)
+				Bullet["Flight"] = Bullet["Flight"] * Powerloss
+				--Msg("Penetrated the wall\n")
+				Bullet["Pos"] = DigRes.HitPos
+				return true
+			else
+				return nil 
+			end
+		else
+			--Msg("Didn't Hit\n")
+		end
+	end
+	
+	return nil 
+	
+end
+
+function ACF_KEShove(Target, Pos, Vec, KE )
+	
+	local phys = Target:GetPhysicsObject() 
+	if (Target:GetParent():IsValid()) then
+		phys = Target:GetParent():GetPhysicsObject() 
+	end
+	if (phys:IsValid()) then	
+		phys:ApplyForceOffset( Vec:GetNormal() * KE, Pos )
 	end
 	
 end

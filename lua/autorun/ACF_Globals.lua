@@ -15,6 +15,8 @@ ACF.HEPower = 8000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 3000		--Mean fragment number for equal weight TNT and casing
 
+ACF.HEATMVScale = 0.7	--Filler KE to HEAT slug KE conversion expotential
+
 ACF.DragDiv = 20		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
 
@@ -50,7 +52,9 @@ elseif (CLIENT) then
 end
 
 include("ACF/Shared/Rounds/RoundAP.lua")
+include("ACF/Shared/Rounds/RoundAPHE.lua")
 include("ACF/Shared/Rounds/RoundHE.lua")
+include("ACF/Shared/Rounds/RoundHEAT.lua")
 include("ACF/Shared/Rounds/RoundHP.lua")
 include("ACF/Shared/Rounds/RoundRefill.lua")
 include("ACF/Shared/Rounds/RoundFunctions.lua")
