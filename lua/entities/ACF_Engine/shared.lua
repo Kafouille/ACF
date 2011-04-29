@@ -6,6 +6,7 @@ ENT.Spawnable		= false
 ENT.AdminSpawnable	= false
 
 function ENT:GetOverlayText()
+	local name = self.Entity:GetNetworkedString("WireName")
 	local Ammo = self.Entity:GetNetworkedBeamInt("Power")
 	local txt = Power or ""
 	if (not SinglePlayer()) then
