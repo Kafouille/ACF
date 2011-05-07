@@ -515,7 +515,7 @@ local Cannon = {}
 	Cannon.name = "Cannon"
 	Cannon.muzzleflash = "120mm_muzzleflash_noscale"
 	Cannon.rofmod = 1.5
-	Cannon.sound = "weapon_functank.CombineCannon.Single"
+	Cannon.sound = "npc/env_headcrabcanister/launch.wav"
 GunClass["C"] = Cannon	
 	
 local Howitzer = {}
@@ -523,7 +523,7 @@ local Howitzer = {}
 	Howitzer.name = "Howitzer"
 	Howitzer.muzzleflash = "120mm_muzzleflash_noscale"
 	Howitzer.rofmod = 1.3
-	Howitzer.sound = "weapon_functank.CombineCannon.Single"
+	Howitzer.sound = "npc/env_headcrabcanister/launch.wav"
 GunClass["HW"] = Howitzer
 	
 local Mortar = {}

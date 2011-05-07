@@ -37,7 +37,7 @@ function ACFGearboxGUICreate( Table )
 		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250 , 500 , 250 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
 		acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide()*0.6)
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
 		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 	
@@ -52,7 +52,7 @@ function ACFGearboxGUICreate( Table )
 	end
 	
 	acfmenupanel:CPanelText("Desc", Table.desc)
-	acfmenupanel:CPanelText("MaxTorque", "MaxTorque : "..(Table.maxtq).."N-M")
+	acfmenupanel:CPanelText("MaxTorque", "Clutch Maximum Torque Rating : "..(Table.maxtq).."n-m")
 	acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 	
 	acfmenupanel.CustomDisplay:PerformLayout()

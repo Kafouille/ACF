@@ -38,6 +38,15 @@ function PANEL:Init( )
 		
 	end
 	
+	local HomeNode = self.WeaponSelect:AddNode( "ACF Home" )
+	HomeNode.mytable = {}
+		HomeNode.mytable.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		HomeNode.mytable.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	function HomeNode:DoClick()
+		acfmenupanel:UpdateDisplay(self.mytable)
+	end
+	HomeNode.Icon:SetImage( "gui/silkicons/newspaper" )
+	
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
 	for ID,Table in pairs(RoundAttribs) do
@@ -165,11 +174,54 @@ function PANEL:PerformLayout()
 	if acfmenupanel.CustomDisplay then
 		--Custom panel
 		acfmenupanel.CustomDisplay:SetPos( 0, ypos )
-		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), 800 )
+		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
 		ypos = acfmenupanel.CustomDisplay.Y + acfmenupanel.CustomDisplay:GetTall() + vspacing
 	end
 	
 end
+
+function ACFHomeGUICreate( Table )
+
+	if not acfmenupanel.CustomDisplay then return end
+
+	acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
+	for Rev,Changes in pairs(acfmenupanel.Changelog) do
+		
+		local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
+		Node.mytable = {}
+			Node.mytable["rev"] = Rev
+		function Node:DoClick()
+			acfmenupanel:UpdateAttribs( Node.mytable )
+		end
+		Node.Icon:SetImage( "gui/silkicons/newspaper" )
+		
+	end	
+	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
+	--acfmenupanel:CPanelText("Changelog", table.GetLastValue( acfmenupanel.Changelog ) )
+	
+	acfmenupanel.CustomDisplay:PerformLayout()
+	
+end
+
+function ACFHomeGUIUpdate( Table )
+	
+	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	
+end
+
+function ACFChangelogHTTPCallBack(contents , size)
+	
+	local Temp = string.Explode( "*", contents )
+	acfmenupanel.Changelog = {}
+	for Key,String in pairs(Temp) do
+		acfmenupanel.Changelog[string.sub(String,2,3)] = string.Trim(string.sub(String, 5))
+	end
+	table.sort(acfmenupanel.Changelog)
+
+end
+http.Get("http://acf.googlecode.com/svn/trunk/info.txt", "", ACFChangelogHTTPCallBack) 
 
 function PANEL:AmmoSelect()
 	

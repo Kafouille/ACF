@@ -8,15 +8,21 @@
 	
 	local Gun = data:GetEntity()
 	local Propellant = data:GetScale()
+	local ReloadTime = data:GetMagnitude()
 	local Class = Gun:GetNWString( "Class" )
 	local RoundType = ACF.IdRounds[data:GetSurfaceProp()]
-	
-	
-	local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( "muzzle" ) )
-	local SoundPressure = (Propellant*1000)^0.5
-	WorldSound( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(50,15,255))
-	ParticleEffect( ACF.Classes["GunClass"][Class]["muzzleflash"], Muzzle.Pos, Muzzle.Ang, Gun )
-	Gun:Animate( Class, Propellant )
+		
+	if Gun:IsValid() then
+		if Propellant > 0 then
+			local SoundPressure = (Propellant*1000)^0.5
+			WorldSound( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(50,15,255))
+			local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( "muzzle" ) )
+			ParticleEffect( ACF.Classes["GunClass"][Class]["muzzleflash"], Muzzle.Pos, Muzzle.Ang, Gun )
+			Gun:Animate( Class, ReloadTime, false )
+		else
+			Gun:Animate( Class, ReloadTime, true )
+		end
+	end
 	
  end 
    
