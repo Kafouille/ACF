@@ -41,7 +41,6 @@ function ENT:Think()
 	self:SetCycle( SinceFire*self.Rate/self.RateScale )
 	if CurTime() > self.LastFire + self.CloseTime and self.CloseAnim then
 		self:ResetSequence( self.CloseAnim )
-		local RateScale = self:SequenceDuration()
 		self:SetCycle( (SinceFire - self.CloseTime)*self.Rate/self.RateScale )
 		self.Rate = 1/(self.Reload - self.CloseTime)	--Base anim time is 1s, rate is in 1/10 of a second
 		self:SetPlaybackRate( self.Rate )
@@ -51,7 +50,7 @@ function ENT:Think()
 	return true
 end
 
-function ENT:Animate( Class, ReloadTime )
+function ENT:Animate( Class, ReloadTime, LoadOnly )
 	
 	if self.CloseAnim and self.CloseAnim > 0 then
 		self.CloseTime = math.max(ReloadTime-0.75,ReloadTime*0.75)
@@ -63,7 +62,11 @@ function ENT:Animate( Class, ReloadTime )
 	self:ResetSequence( self.FireAnim )
 	self:SetCycle( 0 )
 	self.RateScale = self:SequenceDuration()
-	self.Rate = 1/math.Clamp(self.CloseTime,0.1,1.5)	--Base anim time is 1s, rate is in 1/10 of a second
+	if LoadOnly then
+		self.Rate = 1000000
+	else
+		self.Rate = 1/math.Clamp(self.CloseTime,0.1,1.5)	--Base anim time is 1s, rate is in 1/10 of a second
+	end
 	self:SetPlaybackRate( self.Rate )
 	self.LastFire = CurTime()
 	self.Reload = ReloadTime
@@ -79,7 +82,7 @@ function ACFGunGUICreate( Table )
 		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250 , 500 , 250 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
 		acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide()*0.6)
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
 		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		

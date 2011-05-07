@@ -21,30 +21,23 @@ end
 
 
 function ACFEngineGUICreate( Table )
-		
-	acfmenupanel.CData.Name = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
-		acfmenupanel.CData.Name:SetText( Table.name )
-		acfmenupanel.CData.Name:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Name )
+	
+	acfmenupanel:CPanelText("Name", Table.name)
 	
 	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 70 , 70 , 30 ) )
+		acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250 , 500 , 250 ) )
 		acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-		acfmenupanel.CData.DisplayModel:SetFOV( 90 )
-		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),100)
+		acfmenupanel.CData.DisplayModel:SetFOV( 20 )
+		acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
+		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
-	acfmenupanel.CData.Desc = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
-		acfmenupanel.CData.Desc:SetText( Table.desc )
-		acfmenupanel.CData.Desc:SetSize(acfmenupanel:GetWide(),100)
-		acfmenupanel.CData.Desc:SizeToContentsY()
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Desc )
-	
-	acfmenupanel.CData.Weight = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
-		acfmenupanel.CData.Weight:SetText( "Weight : "..Table.weight.."kg" )
-		acfmenupanel.CData.Weight:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.Weight )
+	acfmenupanel:CPanelText("Desc", Table.desc)
+	acfmenupanel:CPanelText("Power", "Peak Power : "..(Table.torque * Table.peakmaxrpm / 9548.8).." kW @ "..(Table.peakmaxrpm).." RPM")
+	acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m")
+	acfmenupanel:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitprm).." RPM")
+	acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
 	

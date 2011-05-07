@@ -25,7 +25,7 @@ function ENT:Initialize()
 	
 	self.Inaccuracy 	= 1
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Ammo" } )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Ammo", "Unload" } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "Entity" }, { "NORMAL" , "ENTITY" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
@@ -133,6 +133,7 @@ function ENT:Link( Target )
 		self.Ready = false
 		Wire_TriggerOutput(self.Entity, "Ready", 0)
 		self:LoadAmmo()	
+		self:ReloadEffect()
 	end
 	self:EmitSound("weapons/357/357_reload4.wav",500,100)
 
@@ -168,13 +169,15 @@ function ENT:TriggerInput( iname , value )
 		end
 	elseif (iname == "Ammo") then
 		self.SetAmmo = math.max(math.floor(value),0)
+	elseif (iname == "Unload" and value > 0) then
+		self:UnloadAmmo()
 	elseif ( iname == "Fire" and value > 0 ) then
 		if self.Entity.NextFire < CurTime() then
 			self.Entity:FireShell()
 			self.Entity:Think()
 		end
 		self.Firing = true
-	elseif ( iname == "Fire" and value == 0 ) then
+	elseif ( iname == "Fire" and value <= 0 ) then
 		self.Firing = false
 	end		
 
@@ -251,7 +254,7 @@ function ENT:CreateShell()
 	--You overwrite this with your own function, defined in the ammo definition file
 end
 
-function ENT:LoadAmmo()
+function ENT:LoadAmmo( AddTime )
 
 	local AmmoType = 0
 	if self.SetAmmo > 0 then
@@ -272,6 +275,9 @@ function ENT:LoadAmmo()
 		Wire_TriggerOutput(self.Entity, "Loaded", self.BulletData["Type"])
 		
 		self.NextFire = CurTime() + self.ReloadTime
+		if AddTime then
+			self.NextFire = self.NextFire + AddTime
+		end
 		self.Entity:Think()
 		return true	
 	else
@@ -299,18 +305,31 @@ function ENT:UnloadAmmo()
 	
 	self.Ready = false
 	Wire_TriggerOutput(self.Entity, "Ready", 0)
-	self:LoadAmmo()	
+	self:LoadAmmo( math.min(self.ReloadTime,self.ReloadTime - (self.NextFire - CurTime()) )	 )
+	self:ReloadEffect()
 
 end
 
-function ENT:MuzzleEffect( MuzzlePos , MuzzleVec )
+function ENT:MuzzleEffect()
 	
 	local Effect = EffectData()
 		Effect:SetEntity( self.Entity )
-		Effect:SetScale( self.ReloadTime )
-		Effect:SetMagnitude( ACF.RoundTypes[self.BulletData["Type"]]["id"]  )	--Encoding the ammo type into a table index
+		Effect:SetScale( self.BulletData["PropMass"] )
+		Effect:SetMagnitude( self.ReloadTime )
+		Effect:SetSurfaceProp( ACF.RoundTypes[self.BulletData["Type"]]["id"]  )	--Encoding the ammo type into a table index
 	util.Effect( "ACF_MuzzleFlash", Effect, true, true )
 
+end
+
+function ENT:ReloadEffect()
+
+	local Effect = EffectData()
+		Effect:SetEntity( self.Entity )
+		Effect:SetScale( 0 )
+		Effect:SetMagnitude( self.ReloadTime )
+		Effect:SetSurfaceProp( ACF.RoundTypes[self.BulletData["Type"]]["id"]  )	--Encoding the ammo type into a table index
+	util.Effect( "ACF_MuzzleFlash", Effect, true, true )
+	
 end
 
 function ENT:PreEntityCopy()
