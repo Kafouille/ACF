@@ -34,7 +34,7 @@ function ACFEngineGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
 	acfmenupanel:CPanelText("Desc", Table.desc)
-	acfmenupanel:CPanelText("Power", "Peak Power : "..(Table.torque * Table.peakmaxrpm / 9548.8).." kW @ "..(Table.peakmaxrpm).." RPM")
+	acfmenupanel:CPanelText("Power", "Peak Power : "..(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)).." kW @ "..(Table.peakmaxrpm).." RPM")
 	acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m")
 	acfmenupanel:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitprm).." RPM")
 	acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
@@ -42,4 +42,3 @@ function ACFEngineGUICreate( Table )
 	acfmenupanel.CustomDisplay:PerformLayout()
 	
 end
-
