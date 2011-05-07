@@ -183,7 +183,9 @@ end
 function ACFHomeGUICreate( Table )
 
 	if not acfmenupanel.CustomDisplay then return end
-
+	
+	acfmenupanel:CPanelText("Header", "Changelog")
+	
 	acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
 	for Rev,Changes in pairs(acfmenupanel.Changelog) do
 		
@@ -196,9 +198,8 @@ function ACFHomeGUICreate( Table )
 		Node.Icon:SetImage( "gui/silkicons/newspaper" )
 		
 	end	
-	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 40 )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
-	--acfmenupanel:CPanelText("Changelog", table.GetLastValue( acfmenupanel.Changelog ) )
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
 	
@@ -207,7 +208,7 @@ end
 function ACFHomeGUIUpdate( Table )
 	
 	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
-	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	acfmenupanel.CustomDisplay:PerformLayout()
 	
 end
 
@@ -221,7 +222,7 @@ function ACFChangelogHTTPCallBack(contents , size)
 	table.sort(acfmenupanel.Changelog)
 
 end
-http.Get("http://acf.googlecode.com/svn/trunk/info.txt", "", ACFChangelogHTTPCallBack) 
+http.Get("http://acf.googlecode.com/svn/trunk/changelog.txt", "", ACFChangelogHTTPCallBack) 
 
 function PANEL:AmmoSelect()
 	

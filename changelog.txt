@@ -2,23 +2,32 @@ r01
 Guns : 
 
 --The guns "Ammo" input now only affects the next round to be loaded, the current round stays in the gun unless specifically unloaded or fired
+
 --Added "Unload" wire input the guns, will cause them to send the round currently loaded back to the crate it came from and load a round from the currently selected crate
+
 --Fixed the animation issues when linking an empty gun to a crate
+
 --Fixed the sound issues with the cannons
 
 Menu : 
 
 --Added a changelog
+
 --Fixed aspect ratio issues with the menu 3D display
+
 --Added proper descriptions to the Engines and Gearboxes
 
 *r02
 Engines :
 
 --Changed the existing engines to diesels, with corresponding sound
---Slightly upped the weight of the 2l-i4
+
+--Slightly upped the weight of both the 1.2l-i4 and 2l-i4
+
 --Changes to the ideal RPM range of both the 1.2l-i4 and 2l-i4 : 
      12l : From 8000-10000RPM to 2000-4000RPM
      2l : From 5000-7000RPM to 1800-3500RPM
+	 
 --Increased the max torque of the 2l-i4 from 150n/m to 200n/m
+
 --Lowered the max torque of the 15l-i4 from 5000n/m to 1800n/m
