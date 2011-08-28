@@ -281,7 +281,7 @@ function ENT:Act( Torque )
 			BrakeMult = self.WheelVel[Key] * Inertia * self.Brake / 10
 		end
 		local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
-		local ForceForce = TorqueVec * GearedTq + TorqueVec * BrakeMult
+		local Force = TorqueVec * GearedTq + TorqueVec * BrakeMult
 		OutPhys:ApplyForceOffset( Force * -0.5, OutPos + Cross*40 )
 		OutPhys:ApplyForceOffset( Force * 0.5, OutPos + Cross*-40 )
 	end
