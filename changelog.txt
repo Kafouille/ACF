@@ -31,3 +31,14 @@ Engines :
 --Increased the max torque of the 2l-i4 from 150n/m to 200n/m
 
 --Lowered the max torque of the 15l-i4 from 5000n/m to 1800n/m
+
+*r03
+Guns : 
+
+--All velocities have been cut in half for the purposes of shell movement, simulating longer ranges. All other calculations have been left alone, so AP shell penetration is not affected
+
+--As a result of larger simulated ranges, drag was reduced
+
+Engines : 
+
+--Fixed a bug that made the engines apply twice as much power as their rated output to the wheels

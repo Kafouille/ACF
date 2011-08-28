@@ -90,7 +90,7 @@ end
 function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be called from other round types
 
 	if ACF_Check( Target ) then
-		local Speed = Bullet["Flight"]:Length()
+		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		if HitRes.Ricochet then

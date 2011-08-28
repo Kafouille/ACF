@@ -45,7 +45,7 @@ function ACF_CalcBulletFlight( Index, Bullet )
 	
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
-	Bullet.Flight = Bullet.Flight + (Bullet.Accel * ACF.VelScale - Drag)*DeltaTime				--Calculates the next shell vector
+	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
 	
 	ACF_DoBulletsFlight( Index, Bullet )
 	

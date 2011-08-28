@@ -17,8 +17,8 @@ ACF.HEFrag = 3000		--Mean fragment number for equal weight TNT and casing
 
 ACF.HEATMVScale = 0.7	--Filler KE to HEAT slug KE conversion expotential
 
-ACF.DragDiv = 20		--Drag fudge factor
-ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
+ACF.DragDiv = 40		--Drag fudge factor
+ACF.VelScale = 0.5		--Scale factor for the shell velocities in the game world
 
 ACF.PBase = 1050		--1KG of propellant produces this much KE at the muzzle, in kj
 ACF.PScale = 1	--Gun Propellant power expotential
