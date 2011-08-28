@@ -35,9 +35,9 @@ Engines :
 *r03
 Guns : 
 
---All velocities have been cut in half for the purposes of shell movement, simulating longer ranges. All other calculations have been left alone, so AP shell penetration is not affected
+--Reduced HE explosive power 25%
 
---As a result of larger simulated ranges, drag was reduced
+--Reduced mortar accuracy by half, and increased reload time by 50%
 
 Engines : 
 

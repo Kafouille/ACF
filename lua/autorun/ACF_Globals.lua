@@ -11,14 +11,14 @@ ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soi
 ACF.KEtoCrush = 0.9
 ACF.KEtoSpall = 1
 
-ACF.HEPower = 8000		--HE Filler power per KG in KJ
+ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 3000		--Mean fragment number for equal weight TNT and casing
 
-ACF.HEATMVScale = 0.7	--Filler KE to HEAT slug KE conversion expotential
+ACF.HEATMVScale = 0.71	--Filler KE to HEAT slug KE conversion expotential
 
 ACF.DragDiv = 40		--Drag fudge factor
-ACF.VelScale = 0.5		--Scale factor for the shell velocities in the game world
+ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
 
 ACF.PBase = 1050		--1KG of propellant produces this much KE at the muzzle, in kj
 ACF.PScale = 1	--Gun Propellant power expotential
