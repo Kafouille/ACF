@@ -527,10 +527,10 @@ local Howitzer = {}
 GunClass["HW"] = Howitzer
 	
 local Mortar = {}
-	Mortar.spread = 4
+	Mortar.spread = 8
 	Mortar.name = "Mortar"
 	Mortar.muzzleflash = "40mm_muzzleflash_noscale"
-	Mortar.rofmod = 2
+	Mortar.rofmod = 3
 	Mortar.sound = "weapons/grenade_launcher1.wav"
 GunClass["MO"] = Mortar	
 
