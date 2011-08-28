@@ -133,7 +133,7 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			
 		if Bullet["Detonated"] then
 			
-			local Speed = Bullet["Flight"]:Length()
+			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], 999999 )
 			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 			
@@ -149,7 +149,7 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 	
 		else
 			
-			local Speed = Bullet["Flight"]:Length()
+			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 			
@@ -177,7 +177,7 @@ function ACF_HEATWorldImpact( Index, Bullet, HitPos, HitNormal )
 		ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 	end
 	
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length(), Bullet["ProjMass"], 999999 )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], 999999 )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )

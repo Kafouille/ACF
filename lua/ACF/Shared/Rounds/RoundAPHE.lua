@@ -96,7 +96,7 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 
 	if ACF_Check( Target ) then
 	
-		local Speed = Bullet["Flight"]:Length()
+		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		
@@ -120,7 +120,7 @@ end
 
 function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length(), Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )

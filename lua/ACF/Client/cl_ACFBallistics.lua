@@ -18,7 +18,7 @@ function ACF_SimBulletFlight( Bullet, Index )
 	--print(Drag)
 
 	Bullet.SimPos = Bullet.SimPos + (Bullet.SimFlight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
-	Bullet.SimFlight = Bullet.SimFlight + (Bullet.Accel * ACF.VelScale - Drag)*DeltaTime			--Calculates the next shell vector
+	Bullet.SimFlight = Bullet.SimFlight + (Bullet.Accel - Drag)*DeltaTime			--Calculates the next shell vector
 	
 	if Bullet and Bullet.Effect:IsValid() then
 		Bullet.Effect:ApplyMovement( Bullet )
