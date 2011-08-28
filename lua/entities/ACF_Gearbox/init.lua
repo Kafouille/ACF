@@ -288,8 +288,8 @@ function ENT:Act( Torque )
 
 	if BoxPhys:IsValid() then	
 		local Force = self:GetForward() * GearedTq - self:GetForward() * BrakeMult
-		BoxPhys:ApplyForceOffset( Force, self:GetPos() + self:GetUp()*-40 )
-		BoxPhys:ApplyForceOffset( Force * -1, self:GetPos() + self:GetUp()*40 )
+		BoxPhys:ApplyForceOffset( Force * 0.5, self:GetPos() + self:GetUp()*-40 )
+		BoxPhys:ApplyForceOffset( Force * -0.5, self:GetPos() + self:GetUp()*40 )
 	end
 	
 	self.LastActive = CurTime()
