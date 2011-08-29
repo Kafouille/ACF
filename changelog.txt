@@ -42,3 +42,8 @@ Guns :
 Engines : 
 
 --Fixed a bug that made the engines apply twice as much power as their rated output to the wheels
+
+*r04
+Engines : 
+
+--Added Dual-Clutch gearboxes, that will allow you to use tank-like steering with only one gearbox

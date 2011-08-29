@@ -16,7 +16,11 @@ function ENT:Initialize()
 	self.WheelNum = 0
 	
 	self.Clutch = 0
+	self.RClutch = 0
+	self.LClutch = 0
 	self.Brake = 0
+	self.LBrake = 0
+	self.RBrake = 0
 	
 	self.Gear = 0
 	self.GearRatio = 0
@@ -31,11 +35,6 @@ function ENT:Initialize()
 	self.LastActive = 0
 	self.Legal = true
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Gear" , "Clutch" , "Brake" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ratio", "Entity" , "DebugN" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
-	self.WireDebugName = "ACF Gearbox"
-
 end  
 
 function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
@@ -58,6 +57,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.SwitchTime = List["Mobility"][Id]["switch"]
 	Gearbox.MaxTorque = List["Mobility"][Id]["maxtq"]
 	Gearbox.Gears = List["Mobility"][Id]["gears"]
+	Gearbox.Dual = List["Mobility"][Id]["doubleclutch"]
 	Gearbox.GearTable = List["Mobility"][Id]["geartable"]
 		Gearbox.GearTable["Final"] = Data10
 		Gearbox.GearTable[1] = Data1
@@ -81,10 +81,28 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox.Gear7 = Data7
 		Gearbox.Gear8 = Data8
 		Gearbox.Gear9 = Data9
-	
+		
 	Gearbox:SetModel( Gearbox.Model )	
+		
+	local Inputs = {"Gear"}
+	if Gearbox.Dual then
+		table.insert(Inputs,"Left Clutch")
+		table.insert(Inputs,"Right Clutch")
+		table.insert(Inputs,"Left Brake")
+		table.insert(Inputs,"Right Brake")
+	else
+		table.insert(Inputs, "Clutch")
+		table.insert(Inputs, "Brake")
+	end
+	
+	Gearbox.Inputs = Wire_CreateInputs( Gearbox.Entity, Inputs )
+	Gearbox.Outputs = WireLib.CreateSpecialOutputs( Gearbox.Entity, { "Ratio", "Entity" , "DebugN" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Wire_TriggerOutput(Gearbox.Entity, "Entity", Gearbox.Entity)
+	Gearbox.WireDebugName = "ACF Gearbox"
 	
 	Gearbox.Clutch = Gearbox.MaxTorque
+	Gearbox.LClutch = Gearbox.MaxTorque
+	Gearbox.RClutch = Gearbox.MaxTorque
 
 	Gearbox:PhysicsInit( SOLID_VPHYSICS )      	
 	Gearbox:SetMoveType( MOVETYPE_VPHYSICS )     	
@@ -98,18 +116,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.In = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "input" )).Pos)
 	Gearbox.OutL = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftL" )).Pos)
 	Gearbox.OutR = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftR" )).Pos)
-	
-	-- Gearbox.Output = {}
-	-- table.insert(Gearbox.Output, 1, ents.Create("prop_physics"))
-	-- Gearbox.Output[1]:SetAngles(Angle)
-	-- Gearbox.Output[1]:SetPos(Pos + Gearbox:GetForward()*20)
-	-- Gearbox.Output[1]:SetModel( "models/props_pipes/pipe01_connector01.mdl" )
-	-- Gearbox.Output[1]:Spawn()
-	-- Gearbox.Output[1]:SetCollisionGroup( COLLISION_GROUP_WORLD )
-	
-	-- constraint.Axis(Gearbox.Output[1], Gearbox, 0, 0, Gearbox.Output[1]:WorldToLocal(Gearbox:GetPos()), Gearbox.Output[1]:WorldToLocal(Gearbox:GetPos()), 0, 0, 0, 0)
-	
-	
+		
 	undo.Create("ACF Gearbox")
 		undo.AddEntity( Gearbox )
 		undo.SetPlayer( Owner )
@@ -118,6 +125,8 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Owner:AddCount("_acf_Gearbox", Gearbox)
 	Owner:AddCleanup( "acfmenu", Gearbox )
 	
+	timer.Simple(0.5, function() Gearbox:UpdateHUD() end ) 
+		
 	return Gearbox
 end
 list.Set( "ACFCvars", "acf_gearbox" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
@@ -159,7 +168,23 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		
 	self.Gear = 0
 	
+	self:UpdateHUD()
+	
 	return Feedback
+end
+
+function ENT:UpdateHUD()
+
+	umsg.Start( "ACFGearbox_SendRatios", ply )
+		umsg.Entity( self.Entity )
+		umsg.String( self.Id )
+		umsg.Short( self.Gear0*100 )
+		for I=1 , self.Gears do
+			umsg.Short( self.GearTable[I]*100 )
+		end
+		umsg.Bool( self.Dual )
+	umsg.End()
+	
 end
 
 function ENT:TriggerInput( iname , value )
@@ -169,7 +194,15 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Clutch" ) then
 		self.Clutch = math.Clamp(1-value,0,1)*self.MaxTorque
 	elseif ( iname == "Brake" ) then
-		self.Brake = math.Clamp(value,0,10)
+		self.Brake = math.Clamp(value,0,100)
+	elseif ( iname == "Left Brake" ) then
+		self.LBrake = math.Clamp(value,0,100)
+	elseif ( iname == "Right Brake" ) then
+		self.RBrake = math.Clamp(value,0,100)
+	elseif ( iname == "Left Clutch" ) then
+		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+	elseif ( iname == "Right Clutch" ) then
+		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
 	end		
 
 end
@@ -245,7 +278,7 @@ function ENT:Calc( Engine )
 			end
 		end
 	end
-	
+		
 	local BoxPhys = self:GetPhysicsObject()
 	local RPM = 0
 	local SelfWorld = self:LocalToWorld(BoxPhys:GetAngleVelocity())-self:GetPos()
@@ -261,13 +294,37 @@ function ENT:Calc( Engine )
 		RPM = 0
 	end
 	
+	if self.Dual then
+		self.Clutch = (self.LClutch + self.RClutch)/2
+		self.Brake = self.LBrake + self.RBrake
+	end
+	
 	return RPM
 end
 
 function ENT:Act( Torque )
 	
-	local GearedTq = math.min(Torque,self.Clutch) / self.GearRatio / self.WheelNum
+	local Tq = 0
+	if self.Dual then
+		Tq = self:ActDual( Torque )
+	else
+		Tq = self:ActSingle( Torque )
+	end
+	
 	local BoxPhys = self:GetPhysicsObject()
+	if BoxPhys:IsValid() then	
+		local Force = self:GetForward() * Tq * self.WheelNum - self:GetForward() * BrakeMult
+		BoxPhys:ApplyForceOffset( Force * 0.5, self:GetPos() + self:GetUp()*-40 )
+		BoxPhys:ApplyForceOffset( Force * -0.5, self:GetPos() + self:GetUp()*40 )
+	end
+	
+	self.LastActive = CurTime()
+	
+end
+
+function ENT:ActSingle( Torque )
+
+	local GearedTq = math.min(Torque,self.Clutch) / self.GearRatio / self.WheelNum
 	Wire_TriggerOutput(self.Entity, "DebugN", GearedTq)
 	
 	local BrakeMult = 0
@@ -285,14 +342,46 @@ function ENT:Act( Torque )
 		OutPhys:ApplyForceOffset( Force * -0.5, OutPos + Cross*40 )
 		OutPhys:ApplyForceOffset( Force * 0.5, OutPos + Cross*-40 )
 	end
-
-	if BoxPhys:IsValid() then	
-		local Force = self:GetForward() * GearedTq - self:GetForward() * BrakeMult
-		BoxPhys:ApplyForceOffset( Force * 0.5, self:GetPos() + self:GetUp()*-40 )
-		BoxPhys:ApplyForceOffset( Force * -0.5, self:GetPos() + self:GetUp()*40 )
-	end
 	
-	self.LastActive = CurTime()
+	return GearedTq
+	
+end
+
+function ENT:ActDual( Torque )
+
+	local LTq = math.min(Torque,self.LClutch) / self.GearRatio / self.WheelNum
+	local RTq = math.min(Torque,self.RClutch) / self.GearRatio / self.WheelNum
+	local GearedTq = LTq+RTq
+	
+	Wire_TriggerOutput(self.Entity, "DebugN", GearedTq)
+	
+	local BrakeMult = 0
+	for Key, OutputEnt in pairs(self.WheelLink) do
+		local OutPhys = OutputEnt:GetPhysicsObject()
+		local OutPos = OutputEnt:GetPos()
+		local TorqueAxis = OutputEnt:LocalToWorld(self.WheelAxis[Key]) - OutPos
+		local Cross = TorqueAxis:Cross( Vector(TorqueAxis.y,TorqueAxis.z,TorqueAxis.x) )
+		local Inertia = OutPhys:GetInertia()
+		local Side = self.WheelOutput[Key].y < 0
+		if self.Brake > 0 then
+			if Side then
+				BrakeMult = self.WheelVel[Key] * Inertia * self.LBrake / 10
+			else
+				BrakeMult = self.WheelVel[Key] * Inertia * self.RBrake / 10
+			end
+		end
+		local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
+		local Force = 0
+		if Side then
+			Force = TorqueVec * LTq + TorqueVec * BrakeMult
+		else
+			Force = TorqueVec * RTq + TorqueVec * BrakeMult
+		end
+		OutPhys:ApplyForceOffset( Force * -0.5, OutPos + Cross*40 )
+		OutPhys:ApplyForceOffset( Force * 0.5, OutPos + Cross*-40 )
+	end
+
+	return GearedTq
 	
 end
 
