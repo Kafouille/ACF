@@ -88,17 +88,29 @@ function PANEL:Init( )
 	end
 	
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
+	local Engines = Mobility:AddNode( "Engines" )
+	local Gearboxes = Mobility:AddNode( "Gearboxes" )
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
-		local EndNode = Mobility:AddNode( MobilityTable.name or "No Name" )
+		local NodeAdd = Mobility
+		if MobilityTable.ent == "acf_engine" then
+			NodeAdd = Engines
+		elseif MobilityTable.ent == "acf_gearbox" then
+			NodeAdd = Gearboxes
+		end
+		
+		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
 		EndNode.mytable = MobilityTable
 		function EndNode:DoClick()
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
 		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
-		
+
 	end
+	
+	
+
 	
 	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
 	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do

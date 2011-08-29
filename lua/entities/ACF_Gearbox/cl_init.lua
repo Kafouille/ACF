@@ -2,23 +2,45 @@ include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
 
-ENT.AutomaticFrameAdvance = true 
-
 function ENT:Draw()
 	self:DoNormalDraw()
-	self:DrawModel()
     Wire_Render(self.Entity)
 end
 
 function ENT:DoNormalDraw()
 	local e = self.Entity
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
-		if(self:GetOverlayText() ~= "") then
-			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
-		end
+		if not self.DisplayString then self.DisplayString = "" end
+		AddWorldTip(e:EntIndex(),self.DisplayString,0.5,e:GetPos(),e)
 	end
+	e:DrawModel()
 end
 
+function ACFGearboxCreateDisplayString( data, Timer )
+	
+	local Ent = data:ReadEntity()
+	local Id = data:ReadString()
+	local List = list.Get("ACFEnts")
+	local FinalGear = data:ReadShort()/100
+	
+	Ent.DisplayString = List["Mobility"][Id]["name"].."\n"
+	for I = 1,List["Mobility"][Id]["gears"] do
+		Ent.DisplayString = Ent.DisplayString.."Gear "..I.." : "..tostring(data:ReadShort()/100).."\n"
+	end
+	Ent.DisplayString = Ent.DisplayString.."Final Gear : "..tostring(FinalGear).."\n"
+	if data:ReadBool() then
+		Ent:SetBodygroup(1,1)
+	else
+		Ent:SetBodygroup(1,0)
+	end
+	
+	if (not SinglePlayer()) then
+		local PlayerName = Ent:GetPlayerName()
+		Ent.DisplayString = Ent.DisplayString .."(" .. PlayerName .. ")"
+	end
+ 
+end
+usermessage.Hook( "ACFGearbox_SendRatios", ACFGearboxCreateDisplayString )
 
 function ACFGearboxGUICreate( Table )
 

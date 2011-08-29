@@ -11,7 +11,7 @@ local Engine12I4 = {}
 	Engine12I4.model = "models/engines/inline4s.mdl"
 	Engine12I4.sound = "acf_engines/I4_diesel.wav"
 	Engine12I4.weight = 70
-	Engine12I4.torque = 55		--in Meter/Kg
+	Engine12I4.torque = 55		--in Newton/meters
 	Engine12I4.idlerpm = 1000	--in Rotations Per Minute
 	Engine12I4.peakminrpm = 2000
 	Engine12I4.peakmaxrpm = 4000
@@ -31,7 +31,7 @@ local Engine20I4 = {}
 	Engine20I4.model = "models/engines/inline4m.mdl"
 	Engine20I4.sound = "acf_engines/I4_diesel.wav"
 	Engine20I4.weight = 250
-	Engine20I4.torque = 200		--in Meter/Kg
+	Engine20I4.torque = 200		--in Newton/meters
 	Engine20I4.idlerpm = 800	--in Rotations Per Minute
 	Engine20I4.peakminrpm = 1800
 	Engine20I4.peakmaxrpm = 3500
@@ -51,7 +51,7 @@ local Engine150I4 = {}
 	Engine150I4.model = "models/engines/inline4l.mdl"
 	Engine150I4.sound = "acf_engines/I4_diesel.wav"
 	Engine150I4.weight = 1500
-	Engine150I4.torque = 1800		--in Meter/Kg
+	Engine150I4.torque = 1800		--in Newton/meters
 	Engine150I4.idlerpm = 300	--in Rotations Per Minute
 	Engine150I4.peakminrpm = 500
 	Engine150I4.peakmaxrpm = 1500
@@ -62,61 +62,63 @@ local Engine150I4 = {}
 	end
 MobilityTable["15.0-I4"] = Engine150I4
 
-local Gearbox4Small = {}
-	Gearbox4Small.id = "4Gear-T-S"
-	Gearbox4Small.ent = "acf_gearbox"
-	Gearbox4Small.type = "Mobility"
-	Gearbox4Small.name = "4-Speed Gearbox, Transaxial, Small"
-	Gearbox4Small.desc = "A small, and light 4 speed gearbox, with a somewhat limited max torque rating\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
-	Gearbox4Small.model = "models/engines/transaxial_s.mdl"
-	Gearbox4Small.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gearbox4Small.weight = 50
-	Gearbox4Small.switch = 0.3
-	Gearbox4Small.maxtq = 80
-	Gearbox4Small.gears = 4
-	Gearbox4Small.geartable = {}
-		Gearbox4Small.geartable[-1] = 0.5
-		Gearbox4Small.geartable[0] = 0
-		Gearbox4Small.geartable[1] = 0.1
-		Gearbox4Small.geartable[2] = 0.2
-		Gearbox4Small.geartable[3] = 0.4
-		Gearbox4Small.geartable[4] = 0.8
+local Gear4TS = {}
+	Gear4TS.id = "4Gear-T-S"
+	Gear4TS.ent = "acf_gearbox"
+	Gear4TS.type = "Mobility"
+	Gear4TS.name = "4-Speed, Transaxial, Small"
+	Gear4TS.desc = "A small, and light 4 speed gearbox, with a somewhat limited max torque rating\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear4TS.model = "models/engines/transaxial_s.mdl"
+	Gear4TS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TS.weight = 50
+	Gear4TS.switch = 0.3
+	Gear4TS.maxtq = 80
+	Gear4TS.gears = 4
+	Gear4TS.doubleclutch = false
+	Gear4TS.geartable = {}
+		Gear4TS.geartable[-1] = 0.5
+		Gear4TS.geartable[0] = 0
+		Gear4TS.geartable[1] = 0.1
+		Gear4TS.geartable[2] = 0.2
+		Gear4TS.geartable[3] = 0.4
+		Gear4TS.geartable[4] = 0.8
 	if ( CLIENT ) then
-		Gearbox4Small.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
-		Gearbox4Small.guiupdate = function() return end
+		Gear4TS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TS.guiupdate = function() return end
 	end
-MobilityTable["4Gear-T-S"] = Gearbox4Small
+MobilityTable["4Gear-T-S"] = Gear4TS
 
-local Gearbox4Medium = {}
-	Gearbox4Medium.id = "4Gear-T-M"
-	Gearbox4Medium.ent = "acf_gearbox"
-	Gearbox4Medium.type = "Mobility"
-	Gearbox4Medium.name = "4-Speed Gearbox, Transaxial, Medium"
-	Gearbox4Medium.desc = "A medium sized, 4 speed gearbox"
-	Gearbox4Medium.model = "models/engines/transaxial_m.mdl"
-	Gearbox4Medium.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gearbox4Medium.weight = 150
-	Gearbox4Medium.switch = 0.4
-	Gearbox4Medium.maxtq = 500
-	Gearbox4Medium.gears = 4
-	Gearbox4Medium.geartable = {}
-		Gearbox4Medium.geartable[-1] = 0.5
-		Gearbox4Medium.geartable[0] = 0
-		Gearbox4Medium.geartable[1] = 0.1
-		Gearbox4Medium.geartable[2] = 0.2
-		Gearbox4Medium.geartable[3] = 0.4
-		Gearbox4Medium.geartable[4] = 0.8
+local Gear4TM = {}
+	Gear4TM.id = "4Gear-T-M"
+	Gear4TM.ent = "acf_gearbox"
+	Gear4TM.type = "Mobility"
+	Gear4TM.name = "4-Speed, Transaxial, Medium"
+	Gear4TM.desc = "A medium sized, 4 speed gearbox"
+	Gear4TM.model = "models/engines/transaxial_m.mdl"
+	Gear4TM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TM.weight = 150
+	Gear4TM.switch = 0.4
+	Gear4TM.maxtq = 500
+	Gear4TM.gears = 4
+	Gear4TM.doubleclutch = false
+	Gear4TM.geartable = {}
+		Gear4TM.geartable[-1] = 0.5
+		Gear4TM.geartable[0] = 0
+		Gear4TM.geartable[1] = 0.1
+		Gear4TM.geartable[2] = 0.2
+		Gear4TM.geartable[3] = 0.4
+		Gear4TM.geartable[4] = 0.8
 	if ( CLIENT ) then
-		Gearbox4Medium.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
-		Gearbox4Medium.guiupdate = function() return end
+		Gear4TM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TM.guiupdate = function() return end
 	end
-MobilityTable["4Gear-T-M"] = Gearbox4Medium
+MobilityTable["4Gear-T-M"] = Gear4TM
 
 local Gear4TL = {}
 	Gear4TL.id = "4Gear-T-L"
 	Gear4TL.ent = "acf_gearbox"
 	Gear4TL.type = "Mobility"
-	Gear4TL.name = "4-Speed Gearbox, Transaxial, Large"
+	Gear4TL.name = "4-Speed, Transaxial, Large"
 	Gear4TL.desc = "A large, heavy and sturdy 4 speed gearbox"
 	Gear4TL.model = "models/engines/transaxial_l.mdl"
 	Gear4TL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
@@ -124,6 +126,7 @@ local Gear4TL = {}
 	Gear4TL.switch = 0.6
 	Gear4TL.maxtq = 8000
 	Gear4TL.gears = 4
+	Gear4TL.doubleclutch = false
 	Gear4TL.geartable = {}
 		Gear4TL.geartable[-1] = 1
 		Gear4TL.geartable[0] = 0
@@ -136,6 +139,84 @@ local Gear4TL = {}
 		Gear4TL.guiupdate = function() return end
 	end
 MobilityTable["4Gear-T-L"] = Gear4TL
+
+local Gear4TDS = {}
+	Gear4TDS.id = "4Gear-TD-S"
+	Gear4TDS.ent = "acf_gearbox"
+	Gear4TDS.type = "Mobility"
+	Gear4TDS.name = "4-Speed, Transaxial Dual Clutch, Small"
+	Gear4TDS.desc = "A small, and light 4 speed gearbox, with a somewhat limited max torque rating. The dual clutch allows you to apply power and brake each side independently\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear4TDS.model = "models/engines/transaxial_s.mdl"
+	Gear4TDS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TDS.weight = 65
+	Gear4TDS.switch = 0.3
+	Gear4TDS.maxtq = 80
+	Gear4TDS.gears = 4
+	Gear4TDS.doubleclutch = true
+	Gear4TDS.geartable = {}
+		Gear4TDS.geartable[-1] = 0.5
+		Gear4TDS.geartable[0] = 0
+		Gear4TDS.geartable[1] = 0.1
+		Gear4TDS.geartable[2] = 0.2
+		Gear4TDS.geartable[3] = 0.4
+		Gear4TDS.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4TDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TDS.guiupdate = function() return end
+	end
+MobilityTable["4Gear-TD-S"] = Gear4TDS
+
+local Gear4TDM = {}
+	Gear4TDM.id = "4Gear-TD-M"
+	Gear4TDM.ent = "acf_gearbox"
+	Gear4TDM.type = "Mobility"
+	Gear4TDM.name = "4-Speed, Transaxial Dual Clutch, Medium"
+	Gear4TDM.desc = "A medium sized, 4 speed gearbox. The dual clutch allows you to apply power and brake each side independently"
+	Gear4TDM.model = "models/engines/transaxial_m.mdl"
+	Gear4TDM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TDM.weight = 200
+	Gear4TDM.switch = 0.4
+	Gear4TDM.maxtq = 500
+	Gear4TDM.gears = 4
+	Gear4TDM.doubleclutch = true
+	Gear4TDM.geartable = {}
+		Gear4TDM.geartable[-1] = 0.5
+		Gear4TDM.geartable[0] = 0
+		Gear4TDM.geartable[1] = 0.1
+		Gear4TDM.geartable[2] = 0.2
+		Gear4TDM.geartable[3] = 0.4
+		Gear4TDM.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4TDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TDM.guiupdate = function() return end
+	end
+MobilityTable["4Gear-TD-M"] = Gear4TDM
+
+local Gear4TDL = {}
+	Gear4TDL.id = "4Gear-TD-L"
+	Gear4TDL.ent = "acf_gearbox"
+	Gear4TDL.type = "Mobility"
+	Gear4TDL.name = "4-Speed, Transaxial Dual Clutch, Large"
+	Gear4TDL.desc = "A large, heavy and sturdy 4 speed gearbox. The dual clutch allows you to apply power and brake each side independently"
+	Gear4TDL.model = "models/engines/transaxial_l.mdl"
+	Gear4TDL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TDL.weight = 650
+	Gear4TDL.switch = 0.6
+	Gear4TDL.maxtq = 8000
+	Gear4TDL.gears = 4
+	Gear4TDL.doubleclutch = true
+	Gear4TDL.geartable = {}
+		Gear4TDL.geartable[-1] = 1
+		Gear4TDL.geartable[0] = 0
+		Gear4TDL.geartable[1] = 0.1
+		Gear4TDL.geartable[2] = 0.2
+		Gear4TDL.geartable[3] = 0.4
+		Gear4TDL.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4TDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TDL.guiupdate = function() return end
+	end
+MobilityTable["4Gear-TD-L"] = Gear4TDL
 
 -- local Tracks = {}
 	-- Tracks.id = "CarV8"
@@ -152,3 +233,22 @@ MobilityTable["4Gear-T-L"] = Gear4TL
 -- MobilityTable["Tracks"] = Tracks
 
 list.Set( "ACFEnts", "Mobility", MobilityTable )	--end mobility listing
+
+local MobClass = {}
+
+local SingleClutchT = {}
+	SingleClutchT.type = "Gearbox"
+	SingleClutchT.name = "Single Clutch, Transverse"
+MobClass["Gear-SC-T"] = SingleClutchT	
+
+local DualClutchT = {}
+	DualClutchT.type = "Gearbox"
+	DualClutchT.name = "Dual Clutch, Transverse"
+MobClass["Gear-DC-T"] = DualClutchT
+
+local Inline4D = {}
+	Inline4D.type = "Engine"
+	Inline4D.name = "Inline 4, Diesel"
+MobClass["Engine-I4-D"] = Inline4D
+
+list.Set( "ACFClasses", "MobClass", MobClass )	--End mobility classes listing
