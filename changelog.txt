@@ -47,3 +47,9 @@ Engines :
 Engines : 
 
 --Added Dual-Clutch gearboxes, that will allow you to use tank-like steering with only one gearbox
+
+*r05
+Engines : 
+
+--Added V8 lineup
+--Increased engine volume
