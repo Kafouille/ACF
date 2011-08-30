@@ -11,7 +11,7 @@ local Engine12I4 = {}
 	Engine12I4.model = "models/engines/inline4s.mdl"
 	Engine12I4.sound = "acf_engines/I4_diesel.wav"
 	Engine12I4.weight = 70
-	Engine12I4.torque = 55		--in Newton/meters
+	Engine12I4.torque = 55		--in Meter/Kg
 	Engine12I4.idlerpm = 1000	--in Rotations Per Minute
 	Engine12I4.peakminrpm = 2000
 	Engine12I4.peakmaxrpm = 4000
@@ -29,9 +29,9 @@ local Engine20I4 = {}
 	Engine20I4.name = "2.0L I4 Diesel"
 	Engine20I4.desc = "Car sized diesel engine, with low power but decent low end torque"
 	Engine20I4.model = "models/engines/inline4m.mdl"
-	Engine20I4.sound = "acf_engines/I4_diesel.wav"
+	Engine20I4.sound = "acf_engines/I4_diesel2.wav"
 	Engine20I4.weight = 250
-	Engine20I4.torque = 200		--in Newton/meters
+	Engine20I4.torque = 200		--in Meter/Kg
 	Engine20I4.idlerpm = 800	--in Rotations Per Minute
 	Engine20I4.peakminrpm = 1800
 	Engine20I4.peakmaxrpm = 3500
@@ -49,9 +49,9 @@ local Engine150I4 = {}
 	Engine150I4.name = "15.0L I4 Diesel"
 	Engine150I4.desc = "Small boat sized diesel, with large ammounts of torque"
 	Engine150I4.model = "models/engines/inline4l.mdl"
-	Engine150I4.sound = "acf_engines/I4_diesel.wav"
+	Engine150I4.sound = "acf_engines/I4_diesellarge.wav"
 	Engine150I4.weight = 1500
-	Engine150I4.torque = 1800		--in Newton/meters
+	Engine150I4.torque = 1800		--in Meter/Kg
 	Engine150I4.idlerpm = 300	--in Rotations Per Minute
 	Engine150I4.peakminrpm = 500
 	Engine150I4.peakmaxrpm = 1500
@@ -61,6 +61,66 @@ local Engine150I4 = {}
 		Engine150I4.guiupdate = function() return end
 	end
 MobilityTable["15.0-I4"] = Engine150I4
+
+local Engine180V8 = {}
+	Engine180V8.id = "18.0-V8"
+	Engine180V8.ent = "acf_engine"
+	Engine180V8.type = "Mobility"
+	Engine180V8.name = "18.0L V8 Petrol"
+	Engine180V8.desc = "American Ford GAF V8, decent overall power and torque and fairly lightweight"
+	Engine180V8.model = "models/engines/v8l.mdl"
+	Engine180V8.sound = "acf_engines/v8_diesellarge.wav"
+	Engine180V8.weight = 800
+	Engine180V8.torque = 1420		--in Meter/Kg
+	Engine180V8.idlerpm = 600	--in Rotations Per Minute
+	Engine180V8.peakminrpm = 1600
+	Engine180V8.peakmaxrpm = 2600
+	Engine180V8.limitprm = 3000
+	if ( CLIENT ) then
+		Engine180V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine180V8.guiupdate = function() return end
+	end
+MobilityTable["18.0-V8"] = Engine180V8
+
+local Engine65V8 = {}
+	Engine65V8.id = "6.5-V8"
+	Engine65V8.ent = "acf_engine"
+	Engine65V8.type = "Mobility"
+	Engine65V8.name = "6.5L V8 Diesel"
+	Engine65V8.desc = "Truck sized diesel engine, low power but excellent low end torque"
+	Engine65V8.model = "models/engines/v8m.mdl"
+	Engine65V8.sound = "acf_engines/v8_diesel.wav"
+	Engine65V8.weight = 500
+	Engine65V8.torque = 500		--in Meter/Kg
+	Engine65V8.idlerpm = 550	--in Rotations Per Minute
+	Engine65V8.peakminrpm = 1200
+	Engine65V8.peakmaxrpm = 2500
+	Engine65V8.limitprm = 4000
+	if ( CLIENT ) then
+		Engine65V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine65V8.guiupdate = function() return end
+	end
+MobilityTable["6.5-V8"] = Engine65V8
+
+local Engine57V8 = {}
+	Engine57V8.id = "5.7-V8"
+	Engine57V8.ent = "acf_engine"
+	Engine57V8.type = "Mobility"
+	Engine57V8.name = "5.7L V8 Petrol"
+	Engine57V8.desc = "Car sized petrol engine, good power and mid range torque"
+	Engine57V8.model = "models/engines/v8s.mdl"
+	Engine57V8.sound = "acf_engines/v8_petrol.wav"
+	Engine57V8.weight = 350
+	Engine57V8.torque = 390		--in Meter/Kg
+	Engine57V8.idlerpm = 800	--in Rotations Per Minute
+	Engine57V8.peakminrpm = 3000
+	Engine57V8.peakmaxrpm = 4200
+	Engine57V8.limitprm = 6500
+	if ( CLIENT ) then
+		Engine57V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine57V8.guiupdate = function() return end
+	end
+MobilityTable["5.7-V8"] = Engine57V8
 
 local Gear4TS = {}
 	Gear4TS.id = "4Gear-T-S"
