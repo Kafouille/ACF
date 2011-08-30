@@ -111,10 +111,10 @@ local Engine57V8 = {}
 	Engine57V8.model = "models/engines/v8s.mdl"
 	Engine57V8.sound = "acf_engines/v8_petrol.wav"
 	Engine57V8.weight = 350
-	Engine57V8.torque = 390		--in Meter/Kg
+	Engine57V8.torque = 340		--in Meter/Kg
 	Engine57V8.idlerpm = 800	--in Rotations Per Minute
 	Engine57V8.peakminrpm = 3000
-	Engine57V8.peakmaxrpm = 4200
+	Engine57V8.peakmaxrpm = 5000
 	Engine57V8.limitprm = 6500
 	if ( CLIENT ) then
 		Engine57V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
