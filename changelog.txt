@@ -53,3 +53,10 @@ Engines :
 
 --Added V8 lineup
 --Increased engine volume
+
+*r06
+Engines : 
+-- Tuned the suck out of the 6.5L V8
+
+Gearboxes :
+-- Added 6 speed lineup
