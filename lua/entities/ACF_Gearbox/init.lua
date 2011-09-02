@@ -13,7 +13,6 @@ function ENT:Initialize()
 	self.WheelRopeL = {}
 	self.WheelOutput = {}
 	self.WheelVel = {}
-	self.WheelNum = 0
 	
 	self.Clutch = 0
 	self.RClutch = 0
@@ -21,6 +20,8 @@ function ENT:Initialize()
 	self.Brake = 0
 	self.LBrake = 0
 	self.RBrake = 0
+	self.WheelNumL = 0
+	self.WheelNumR = 0
 	
 	self.Gear = 0
 	self.GearRatio = 0
@@ -267,14 +268,22 @@ function ENT:Calc( Engine )
 		if not IsValid(WheelEnt) then
 			table.remove(self.WheelLink,Key)
 			table.remove(self.WheelAxis,Key)
-			self.WheelNum = table.Count(self.WheelAxis)
+			if self.WheelAxis.Key.y < 0 then
+				self.WheelNumL = self.WheelNumL + 1
+			else
+				self.WheelNumR = self.WheelNumR + 1
+			end
 		else
 			local WheelPhys = WheelEnt:GetPhysicsObject()
 			if not IsValid(WheelPhys) then
 				WheelEnt:Remove()
 				table.remove(self.WheelLink,Key)
 				table.remove(self.WheelAxis,Key)
-				self.WheelNum = table.Count(self.WheelAxis)
+				if self.WheelAxis.Key.y < 0 then
+					self.WheelNumL = self.WheelNumL + 1
+				else
+					self.WheelNumR = self.WheelNumR + 1
+				end
 			end
 		end
 	end
@@ -289,7 +298,7 @@ function ENT:Calc( Engine )
 		RPM = RPM - self.WheelVel[Key]
 	end
 	if self.GearRatio != 0 then
-		RPM = RPM / self.WheelNum / self.GearRatio / 6
+		RPM = RPM / (self.WheelNumR + self.WheelNumL) / self.GearRatio / 6
 	else
 		RPM = 0
 	end
@@ -313,7 +322,7 @@ function ENT:Act( Torque )
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if BoxPhys:IsValid() then	
-		local Force = self:GetForward() * Tq * self.WheelNum - self:GetForward() * BrakeMult
+		local Force = self:GetForward() * Tq * (self.WheelNumL + self.WheelNumR) - self:GetForward() * BrakeMult
 		BoxPhys:ApplyForceOffset( Force * 0.5, self:GetPos() + self:GetUp()*-40 )
 		BoxPhys:ApplyForceOffset( Force * -0.5, self:GetPos() + self:GetUp()*40 )
 	end
@@ -324,7 +333,7 @@ end
 
 function ENT:ActSingle( Torque )
 
-	local GearedTq = math.min(Torque,self.Clutch) / self.GearRatio / self.WheelNum
+	local GearedTq = math.min(Torque,self.Clutch) / self.GearRatio / (self.WheelNumL + self.WheelNumR)
 	Wire_TriggerOutput(self.Entity, "DebugN", GearedTq)
 	
 	local BrakeMult = 0
@@ -349,8 +358,8 @@ end
 
 function ENT:ActDual( Torque )
 
-	local LTq = math.min(Torque,self.LClutch) / self.GearRatio / self.WheelNum
-	local RTq = math.min(Torque,self.RClutch) / self.GearRatio / self.WheelNum
+	local LTq = math.min(Torque,self.LClutch) / self.GearRatio / self.WheelNumR
+	local RTq = math.min(Torque,self.RClutch) / self.GearRatio / self.WheelNumL
 	local GearedTq = LTq+RTq
 	
 	Wire_TriggerOutput(self.Entity, "DebugN", GearedTq)
@@ -404,8 +413,10 @@ function ENT:Link( Target )
 	local LinkPos = Vector(0,0,0)
 	if self.Entity:WorldToLocal(Target:GetPos()).y < 0 then
 		LinkPos = self.OutL
+		self.WheelNumL = self.WheelNumL + 1
 	else
 		LinkPos = self.OutR
+		self.WheelNumR = self.WheelNumR + 1
 	end
 	
 	local DrvAngle = (self.Entity:LocalToWorld(LinkPos) - Target:GetPos()):GetNormalized():DotProduct( (self:GetRight()*LinkPos.y):GetNormalized() )
@@ -420,8 +431,6 @@ function ENT:Link( Target )
 	constraint.Rope( self.Entity, Target, 0, 0, LinkPos, Vector(0,0,0), RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
 	table.insert( self.WheelRopeL,RopeL )
 	table.insert( self.WheelOutput,LinkPos )
-	
-	self.WheelNum = table.Count(self.WheelAxis)
 	
 	return false
 	
@@ -442,6 +451,12 @@ function ENT:Unlink( Target )
 				end
 			end
 			
+			if self.WheelAxis.Key.y < 0 then
+				self.WheelNumL = self.WheelNumL + 1
+			else
+				self.WheelNumR = self.WheelNumR + 1
+			end
+			
 			table.remove(self.WheelLink,Key)
 			table.remove(self.WheelAxis,Key)
 			table.remove(self.WheelRopeL,Key)
@@ -449,8 +464,6 @@ function ENT:Unlink( Target )
 			Success = true
 		end
 	end
-		
-	self.WheelNum = table.Count(self.WheelAxis)
 		
 	if Success then
 		return false
