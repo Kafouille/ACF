@@ -60,3 +60,9 @@ Engines :
 
 Gearboxes :
 -- Added 6 speed lineup
+
+*r07
+Engines : 
+-- Added 3.5 & 8.7L diesel v8s, be sure to update your client
+
+
