@@ -65,4 +65,8 @@ Gearboxes :
 Engines : 
 -- Added 3.5 & 8.7L diesel v8s, be sure to update your client
 
+*r07
+Engines : 
+-- Removed 3.5, 6.5, and 8.7L engines in favor of 9L petrol v8, inline 4/6 on their way to fill the gaps
+
 
