@@ -82,45 +82,25 @@ local Engine180V8 = {}
 	end
 MobilityTable["18.0-V8"] = Engine180V8
 
-local Engine65V8 = {}
-	Engine65V8.id = "6.5-V8"
-	Engine65V8.ent = "acf_engine"
-	Engine65V8.type = "Mobility"
-	Engine65V8.name = "6.5L V8 Diesel"
-	Engine65V8.desc = "Truck sized diesel engine, mediocre power, but an excellent powerband"
-	Engine65V8.model = "models/engines/v8m.mdl"
-	Engine65V8.sound = "acf_engines/v8_diesel.wav"
-	Engine65V8.weight = 500
-	Engine65V8.torque = 500		--in Meter/Kg
-	Engine65V8.idlerpm = 600	--in Rotations Per Minute
-	Engine65V8.peakminrpm = 2000
-	Engine65V8.peakmaxrpm = 4000
-	Engine65V8.limitprm = 4500
+local Engine90V8 = {}
+	Engine90V8.id = "9.0-V8"
+	Engine90V8.ent = "acf_engine"
+	Engine90V8.type = "Mobility"
+	Engine90V8.name = "9.0L V8 Petrol"
+	Engine90V8.desc = "Thirsty, giant V8, for medium applications"
+	Engine90V8.model = "models/engines/v8m.mdl"
+	Engine90V8.sound = "acf_engines/v8_petrol2.wav"
+	Engine90V8.weight = 550
+	Engine90V8.torque = 710		--in Meter/Kg
+	Engine90V8.idlerpm = 700	--in Rotations Per Minute
+	Engine90V8.peakminrpm = 2200
+	Engine90V8.peakmaxrpm = 3500
+	Engine90V8.limitprm = 5000
 	if ( CLIENT ) then
-		Engine65V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		Engine65V8.guiupdate = function() return end
+		Engine90V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine90V8.guiupdate = function() return end
 	end
-MobilityTable["6.5-V8"] = Engine65V8
-
-local Engine87V8 = {}
-	Engine87V8.id = "8.7-V8"
-	Engine87V8.ent = "acf_engine"
-	Engine87V8.type = "Mobility"
-	Engine87V8.name = "8.7L V8 Diesel"
-	Engine87V8.desc = "Heavy duty diesel V8, a step up from the 6.5L"
-	Engine87V8.model = "models/engines/v8m.mdl"
-	Engine87V8.sound = "acf_engines/v8_diesel2.wav"
-	Engine87V8.weight = 700
-	Engine87V8.torque = 1000		--in Meter/Kg
-	Engine87V8.idlerpm = 500	--in Rotations Per Minute
-	Engine87V8.peakminrpm = 1000
-	Engine87V8.peakmaxrpm = 3000
-	Engine87V8.limitprm = 3500
-	if ( CLIENT ) then
-		Engine87V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		Engine87V8.guiupdate = function() return end
-	end
-MobilityTable["8.7-V8"] = Engine87V8
+MobilityTable["9.0-V8"] = Engine90V8
 
 local Engine57V8 = {}
 	Engine57V8.id = "5.7-V8"
@@ -142,25 +122,6 @@ local Engine57V8 = {}
 	end
 MobilityTable["5.7-V8"] = Engine57V8
 
-local Engine35V8 = {}
-	Engine35V8.id = "3.5-V8"
-	Engine35V8.ent = "acf_engine"
-	Engine35V8.type = "Mobility"
-	Engine35V8.name = "3.5L V8 Diesel"
-	Engine35V8.desc = "Light duty V8 diesel, not much power but decent torque"
-	Engine35V8.model = "models/engines/v8s.mdl"
-	Engine35V8.sound = "acf_engines/v8_smalldiesel.wav"
-	Engine35V8.weight = 300
-	Engine35V8.torque = 350		--in Meter/Kg
-	Engine35V8.idlerpm = 700	--in Rotations Per Minute
-	Engine35V8.peakminrpm = 1000
-	Engine35V8.peakmaxrpm = 3500
-	Engine35V8.limitprm = 4000
-	if ( CLIENT ) then
-		Engine35V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
-		Engine35V8.guiupdate = function() return end
-	end
-MobilityTable["3.5-V8"] = Engine35V8
 
 local Gear4TS = {}
 	Gear4TS.id = "4Gear-T-S"
