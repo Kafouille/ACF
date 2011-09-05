@@ -491,7 +491,7 @@ local Machinegun = {}
 	Machinegun.name = "Machinegun"
 	Machinegun.muzzleflash = "50cal_muzzleflash_noscale"
 	Machinegun.rofmod = 0.5
-	Machinegun.sound = "weapons/ar2/fire1.wav"
+	Machinegun.sound = "weapons/ACF_Gun/mg_fire1.wav"
 GunClass["MG"] = Machinegun	
 	
 local Autocannon = {}
@@ -499,7 +499,7 @@ local Autocannon = {}
 	Autocannon.name = "Autocannon"
 	Autocannon.muzzleflash = "30mm_muzzleflash_noscale"
 	Autocannon.rofmod = 0.35
-	Autocannon.sound = "weapons/ar2/fire1.wav"
+	Autocannon.sound = "weapons/ACF_Gun/ac_fire3.wav"
 GunClass["AC"] = Autocannon
 
 local Gatling = {}
@@ -507,7 +507,7 @@ local Gatling = {}
 	Gatling.name = "Rotary Autocannon"
 	Gatling.muzzleflash = "50cal_muzzleflash_noscale"
 	Gatling.rofmod = 0.07
-	Gatling.sound = "weapons/ar2/fire1.wav"
+	Gatling.sound = "weapons/ACF_Gun/rac_fire1.wav"
 GunClass["RAC"] = Gatling
 	
 local Cannon = {}
@@ -515,7 +515,7 @@ local Cannon = {}
 	Cannon.name = "Cannon"
 	Cannon.muzzleflash = "120mm_muzzleflash_noscale"
 	Cannon.rofmod = 1.5
-	Cannon.sound = "npc/env_headcrabcanister/launch.wav"
+	Cannon.sound = "Cannon.Fire"
 GunClass["C"] = Cannon	
 	
 local Howitzer = {}
@@ -523,7 +523,7 @@ local Howitzer = {}
 	Howitzer.name = "Howitzer"
 	Howitzer.muzzleflash = "120mm_muzzleflash_noscale"
 	Howitzer.rofmod = 1.3
-	Howitzer.sound = "npc/env_headcrabcanister/launch.wav"
+	Howitzer.sound = "Howitzer.Fire"
 GunClass["HW"] = Howitzer
 	
 local Mortar = {}
@@ -531,7 +531,7 @@ local Mortar = {}
 	Mortar.name = "Mortar"
 	Mortar.muzzleflash = "40mm_muzzleflash_noscale"
 	Mortar.rofmod = 3
-	Mortar.sound = "weapons/grenade_launcher1.wav"
+	Mortar.sound = "Mortar.Fire"
 GunClass["MO"] = Mortar	
 
 local GLauncher = {}
