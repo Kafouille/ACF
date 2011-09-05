@@ -499,7 +499,7 @@ local Autocannon = {}
 	Autocannon.name = "Autocannon"
 	Autocannon.muzzleflash = "30mm_muzzleflash_noscale"
 	Autocannon.rofmod = 0.35
-	Autocannon.sound = "weapons/ACF_Gun/ac_fire3.wav"
+	Autocannon.sound = "weapons/ACF_Gun/ac_fire.wav"
 GunClass["AC"] = Autocannon
 
 local Gatling = {}
