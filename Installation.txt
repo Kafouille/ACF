@@ -1,0 +1,3 @@
+ACF Installation Guide:
+
+Put the Particle folder in your main GMod directory, as well as the scripts folder
