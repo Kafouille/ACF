@@ -72,5 +72,7 @@ Engines :
 *r08
 Guns : 
 -- Added all new sounds for guns, soundscripting for them as well so they are audible at range
+Engines:
+-- Added soundscripts and changed engine sounds accordingly
 
 
