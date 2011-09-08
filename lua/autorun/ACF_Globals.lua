@@ -19,6 +19,8 @@ ACF.HEATMVScale = 0.71	--Filler KE to HEAT slug KE conversion expotential
 
 ACF.DragDiv = 40		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
+-- local PhysEnv = physenv.GetPerformanceSettings()
+ACF.PhysMaxVel = 4000
 
 ACF.PBase = 1050		--1KG of propellant produces this much KE at the muzzle, in kj
 ACF.PScale = 1	--Gun Propellant power expotential
