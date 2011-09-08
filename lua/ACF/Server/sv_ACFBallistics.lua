@@ -36,7 +36,6 @@ function ACF_RemoveBullet( Index )
 end
 
 function ACF_CalcBulletFlight( Index, Bullet )
-	--print("Bullet CalcFlight")
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
 	local Time = SysTime()
@@ -46,6 +45,7 @@ function ACF_CalcBulletFlight( Index, Bullet )
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
 	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
+	Bullet.BackTrace = Bullet.Flight:GetNormalized()*ACF.PhysMaxVel*DeltaTime
 	
 	ACF_DoBulletsFlight( Index, Bullet )
 	
@@ -54,7 +54,7 @@ end
 function ACF_DoBulletsFlight( Index, Bullet )
 
 	local FlightTr = { }
-		FlightTr.start = Bullet.Pos
+		FlightTr.start = Bullet.Pos + Bullet.BackTrace
 		FlightTr.endpos = Bullet.NextPos
 		FlightTr.filter = Bullet.Filter
 	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
