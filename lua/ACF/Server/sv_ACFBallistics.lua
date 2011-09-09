@@ -54,7 +54,7 @@ end
 function ACF_DoBulletsFlight( Index, Bullet )
 
 	local FlightTr = { }
-		FlightTr.start = Bullet.Pos + Bullet.BackTrace
+		FlightTr.start = Bullet.Pos - Bullet.BackTrace
 		FlightTr.endpos = Bullet.NextPos
 		FlightTr.filter = Bullet.Filter
 	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
