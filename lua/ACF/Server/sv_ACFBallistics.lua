@@ -11,6 +11,7 @@ function ACF_CreateBullet( BulletData )
 	
 	BulletData["Accel"] = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)			--Those are BulletData settings that are global and shouldn't change round to round
 	BulletData["LastThink"] = SysTime()
+	BulletData["FlightTime"] = 0
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
 		
@@ -40,12 +41,15 @@ function ACF_CalcBulletFlight( Index, Bullet )
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
 	local Time = SysTime()
 	local DeltaTime = Time - Bullet.LastThink
-	Bullet.LastThink = Time
 	
-	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * (Bullet.Flight:Length())^2)/ACF.DragDiv
+	local Speed = Bullet.Flight:Length()
+	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * Speed^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
 	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
-	Bullet.BackTrace = Bullet.Flight:GetNormalized()*ACF.PhysMaxVel*DeltaTime
+	Bullet.StartTrace = Bullet.Pos - Bullet.Flight:GetNormalized()*math.min(ACF.PhysMaxVel*DeltaTime,Bullet.FlightTime*Speed)
+	
+	Bullet.LastThink = Time
+	Bullet.FlightTime = Bullet.FlightTime + DeltaTime
 	
 	ACF_DoBulletsFlight( Index, Bullet )
 	
@@ -54,7 +58,7 @@ end
 function ACF_DoBulletsFlight( Index, Bullet )
 
 	local FlightTr = { }
-		FlightTr.start = Bullet.Pos - Bullet.BackTrace
+		FlightTr.start = Bullet.StartTrace
 		FlightTr.endpos = Bullet.NextPos
 		FlightTr.filter = Bullet.Filter
 	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
