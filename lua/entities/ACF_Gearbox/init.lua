@@ -259,6 +259,8 @@ function ENT:CheckRopes()
 end
 
 function ENT:Calc( Engine )
+
+	if self.LastActive == CurTime() then return self.CurRPM end
 	
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
@@ -308,7 +310,8 @@ function ENT:Calc( Engine )
 		self.Brake = self.LBrake + self.RBrake
 	end
 	
-	return RPM
+	self.CurRPM = RPM
+	return self.CurRPM
 end
 
 function ENT:Act( Torque )
