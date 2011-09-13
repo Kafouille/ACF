@@ -123,6 +123,9 @@ local Engine57V8 = {}
 MobilityTable["5.7-V8"] = Engine57V8
 
 
+
+
+-- 4 speed normal gearboxes
 local Gear4TS = {}
 	Gear4TS.id = "4Gear-T-S"
 	Gear4TS.ent = "acf_gearbox"
@@ -201,6 +204,10 @@ local Gear4TL = {}
 	end
 MobilityTable["4Gear-T-L"] = Gear4TL
 
+
+
+
+-- 4 speed dual clutch gearboxes
 local Gear4TDS = {}
 	Gear4TDS.id = "4Gear-TD-S"
 	Gear4TDS.ent = "acf_gearbox"
@@ -279,6 +286,10 @@ local Gear4TDL = {}
 	end
 MobilityTable["4Gear-TD-L"] = Gear4TDL
 
+
+
+
+-- 6 speed normal gearboxes
 local Gear6TS = {}
 	Gear6TS.id = "6Gear-T-S"
 	Gear6TS.ent = "acf_gearbox"
@@ -363,6 +374,10 @@ local Gear6TL = {}
 	end
 MobilityTable["6Gear-T-L"] = Gear6TL
 
+
+
+
+-- 6 speed dual clutch gearboxes
 local Gear6TDS = {}
 	Gear6TDS.id = "6Gear-TD-S"
 	Gear6TDS.ent = "acf_gearbox"
@@ -447,6 +462,348 @@ local Gear6TDL = {}
 	end
 MobilityTable["6Gear-TD-L"] = Gear6TDL
 
+
+
+
+-- 4 speed normal inline gearboxes
+local Gear4LS = {}
+	Gear4LS.id = "4Gear-L-S"
+	Gear4LS.ent = "acf_gearbox"
+	Gear4LS.type = "Mobility"
+	Gear4LS.name = "4-Speed, Inline, Small"
+	Gear4LS.desc = "A small, and light 4 speed inline gearbox, with a somewhat limited max torque rating\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear4LS.model = "models/engines/linear_s.mdl"
+	Gear4LS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4LS.weight = 50
+	Gear4LS.switch = 0.3
+	Gear4LS.maxtq = 80
+	Gear4LS.gears = 4
+	Gear4LS.doubleclutch = false
+	Gear4LS.geartable = {}
+		Gear4LS.geartable[-1] = 0.5
+		Gear4LS.geartable[0] = 0
+		Gear4LS.geartable[1] = 0.1
+		Gear4LS.geartable[2] = 0.2
+		Gear4LS.geartable[3] = 0.4
+		Gear4LS.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4LS.guiupdate = function() return end
+	end
+MobilityTable["4Gear-L-S"] = Gear4LS
+
+local Gear4LM = {}
+	Gear4LM.id = "4Gear-L-M"
+	Gear4LM.ent = "acf_gearbox"
+	Gear4LM.type = "Mobility"
+	Gear4LM.name = "4-Speed, Inline, Medium"
+	Gear4LM.desc = "A medium sized, 4 speed inline gearbox"
+	Gear4LM.model = "models/engines/linear_m.mdl"
+	Gear4LM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4LM.weight = 150
+	Gear4LM.switch = 0.4
+	Gear4LM.maxtq = 550
+	Gear4LM.gears = 4
+	Gear4LM.doubleclutch = false
+	Gear4LM.geartable = {}
+		Gear4LM.geartable[-1] = 0.5
+		Gear4LM.geartable[0] = 0
+		Gear4LM.geartable[1] = 0.1
+		Gear4LM.geartable[2] = 0.2
+		Gear4LM.geartable[3] = 0.4
+		Gear4LM.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4LM.guiupdate = function() return end
+	end
+MobilityTable["4Gear-T-M"] = Gear4LM
+
+local Gear4LL = {}
+	Gear4LL.id = "4Gear-L-L"
+	Gear4LL.ent = "acf_gearbox"
+	Gear4LL.type = "Mobility"
+	Gear4LL.name = "4-Speed, Inline, Large"
+	Gear4LL.desc = "A large, heavy and sturdy 4 speed inline gearbox"
+	Gear4LL.model = "models/engines/linear_l.mdl"
+	Gear4LL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4LL.weight = 500
+	Gear4LL.switch = 0.6
+	Gear4LL.maxtq = 6000
+	Gear4LL.gears = 4
+	Gear4LL.doubleclutch = false
+	Gear4LL.geartable = {}
+		Gear4LL.geartable[-1] = 1
+		Gear4LL.geartable[0] = 0
+		Gear4LL.geartable[1] = 0.1
+		Gear4LL.geartable[2] = 0.2
+		Gear4LL.geartable[3] = 0.4
+		Gear4LL.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4LL.guiupdate = function() return end
+	end
+MobilityTable["4Gear-L-L"] = Gear4LL
+
+
+
+
+-- 4 speed inline dual clutch gearboxes
+local Gear4TLS = {}
+	Gear4TLS.id = "4Gear-LD-S"
+	Gear4TLS.ent = "acf_gearbox"
+	Gear4TLS.type = "Mobility"
+	Gear4TLS.name = "4-Speed, Inline Dual Clutch, Small"
+	Gear4TLS.desc = "A small, and light 4 speed inline gearbox, with a somewhat limited max torque rating. The dual clutch allows you to apply power and brake each side independently\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear4TLS.model = "models/engines/linear_s.mdl"
+	Gear4TLS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TLS.weight = 65
+	Gear4TLS.switch = 0.3
+	Gear4TLS.maxtq = 80
+	Gear4TLS.gears = 4
+	Gear4TLS.doubleclutch = true
+	Gear4TLS.geartable = {}
+		Gear4TLS.geartable[-1] = 0.5
+		Gear4TLS.geartable[0] = 0
+		Gear4TLS.geartable[1] = 0.1
+		Gear4TLS.geartable[2] = 0.2
+		Gear4TLS.geartable[3] = 0.4
+		Gear4TLS.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4TLS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TLS.guiupdate = function() return end
+	end
+MobilityTable["4Gear-LD-S"] = Gear4TLS
+
+local Gear4TLM = {}
+	Gear4TLM.id = "4Gear-LD-M"
+	Gear4TLM.ent = "acf_gearbox"
+	Gear4TLM.type = "Mobility"
+	Gear4TLM.name = "4-Speed, Inline Dual Clutch, Medium"
+	Gear4TLM.desc = "A medium sized, 4 speed inline gearbox. The dual clutch allows you to apply power and brake each side independently"
+	Gear4TLM.model = "models/engines/linear_m.mdl"
+	Gear4TLM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TLM.weight = 200
+	Gear4TLM.switch = 0.4
+	Gear4TLM.maxtq = 550
+	Gear4TLM.gears = 4
+	Gear4TLM.doubleclutch = true
+	Gear4TLM.geartable = {}
+		Gear4TLM.geartable[-1] = 0.5
+		Gear4TLM.geartable[0] = 0
+		Gear4TLM.geartable[1] = 0.1
+		Gear4TLM.geartable[2] = 0.2
+		Gear4TLM.geartable[3] = 0.4
+		Gear4TLM.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4TLM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4TLM.guiupdate = function() return end
+	end
+MobilityTable["4Gear-LD-M"] = Gear4TLM
+
+local Gear4LDL = {}
+	Gear4LDL.id = "4Gear-LD-L"
+	Gear4LDL.ent = "acf_gearbox"
+	Gear4LDL.type = "Mobility"
+	Gear4LDL.name = "4-Speed, Inline Dual Clutch, Large"
+	Gear4LDL.desc = "A large, heavy and sturdy 4 speed inline gearbox. The dual clutch allows you to apply power and brake each side independently"
+	Gear4LDL.model = "models/engines/linear_l.mdl"
+	Gear4LDL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4LDL.weight = 650
+	Gear4LDL.switch = 0.6
+	Gear4LDL.maxtq = 6000
+	Gear4LDL.gears = 4
+	Gear4LDL.doubleclutch = true
+	Gear4LDL.geartable = {}
+		Gear4LDL.geartable[-1] = 1
+		Gear4LDL.geartable[0] = 0
+		Gear4LDL.geartable[1] = 0.1
+		Gear4LDL.geartable[2] = 0.2
+		Gear4LDL.geartable[3] = 0.4
+		Gear4LDL.geartable[4] = 0.8
+	if ( CLIENT ) then
+		Gear4LDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear4LDL.guiupdate = function() return end
+	end
+MobilityTable["4Gear-LD-L"] = Gear4LDL
+
+
+
+
+-- 6 speed normal inline gearboxes
+local Gear6LS = {}
+	Gear6LS.id = "6Gear-L-S"
+	Gear6LS.ent = "acf_gearbox"
+	Gear6LS.type = "Mobility"
+	Gear6LS.name = "6-Speed, Inline, Small"
+	Gear6LS.desc = "A small and light 6 speed inline gearbox, with a limited max torque rating."
+	Gear6LS.model = "models/engines/linear_s.mdl"
+	Gear6LS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LS.weight = 70
+	Gear6LS.switch = 0.3
+	Gear6LS.maxtq = 70
+	Gear6LS.gears = 6
+	Gear6LS.doubleclutch = false
+	Gear6LS.geartable = {}
+		Gear6LS.geartable[-1] = 0.5
+		Gear6LS.geartable[0] = 0
+		Gear6LS.geartable[1] = 0.1
+		Gear6LS.geartable[2] = 0.2
+		Gear6LS.geartable[3] = 0.3
+		Gear6LS.geartable[4] = 0.4
+		Gear6LS.geartable[5] = 0.5
+		Gear6LS.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LS.guiupdate = function() return end
+	end
+MobilityTable["6Gear-L-S"] = Gear6LS
+
+local Gear6LM = {}
+	Gear6LM.id = "6Gear-L-M"
+	Gear6LM.ent = "acf_gearbox"
+	Gear6LM.type = "Mobility"
+	Gear6LM.name = "6-Speed, Inline, Medium"
+	Gear6LM.desc = "A medium duty 6 speed inline gearbox with a limited torque rating."
+	Gear6LM.model = "models/engines/linear_m.mdl"
+	Gear6LM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LM.weight = 250
+	Gear6LM.switch = 0.4
+	Gear6LM.maxtq = 400
+	Gear6LM.gears = 6
+	Gear6LM.doubleclutch = false
+	Gear6LM.geartable = {}
+		Gear6LM.geartable[-1] = 0.5
+		Gear6LM.geartable[0] = 0
+		Gear6LM.geartable[1] = 0.1
+		Gear6LM.geartable[2] = 0.2
+		Gear6LM.geartable[3] = 0.3
+		Gear6LM.geartable[4] = 0.4
+		Gear6LM.geartable[5] = 0.5
+		Gear6LM.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LM.guiupdate = function() return end
+	end
+MobilityTable["6Gear-L-M"] = Gear6LM
+
+local Gear6LL = {}
+	Gear6LL.id = "6Gear-L-L"
+	Gear6LL.ent = "acf_gearbox"
+	Gear6LL.type = "Mobility"
+	Gear6LL.name = "6-Speed, Inline, Large"
+	Gear6LL.desc = "Heavy duty 6 speed inline gearbox, however not as resilient as a 4 speed."
+	Gear6LL.model = "models/engines/linear_l.mdl"
+	Gear6LL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LL.weight = 700
+	Gear6LL.switch = 0.6
+	Gear6LL.maxtq = 6000
+	Gear6LL.gears = 6
+	Gear6LL.doubleclutch = false
+	Gear6LL.geartable = {}
+		Gear6LL.geartable[-1] = 1
+		Gear6LL.geartable[0] = 0
+		Gear6LL.geartable[1] = 0.1
+		Gear6LL.geartable[2] = 0.2
+		Gear6LL.geartable[3] = 0.3
+		Gear6LL.geartable[4] = 0.4
+		Gear6LL.geartable[5] = 0.5
+		Gear6LL.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LL.guiupdate = function() return end
+	end
+MobilityTable["6Gear-L-L"] = Gear6LL
+
+
+
+
+
+-- 6 speed dual clutch inline gearboxes
+local Gear6LDS = {}
+	Gear6LDS.id = "6Gear-LD-S"
+	Gear6LDS.ent = "acf_gearbox"
+	Gear6LDS.type = "Mobility"
+	Gear6LDS.name = "6-Speed, Inline Dual Clutch, Small"
+	Gear6LDS.desc = "A small and light 6 speed inline gearbox, with a limited max torque rating. The dual clutch allows you to apply power and brake each side independently\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear6LDS.model = "models/engines/linear_s.mdl"
+	Gear6LDS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LDS.weight = 100
+	Gear6LDS.switch = 0.3
+	Gear6LDS.maxtq = 70
+	Gear6LDS.gears = 6
+	Gear6LDS.doubleclutch = true
+	Gear6LDS.geartable = {}
+		Gear6LDS.geartable[-1] = 0.5
+		Gear6LDS.geartable[0] = 0
+		Gear6LDS.geartable[1] = 0.1
+		Gear6LDS.geartable[2] = 0.2
+		Gear6LDS.geartable[3] = 0.3
+		Gear6LDS.geartable[4] = 0.4
+		Gear6LDS.geartable[5] = 0.5
+		Gear6LDS.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LDS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LDS.guiupdate = function() return end
+	end
+MobilityTable["6Gear-LD-S"] = Gear6LDS
+
+local Gear6LDM = {}
+	Gear6LDM.id = "6Gear-LD-M"
+	Gear6LDM.ent = "acf_gearbox"
+	Gear6LDM.type = "Mobility"
+	Gear6LDM.name = "6-Speed, Inline Dual Clutch, Medium"
+	Gear6LDM.desc = "A a medium duty 6 speed inline gearbox. The added gears reduce torque capacity substantially. The dual clutch allows you to apply power and brake each side independently\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear6LDM.model = "models/engines/linear_m.mdl"
+	Gear6LDM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LDM.weight = 400
+	Gear6LDM.switch = 0.4
+	Gear6LDM.maxtq = 400
+	Gear6LDM.gears = 6
+	Gear6LDM.doubleclutch = true
+	Gear6LDM.geartable = {}
+		Gear6LDM.geartable[-1] = 0.5
+		Gear6LDM.geartable[0] = 0
+		Gear6LDM.geartable[1] = 0.1
+		Gear6LDM.geartable[2] = 0.2
+		Gear6LDM.geartable[3] = 0.3
+		Gear6LDM.geartable[4] = 0.4
+		Gear6LDM.geartable[5] = 0.5
+		Gear6LDM.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LDM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LDM.guiupdate = function() return end
+	end
+MobilityTable["6Gear-LD-M"] = Gear6LDM
+
+local Gear6LDL = {}
+	Gear6LDL.id = "6Gear-LD-L"
+	Gear6LDL.ent = "acf_gearbox"
+	Gear6LDL.type = "Mobility"
+	Gear6LDL.name = "6-Speed, Inline Dual Clutch, Large"
+	Gear6LDL.desc = "Heavy duty 6 speed inline gearbox, however not as resilient as a 4 speed. The dual clutch allows you to apply power and brake each side independently\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear6LDL.model = "models/engines/linear_l.mdl"
+	Gear6LDL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6LDL.weight = 900
+	Gear6LDL.switch = 0.6
+	Gear6LDL.maxtq = 3500
+	Gear6LDL.gears = 6
+	Gear6LDL.doubleclutch = true
+	Gear6LDL.geartable = {}
+		Gear6LDL.geartable[-1] = 1
+		Gear6LDL.geartable[0] = 0
+		Gear6LDL.geartable[1] = 0.1
+		Gear6LDL.geartable[2] = 0.2
+		Gear6LDL.geartable[3] = 0.3
+		Gear6LDL.geartable[4] = 0.4
+		Gear6LDL.geartable[5] = 0.5
+		Gear6LDL.geartable[6] = 0.6
+	if ( CLIENT ) then
+		Gear6LDL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear6LDL.guiupdate = function() return end
+	end
+MobilityTable["6Gear-LD-L"] = Gear6LDL
+
+
 -- local Tracks = {}
 	-- Tracks.id = "CarV8"
 	-- Tracks.ent = "acf_engine"
@@ -474,6 +831,16 @@ local DualClutchT = {}
 	DualClutchT.type = "Gearbox"
 	DualClutchT.name = "Dual Clutch, Transverse"
 MobClass["Gear-DC-T"] = DualClutchT
+
+local SingleClutchL = {}
+	SingleClutchL.type = "Gearbox"
+	SingleClutchL.name = "Single Clutch, Linear"
+MobClass["Gear-SC-L"] = SingleClutchL	
+
+local DualClutchL = {}
+	DualClutchL.type = "Gearbox"
+	DualClutchL.name = "Dual Clutch, Linear"
+MobClass["Gear-DC-L"] = DualClutchL
 
 local Inline4D = {}
 	Inline4D.type = "Engine"
