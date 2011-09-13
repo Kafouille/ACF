@@ -201,9 +201,9 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Right Brake" ) then
 		self.RBrake = math.Clamp(value,0,100)
 	elseif ( iname == "Left Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque/2
 	elseif ( iname == "Right Clutch" ) then
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque/2
 	end		
 
 end

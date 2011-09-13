@@ -77,6 +77,17 @@ Engines:
 
 *r09
 Guns : 
--- Tentative fix for the HE occlusion issues
+-- HE occlusion issues are now fixed
+
+*r10
+Guns :
+--Ammocrate armour is now calculated differently, only takeing the weight of the empty crate, without the ammo, into account.
+
+--Ammo detonations occur differently, they are now based on the damage dealed to the crate compared to the size of the rounds in that crate. This makes it more difficult to detonate big rounds with MGs or rounds that just barely penetrated armour
+
+Interface :
+--Changelog now appears upon selection of the ACF Menu
+
+--Changelog revisions are now properly sorted
 
 
