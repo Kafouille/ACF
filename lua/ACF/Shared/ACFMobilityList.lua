@@ -516,7 +516,7 @@ local Gear4LM = {}
 		Gear4LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
 		Gear4LM.guiupdate = function() return end
 	end
-MobilityTable["4Gear-T-M"] = Gear4LM
+MobilityTable["4Gear-L-M"] = Gear4LM
 
 local Gear4LL = {}
 	Gear4LL.id = "4Gear-L-L"
