@@ -90,4 +90,8 @@ Interface :
 
 --Changelog revisions are now properly sorted
 
+*r11
+Gearboxes : 
+-- Added 4 & 6 speed inline gearboxes
+
 
