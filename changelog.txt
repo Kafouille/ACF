@@ -94,4 +94,11 @@ Interface :
 Gearboxes : 
 -- Added 4 & 6 speed inline gearboxes
 
+*r12
+Guns : 
+--IMPORTANT : Removed Ammo input on guns, replacing it is the Active input on crates. The gun will load rounds from any crate marked as Active, cycling them in the order they were linked in if more than one is Active. At least one crate has to be Active for the gun to be able to load ammo
+
+--Added an AmmoCount output to the guns, showing the ammo count of all the crates currently Active
+
+--Guns won't try to load from empty crates if any Active and linked crate still has ammo
 

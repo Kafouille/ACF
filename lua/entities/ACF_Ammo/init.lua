@@ -11,12 +11,13 @@ function ENT:Initialize()
 	self.Exploding = false
 	self.Damaged = false
 	self.CanUpdate = true
+	self.Load = false
 	
 	self.Master = {}
 	self.Sequence = 0
 	
 	self.WireDebugName = "Ammo Crate"
-	--self.Inputs = Wire_CreateInputs( self.Entity, { "Sequence"} )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Active"} )
 	self.Outputs = Wire_CreateOutputs( self.Entity, { "Munitions" , "On Fire" } )
 		
 	self.NextThink = CurTime() +  1
@@ -197,10 +198,26 @@ end
 
 function ENT:TriggerInput( iname , value )
 
-	if (iname == "Sequence") then
-		self.Sequence = value
+	if (iname == "Active") then
+		if value > 0 then
+			self.Load = true
+			self:FirstLoad()
+		else
+			self.Load = false
+		end
 	end		
 
+end
+
+function ENT:FirstLoad()
+
+	for Key,Value in pairs(self.Master) do
+		if self.Master[Key] and self.Master[Key]:IsValid() and self.Master[Key]["BulletData"]["Type"] == "Empty" then
+			print("Send FirstLoad")
+			self.Master[Key]:UnloadAmmo()
+		end
+	end
+	
 end
 
 function ENT:Think()
