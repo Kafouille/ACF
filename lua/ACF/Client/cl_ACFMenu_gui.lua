@@ -210,10 +210,12 @@ function ACFHomeGUICreate( Table )
 		Node.Icon:SetImage( "gui/silkicons/newspaper" )
 		
 	end	
-	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 40 )
+	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
+	
+	acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
 	
 end
 
@@ -229,9 +231,14 @@ function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	acfmenupanel.Changelog = {}
 	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog[string.sub(String,2,3)] = string.Trim(string.sub(String, 5))
+		acfmenupanel.Changelog[tonumber(string.sub(String,2,3))] = string.Trim(string.sub(String, 5))
 	end
-	table.sort(acfmenupanel.Changelog)
+	table.SortByKey(acfmenupanel.Changelog,true)
+	
+	local Table = {}
+		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	acfmenupanel:UpdateDisplay( Table )
 
 end
 http.Get("http://acf.googlecode.com/svn/trunk/changelog.txt", "", ACFChangelogHTTPCallBack) 

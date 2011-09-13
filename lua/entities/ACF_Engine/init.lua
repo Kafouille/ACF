@@ -151,13 +151,18 @@ function ENT:ACFInit()
 				local Parent = Ent:GetParent()
 				
 				if validEntity(Parent) then
-					local Constraints = constraint.FindConstraints(Ent, "Weld")
+					
+					local Constraints = {}
+					table.Add(Constraints,constraint.FindConstraints(Ent, "Weld"))
+					table.Add(Constraints,constraint.FindConstraints(Ent, "Axis"))
+					table.Add(Constraints,constraint.FindConstraints(Ent, "Ballsocket"))
+					table.Add(Constraints,constraint.FindConstraints(Ent, "AdvBallsocket"))
 					
 					if Constraints then
 					
-						for Key,Weld in pairs(Constraints) do
+						for Key,Const in pairs(Constraints) do
 							
-							if Weld.Ent1 == Parent or Weld.Ent2 == Parent then
+							if Const.Ent1 == Parent or Const.Ent2 == Parent then
 								self.PhysMass = self.PhysMass + Phys:GetMass()
 							end
 							
