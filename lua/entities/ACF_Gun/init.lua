@@ -15,7 +15,6 @@ function ENT:Initialize()
 	self.IsMaster = true
 	self.AmmoLink = {}
 	self.CurAmmo = 1
-	self.SetAmmo = 0
 	self.Sequence = 1
 	
 	self.BulletData = {}
@@ -25,8 +24,8 @@ function ENT:Initialize()
 	
 	self.Inaccuracy 	= 1
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Ammo", "Unload" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "Entity" }, { "NORMAL" , "ENTITY" } )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity" }, { "NORMAL" , "NORMAL" , "ENTITY" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
 
@@ -129,13 +128,9 @@ function ENT:Link( Target )
 	table.insert(self.AmmoLink,Target)
 	table.insert(Target.Master,self.Entity)
 	
-	if ( self.BulletData["Type"] == "Empty" ) then
-		self.Ready = false
-		Wire_TriggerOutput(self.Entity, "Ready", 0)
-		self:LoadAmmo()	
-		self:ReloadEffect()
+	if ( self.BulletData["Type"] == "Empty" and Target["Load"] ) then
+		self:UnloadAmmo()
 	end
-	self:EmitSound("weapons/357/357_reload4.wav",500,100)
 
 	return false
 	
@@ -161,16 +156,8 @@ end
 
 function ENT:TriggerInput( iname , value )
 
-	if (iname == "Airburst") then
-		if value <= 0 then
-			self.Airburst = nil
-		else
-			self.Airburst = value
-		end
-	elseif (iname == "Ammo") then
-		self.SetAmmo = math.max(math.floor(value),0)
-	elseif (iname == "Unload" and value > 0) then
-		self:UnloadAmmo()
+	if (iname == "Unload" and value > 0) then
+		timer.Simple( 0, self.UnloadAmmo, self )
 	elseif ( iname == "Fire" and value > 0 ) then
 		if self.Entity.NextFire < CurTime() then
 			self.Entity:FireShell()
@@ -188,9 +175,13 @@ function ENT:Think()
 	local Time = CurTime()
 	if self.LastSend+1 <= Time then
 		local Ammo = 0
-		for Key,Value in pairs(self.AmmoLink) do
-			Ammo = Ammo + (Value.Ammo or 0)
+		for Key,AmmoEnt in pairs(self.AmmoLink) do
+			if AmmoEnt and AmmoEnt:IsValid() and AmmoEnt["Load"] then
+				Ammo = Ammo + (AmmoEnt.Ammo or 0)
+			end
 		end
+		Wire_TriggerOutput(self.Entity, "AmmoCount", Ammo)
+		
 		self.Entity:SetNetworkedBeamString("GunType",self.Entity.Id)
 		self.Entity:SetNetworkedBeamInt("Ammo",Ammo)
 		self.Entity:SetNetworkedBeamString("Type",self.BulletData["Type"])
@@ -238,13 +229,13 @@ function ENT:FireShell()
 			end
 			
 			self.Ready = false
-			self:LoadAmmo()	
+			self:LoadAmmo(false, false)	
 			Wire_TriggerOutput(self.Entity, "Ready", 0)
 
 		else
 			self.Ready = false
 			Wire_TriggerOutput(self.Entity, "Ready", 0)
-			self:LoadAmmo()	
+			self:LoadAmmo(false, true)	
 		end
 	end
 	
@@ -254,19 +245,34 @@ function ENT:CreateShell()
 	--You overwrite this with your own function, defined in the ammo definition file
 end
 
-function ENT:LoadAmmo( AddTime )
+function ENT:FindNextCrate()
 
-	local AmmoType = 0
-	if self.SetAmmo > 0 then
-		AmmoType = self.SetAmmo
-	else
-		AmmoType = self.CurAmmo
-		self.CurAmmo = self.CurAmmo + 1
-		if self.CurAmmo > table.getn(self.AmmoLink) then self.CurAmmo = 1 end
-	end
+	local MaxAmmo = table.getn(self.AmmoLink)
+	local AmmoEnt = nil
+	local i = 0
+	
+	while i <= MaxAmmo and not (AmmoEnt and AmmoEnt:IsValid() and AmmoEnt.Ammo > 0) do
 		
-	local AmmoEnt = self.AmmoLink[AmmoType]
-	if AmmoEnt and AmmoEnt:IsValid() and AmmoEnt.Ammo > 0 then
+		self.CurAmmo = self.CurAmmo + 1
+		if self.CurAmmo > MaxAmmo then self.CurAmmo = 1 end
+		
+		AmmoEnt = self.AmmoLink[self.CurAmmo]
+		if AmmoEnt and AmmoEnt:IsValid() and AmmoEnt.Ammo > 0 and AmmoEnt["Load"] then
+			return AmmoEnt
+		end
+		AmmoEnt = nil
+		
+		i = i + 1
+	end
+	
+	return false
+end
+
+function ENT:LoadAmmo( AddTime, Reload )
+
+	local AmmoEnt = self:FindNextCrate()
+	
+	if AmmoEnt then
 		AmmoEnt.Ammo = AmmoEnt.Ammo - 1
 		self.BulletData = AmmoEnt.BulletData
 		self.BulletData["Crate"] = AmmoEnt:EntIndex()
@@ -277,6 +283,9 @@ function ENT:LoadAmmo( AddTime )
 		self.NextFire = CurTime() + self.ReloadTime
 		if AddTime then
 			self.NextFire = self.NextFire + AddTime
+		end
+		if Reload then
+			self:ReloadEffect()
 		end
 		self.Entity:Think()
 		return true	
@@ -305,8 +314,8 @@ function ENT:UnloadAmmo()
 	
 	self.Ready = false
 	Wire_TriggerOutput(self.Entity, "Ready", 0)
-	self:LoadAmmo( math.min(self.ReloadTime,self.ReloadTime - (self.NextFire - CurTime()) )	 )
-	self:ReloadEffect()
+	self:LoadAmmo( math.min(self.ReloadTime,self.ReloadTime - (self.NextFire - CurTime()) )	, true )
+	self:EmitSound("weapons/357/357_reload4.wav",500,100)
 
 end
 
