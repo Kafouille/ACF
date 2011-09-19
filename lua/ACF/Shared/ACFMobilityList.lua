@@ -2,6 +2,74 @@ AddCSLuaFile( "ACF/Shared/ACFMobilityList.lua" )
 
 local MobilityTable = {}  --Start mobility listing
 
+
+
+
+-- Petrol I4s
+local Engine10I4 = {}
+	Engine10I4.id = "1.0-I4"
+	Engine10I4.ent = "acf_engine"
+	Engine10I4.type = "Mobility"
+	Engine10I4.name = "1.0L I4 Petrol"
+	Engine10I4.desc = "Low power, high revving bike engine, power in the upper powerband"
+	Engine10I4.model = "models/engines/inline4s.mdl"
+	Engine10I4.sound = "I4P.Small"
+	Engine10I4.weight = 55
+	Engine10I4.torque = 60		--in Meter/Kg
+	Engine10I4.idlerpm = 1000	--in Rotations Per Minute
+	Engine10I4.peakminrpm = 5250
+	Engine10I4.peakmaxrpm = 8000
+	Engine10I4.limitprm = 9000
+	if ( CLIENT ) then
+		Engine10I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine10I4.guiupdate = function() return end
+	end
+MobilityTable["1.0-I4"] = Engine10I4
+
+local Engine18I4 = {}
+	Engine18I4.id = "1.8-I4"
+	Engine18I4.ent = "acf_engine"
+	Engine18I4.type = "Mobility"
+	Engine18I4.name = "1.8L I4 Petrol"
+	Engine18I4.desc = "Car sized petrol I4, good for burning rice"
+	Engine18I4.model = "models/engines/inline4m.mdl"
+	Engine18I4.sound = "I4P.Medium"
+	Engine18I4.weight = 200
+	Engine18I4.torque = 150		--in Meter/Kg
+	Engine18I4.idlerpm = 900	--in Rotations Per Minute
+	Engine18I4.peakminrpm = 4000
+	Engine18I4.peakmaxrpm = 6500
+	Engine18I4.limitprm = 8000
+	if ( CLIENT ) then
+		Engine18I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine18I4.guiupdate = function() return end
+	end
+MobilityTable["1.8-I4"] = Engine18I4
+
+local Engine160I4 = {}
+	Engine160I4.id = "16.0-I4"
+	Engine160I4.ent = "acf_engine"
+	Engine160I4.type = "Mobility"
+	Engine160I4.name = "16.0L I4 Petrol"
+	Engine160I4.desc = "Giant, thirsty I4 petrol, most commonly used in boats"
+	Engine160I4.model = "models/engines/inline4l.mdl"
+	Engine160I4.sound = "I4P.Large"
+	Engine160I4.weight = 1000
+	Engine160I4.torque = 1000		--in Meter/Kg
+	Engine160I4.idlerpm = 500	--in Rotations Per Minute
+	Engine160I4.peakminrpm = 1500
+	Engine160I4.peakmaxrpm = 3000
+	Engine160I4.limitprm = 3500
+	if ( CLIENT ) then
+		Engine160I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine160I4.guiupdate = function() return end
+	end
+MobilityTable["16.0-I4"] = Engine160I4
+
+
+
+
+-- Diesel I4s
 local Engine12I4 = {}
 	Engine12I4.id = "1.2-I4"
 	Engine12I4.ent = "acf_engine"
@@ -62,6 +130,11 @@ local Engine150I4 = {}
 	end
 MobilityTable["15.0-I4"] = Engine150I4
 
+
+
+
+
+--Petrol V8s
 local Engine180V8 = {}
 	Engine180V8.id = "18.0-V8"
 	Engine180V8.ent = "acf_engine"
