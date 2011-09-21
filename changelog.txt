@@ -106,3 +106,8 @@ Guns :
 Engines :
 -- Added petrol Inline 4 series
 
+*r14
+Engines :
+--Added Diesel & Petrol I6 series
+--Retuned 9L v8; less torque, marginally more horsepower, and lighter in mass
+
