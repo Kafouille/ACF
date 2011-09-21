@@ -15,7 +15,7 @@ local Engine10I4 = {}
 	Engine10I4.model = "models/engines/inline4s.mdl"
 	Engine10I4.sound = "I4P.Small"
 	Engine10I4.weight = 55
-	Engine10I4.torque = 60		--in Meter/Kg
+	Engine10I4.torque = 40		--in Meter/Kg
 	Engine10I4.idlerpm = 1000	--in Rotations Per Minute
 	Engine10I4.peakminrpm = 5250
 	Engine10I4.peakmaxrpm = 8000
@@ -57,8 +57,8 @@ local Engine160I4 = {}
 	Engine160I4.weight = 1000
 	Engine160I4.torque = 1000		--in Meter/Kg
 	Engine160I4.idlerpm = 500	--in Rotations Per Minute
-	Engine160I4.peakminrpm = 1500
-	Engine160I4.peakmaxrpm = 3000
+	Engine160I4.peakminrpm = 1750
+	Engine160I4.peakmaxrpm = 3250
 	Engine160I4.limitprm = 3500
 	if ( CLIENT ) then
 		Engine160I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -133,6 +133,132 @@ MobilityTable["15.0-I4"] = Engine150I4
 
 
 
+--Diesel L6s
+local Engine30I6 = {}
+	Engine30I6.id = "3.0-I6"
+	Engine30I6.ent = "acf_engine"
+	Engine30I6.type = "Mobility"
+	Engine30I6.name = "3.0L I6 Diesel"
+	Engine30I6.desc = "Car sized I6 diesel, good, wide powerband"
+	Engine30I6.model = "models/engines/inline6s.mdl"
+	Engine30I6.sound = "L6D.Small"
+	Engine30I6.weight = 300
+	Engine30I6.torque = 240		--in Meter/Kg
+	Engine30I6.idlerpm = 650	--in Rotations Per Minute
+	Engine30I6.peakminrpm = 1000
+	Engine30I6.peakmaxrpm = 3000
+	Engine30I6.limitprm = 4500
+	if ( CLIENT ) then
+		Engine30I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine30I6.guiupdate = function() return end
+	end
+MobilityTable["3.0-I6"] = Engine30I6
+
+local Engine65I6 = {}
+	Engine65I6.id = "6.5-I6"
+	Engine65I6.ent = "acf_engine"
+	Engine65I6.type = "Mobility"
+	Engine65I6.name = "6.5L I6 Diesel"
+	Engine65I6.desc = "Truck duty I6, good overall powerband and torque"
+	Engine65I6.model = "models/engines/inline6m.mdl"
+	Engine65I6.sound = "L6D.Medium"
+	Engine65I6.weight = 500
+	Engine65I6.torque = 550		--in Meter/Kg
+	Engine65I6.idlerpm = 600	--in Rotations Per Minute
+	Engine65I6.peakminrpm = 1600
+	Engine65I6.peakmaxrpm = 3500
+	Engine65I6.limitprm = 4000
+	if ( CLIENT ) then
+		Engine65I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine65I6.guiupdate = function() return end
+	end
+MobilityTable["6.5-I6"] = Engine65I6
+
+local Engine200I6 = {}
+	Engine200I6.id = "20.0-I6"
+	Engine200I6.ent = "acf_engine"
+	Engine200I6.type = "Mobility"
+	Engine200I6.name = "20.0L I6 Diesel"
+	Engine200I6.desc = "Heavy duty diesel I6, used in generators and heavy movers"
+	Engine200I6.model = "models/engines/inline6l.mdl"
+	Engine200I6.sound = "L6D.Large"
+	Engine200I6.weight = 1800
+	Engine200I6.torque = 1850		--in Meter/Kg
+	Engine200I6.idlerpm = 400	--in Rotations Per Minute
+	Engine200I6.peakminrpm = 550
+	Engine200I6.peakmaxrpm = 1550
+	Engine200I6.limitprm = 2250
+	if ( CLIENT ) then
+		Engine200I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine200I6.guiupdate = function() return end
+	end
+MobilityTable["20.0-I6"] = Engine200I6
+
+
+
+--Petrol L6s
+local Engine22I6 = {}
+	Engine22I6.id = "2.2-I6"
+	Engine22I6.ent = "acf_engine"
+	Engine22I6.type = "Mobility"
+	Engine22I6.name = "2.2L I6 Petrol"
+	Engine22I6.desc = "Car sized I6 petrol with power in the high revs"
+	Engine22I6.model = "models/engines/inline6s.mdl"
+	Engine22I6.sound = "L6P.Small"
+	Engine22I6.weight = 250
+	Engine22I6.torque = 170		--in Meter/Kg
+	Engine22I6.idlerpm = 800	--in Rotations Per Minute
+	Engine22I6.peakminrpm = 4000
+	Engine22I6.peakmaxrpm = 6500
+	Engine22I6.limitprm = 8000
+	if ( CLIENT ) then
+		Engine22I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine22I6.guiupdate = function() return end
+	end
+MobilityTable["2.2-I6"] = Engine22I6
+
+local Engine48I6 = {}
+	Engine48I6.id = "4.8-I6"
+	Engine48I6.ent = "acf_engine"
+	Engine48I6.type = "Mobility"
+	Engine48I6.name = "4.8L I6 Petrol"
+	Engine48I6.desc = "Light truck duty I6, good for offroad applications"
+	Engine48I6.model = "models/engines/inline6m.mdl"
+	Engine48I6.sound = "L6P.Medium"
+	Engine48I6.weight = 300
+	Engine48I6.torque = 400		--in Meter/Kg
+	Engine48I6.idlerpm = 900	--in Rotations Per Minute
+	Engine48I6.peakminrpm = 3000
+	Engine48I6.peakmaxrpm = 5000
+	Engine48I6.limitprm = 6500
+	if ( CLIENT ) then
+		Engine48I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine48I6.guiupdate = function() return end
+	end
+MobilityTable["4.8-I6"] = Engine48I6
+
+local Engine172I6 = {}
+	Engine172I6.id = "17.2-I6"
+	Engine172I6.ent = "acf_engine"
+	Engine172I6.type = "Mobility"
+	Engine172I6.name = "17.2L I6 Petrol"
+	Engine172I6.desc = "Heavy tractor duty petrol I6, decent overall powerband"
+	Engine172I6.model = "models/engines/inline6l.mdl"
+	Engine172I6.sound = "L6P.Large"
+	Engine172I6.weight = 800
+	Engine172I6.torque = 1000		--in Meter/Kg
+	Engine172I6.idlerpm = 500	--in Rotations Per Minute
+	Engine172I6.peakminrpm = 1800
+	Engine172I6.peakmaxrpm = 3000
+	Engine172I6.limitprm = 3500
+	if ( CLIENT ) then
+		Engine172I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine172I6.guiupdate = function() return end
+	end
+MobilityTable["17.2-I6"] = Engine172I6
+
+
+
 
 --Petrol V8s
 local Engine180V8 = {}
@@ -163,12 +289,12 @@ local Engine90V8 = {}
 	Engine90V8.desc = "Thirsty, giant V8, for medium applications"
 	Engine90V8.model = "models/engines/v8m.mdl"
 	Engine90V8.sound = "V8.Medium"
-	Engine90V8.weight = 600
-	Engine90V8.torque = 710		--in Meter/Kg
+	Engine90V8.weight = 550
+	Engine90V8.torque = 500		--in Meter/Kg
 	Engine90V8.idlerpm = 700	--in Rotations Per Minute
-	Engine90V8.peakminrpm = 2200
-	Engine90V8.peakmaxrpm = 3500
-	Engine90V8.limitprm = 5000
+	Engine90V8.peakminrpm = 2800
+	Engine90V8.peakmaxrpm = 4600
+	Engine90V8.limitprm = 5500
 	if ( CLIENT ) then
 		Engine90V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine90V8.guiupdate = function() return end
