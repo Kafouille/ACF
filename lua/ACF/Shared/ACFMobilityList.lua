@@ -5,6 +5,9 @@ local MobilityTable = {}  --Start mobility listing
 
 
 
+--fix 6.5l i6 sound & 1l sound
+
+
 -- Petrol I4s
 local Engine10I4 = {}
 	Engine10I4.id = "1.0-I4"
@@ -54,7 +57,7 @@ local Engine160I4 = {}
 	Engine160I4.desc = "Giant, thirsty I4 petrol, most commonly used in boats"
 	Engine160I4.model = "models/engines/inline4l.mdl"
 	Engine160I4.sound = "I4P.Large"
-	Engine160I4.weight = 1000
+	Engine160I4.weight = 800
 	Engine160I4.torque = 1000		--in Meter/Kg
 	Engine160I4.idlerpm = 500	--in Rotations Per Minute
 	Engine160I4.peakminrpm = 1750
@@ -183,10 +186,10 @@ local Engine200I6 = {}
 	Engine200I6.model = "models/engines/inline6l.mdl"
 	Engine200I6.sound = "L6D.Large"
 	Engine200I6.weight = 1800
-	Engine200I6.torque = 1850		--in Meter/Kg
+	Engine200I6.torque = 2000		--in Meter/Kg
 	Engine200I6.idlerpm = 400	--in Rotations Per Minute
-	Engine200I6.peakminrpm = 550
-	Engine200I6.peakmaxrpm = 1550
+	Engine200I6.peakminrpm = 500
+	Engine200I6.peakmaxrpm = 1700
 	Engine200I6.limitprm = 2250
 	if ( CLIENT ) then
 		Engine200I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -245,7 +248,7 @@ local Engine172I6 = {}
 	Engine172I6.desc = "Heavy tractor duty petrol I6, decent overall powerband"
 	Engine172I6.model = "models/engines/inline6l.mdl"
 	Engine172I6.sound = "L6P.Large"
-	Engine172I6.weight = 800
+	Engine172I6.weight = 1000
 	Engine172I6.torque = 1000		--in Meter/Kg
 	Engine172I6.idlerpm = 500	--in Rotations Per Minute
 	Engine172I6.peakminrpm = 1800
@@ -320,6 +323,70 @@ local Engine57V8 = {}
 		Engine57V8.guiupdate = function() return end
 	end
 MobilityTable["5.7-V8"] = Engine57V8
+
+
+
+
+--Diesel V8s
+local Engine190V8 = {}
+	Engine190V8.id = "19.0-V8"
+	Engine190V8.ent = "acf_engine"
+	Engine190V8.type = "Mobility"
+	Engine190V8.name = "19.0L V8 Diesel"
+	Engine190V8.desc = "Heavy duty diesel V8, used for heavy construction equipment"
+	Engine190V8.model = "models/engines/v8l.mdl"
+	Engine190V8.sound = "V8D.Large"
+	Engine190V8.weight = 2200
+	Engine190V8.torque = 2400		--in Meter/Kg
+	Engine190V8.idlerpm = 500	--in Rotations Per Minute
+	Engine190V8.peakminrpm = 550
+	Engine190V8.peakmaxrpm = 1500
+	Engine190V8.limitprm = 2500
+	if ( CLIENT ) then
+		Engine190V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine190V8.guiupdate = function() return end
+	end
+MobilityTable["19.0-V8"] = Engine190V8
+
+local Engine78V8 = {}
+	Engine78V8.id = "7.8-V8"
+	Engine78V8.ent = "acf_engine"
+	Engine78V8.type = "Mobility"
+	Engine78V8.name = "7.8L V8 Diesel"
+	Engine78V8.desc = "Utility grade V8 diesel, has a good, wide powerband"
+	Engine78V8.model = "models/engines/v8m.mdl"
+	Engine78V8.sound = "V8D.Medium"
+	Engine78V8.weight = 750
+	Engine78V8.torque = 710		--in Meter/Kg
+	Engine78V8.idlerpm = 650	--in Rotations Per Minute
+	Engine78V8.peakminrpm = 1000
+	Engine78V8.peakmaxrpm = 3200
+	Engine78V8.limitprm = 4000
+	if ( CLIENT ) then
+		Engine78V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine78V8.guiupdate = function() return end
+	end
+MobilityTable["7.8-V8"] = Engine78V8
+
+local Engine45V8 = {}
+	Engine45V8.id = "4.5-V8"
+	Engine45V8.ent = "acf_engine"
+	Engine45V8.type = "Mobility"
+	Engine45V8.name = "4.5L V8 Diesel"
+	Engine45V8.desc = "Light duty diesel v8, good for light vehicles that require a lot of torque"
+	Engine45V8.model = "models/engines/v8s.mdl"
+	Engine45V8.sound = "V8D.Small"
+	Engine45V8.weight = 400
+	Engine45V8.torque = 400		--in Meter/Kg
+	Engine45V8.idlerpm = 800	--in Rotations Per Minute
+	Engine45V8.peakminrpm = 1000
+	Engine45V8.peakmaxrpm = 3000
+	Engine45V8.limitprm = 5000
+	if ( CLIENT ) then
+		Engine45V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine45V8.guiupdate = function() return end
+	end
+MobilityTable["4.5-V8"] = Engine45V8
 
 
 
@@ -1018,32 +1085,3 @@ MobilityTable["6Gear-LD-L"] = Gear6LDL
 -- MobilityTable["Tracks"] = Tracks
 
 list.Set( "ACFEnts", "Mobility", MobilityTable )	--end mobility listing
-
-local MobClass = {}
-
-local SingleClutchT = {}
-	SingleClutchT.type = "Gearbox"
-	SingleClutchT.name = "Single Clutch, Transverse"
-MobClass["Gear-SC-T"] = SingleClutchT	
-
-local DualClutchT = {}
-	DualClutchT.type = "Gearbox"
-	DualClutchT.name = "Dual Clutch, Transverse"
-MobClass["Gear-DC-T"] = DualClutchT
-
-local SingleClutchL = {}
-	SingleClutchL.type = "Gearbox"
-	SingleClutchL.name = "Single Clutch, Linear"
-MobClass["Gear-SC-L"] = SingleClutchL	
-
-local DualClutchL = {}
-	DualClutchL.type = "Gearbox"
-	DualClutchL.name = "Dual Clutch, Linear"
-MobClass["Gear-DC-L"] = DualClutchL
-
-local Inline4D = {}
-	Inline4D.type = "Engine"
-	Inline4D.name = "Inline 4, Diesel"
-MobClass["Engine-I4-D"] = Inline4D
-
-list.Set( "ACFClasses", "MobClass", MobClass )	--End mobility classes listing
