@@ -111,3 +111,8 @@ Engines :
 --Added Diesel & Petrol I6 series
 --Retuned 9L v8; less torque, marginally more horsepower, and lighter in mass
 
+*r15
+Engines :
+--Added Diesel v8 line, tweaked 20L to have a bit more torque and less horsepower, fixed some weights.
+--Added new 6.5L diesel 6 sound.
+
