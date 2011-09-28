@@ -60,11 +60,11 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	MaxVol, MaxLength, MaxRadius = ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] )
 		
 	GUIData["MinConeAng"] = 0
-	GUIData["MaxConeAng"] = math.deg( math.atan((Data["ProjLength"] - ConeThick )/Data["Caliber"]/2) )
+	GUIData["MaxConeAng"] = math.deg( math.atan((Data["ProjLength"] - ConeThick )/(Data["Caliber"]/2)) )
 	GUIData["ConeAng"] = math.Clamp(PlayerData["Data6"]*1, GUIData["MinConeAng"], GUIData["MaxConeAng"])
 	ConeLength, ConeAera, AirVol = ACF_HEATConeCalc( GUIData["ConeAng"], Data["Caliber"]/2, Data["ProjLength"] )
 	local ConeVol = ConeAera * ConeThick
-	
+		
 	GUIData["MinFillerVol"] = 0
 	GUIData["MaxFillerVol"] = math.max(MaxVol -  AirVol - ConeVol,GUIData["MinFillerVol"])
 	GUIData["FillerVol"] = math.Clamp(PlayerData["Data5"]*1,GUIData["MinFillerVol"],GUIData["MaxFillerVol"])
@@ -114,7 +114,7 @@ end
 
 function ACF_HEATConeCalc( ConeAngle, Radius, Length )
 
-	local ConeLength = math.tan(math.rad(ConeAngle))
+	local ConeLength = math.tan(math.rad(ConeAngle))*Radius
 	local ConeAera = 3.1416 * Radius * (Radius^2 + ConeLength^2)^0.5
 	local ConeVol = (3.1416 * Radius^2 * ConeLength)/3
 

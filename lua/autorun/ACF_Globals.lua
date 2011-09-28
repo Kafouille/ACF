@@ -3,19 +3,20 @@ ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 print("ACF Loaded")
 
-ACF.Threshold = 250	--Health Divisor
+ACF.Threshold = 150	--Health Divisor
+ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
 ACF.PenAreaMod = 0.85
 ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
 ACF.KEtoRHA = 0.25		--Empirical conversion from (kinetic energy in KJ)/(Aera in Cm2) to RHA penetration
 ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soil is about 0.15
-ACF.KEtoCrush = 0.9
 ACF.KEtoSpall = 1
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
-ACF.HEFrag = 3000		--Mean fragment number for equal weight TNT and casing
+ACF.HEFrag = 1500		--Mean fragment number for equal weight TNT and casing
+ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
 
-ACF.HEATMVScale = 0.71	--Filler KE to HEAT slug KE conversion expotential
+ACF.HEATMVScale = 0.73	--Filler KE to HEAT slug KE conversion expotential
 
 ACF.DragDiv = 40		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world

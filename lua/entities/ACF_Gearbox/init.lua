@@ -201,9 +201,9 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Right Brake" ) then
 		self.RBrake = math.Clamp(value,0,100)
 	elseif ( iname == "Left Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque/2
+		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
 	elseif ( iname == "Right Clutch" ) then
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque/2
+		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
 	end		
 
 end
@@ -306,7 +306,7 @@ function ENT:Calc( Engine )
 	end
 	
 	if self.Dual then
-		self.Clutch = (self.LClutch + self.RClutch)
+		self.Clutch = (self.LClutch + self.RClutch)/2
 		self.Brake = self.LBrake + self.RBrake
 	end
 	
@@ -454,10 +454,10 @@ function ENT:Unlink( Target )
 				end
 			end
 			
-			if self.WheelAxis.Key.y < 0 then
-				self.WheelNumL = self.WheelNumL + 1
+			if self.WheelAxis[Key]["y"] < 0 then
+				self.WheelNumL = self.WheelNumL - 1
 			else
-				self.WheelNumR = self.WheelNumR + 1
+				self.WheelNumR = self.WheelNumR - 1
 			end
 			
 			table.remove(self.WheelLink,Key)
