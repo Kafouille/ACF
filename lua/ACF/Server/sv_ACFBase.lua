@@ -9,7 +9,7 @@ function ACF_Activate ( Entity , Recalc )
 	local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 --Converting from square in to square cm, fuck imperial
 	local Volume = Size.x * Size.y * Size.z * 16.38
 	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Aera / 0.78 --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
-	local Health = Volume/ACF.Threshold							--Setting the threshold of the prop aera gone 
+	local Health = Aera/ACF.Threshold							--Setting the threshold of the prop aera gone 
 	local Percent = 1 
 	
 	if Recalc then
@@ -82,12 +82,12 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	local Structure = Entity.ACF.Density --Structural strengh of the material, derived from prop density, denser stuff is more vulnerable (Density is different than armour, calculated off real volume)
 	
 	local MaxPenetration = (Energy.Penetration / FrAera) * ACF.KEtoRHA							--Let's see how deep the projectile penetrates ( Energy = Kinetic Energy, FrAera = Frontal aera in cm2 )
+	print(MaxPenetration)
 	local Penetration = math.min( MaxPenetration , Armour )			--Clamp penetration to the armour thickness
 	
-	local Crush = (Energy.Momentum * math.min(Penetration/MaxPenetration,1)) * ACF.KEtoCrush / (1+Entity.ACF.Density)^2
-	
 	local HitRes = {}
-	HitRes.Damage = (Penetration/Armour * FrAera) + Crush 	-- This is the volume of the hole caused by our projectile 
+	HitRes.Damage = (Penetration/Armour)^2 * FrAera	-- This is the volume of the hole caused by our projectile 
+	print(HitRes.Damage)
 	HitRes.Overkill = (MaxPenetration - Penetration)
 	HitRes.Loss = Penetration/MaxPenetration
 	

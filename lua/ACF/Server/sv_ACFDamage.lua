@@ -3,6 +3,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 
 	local Power = FillerMass * ACF.HEPower					--Power in KiloJoules of the filler mass of  TNT 
 	local Radius = (FillerMass)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
+	local MaxSphere = (4 * 3.1415 * (Radius*2.54 )^2) 		--Surface Aera of the sphere at maximum radius
 	local Amp = math.min(Power/2000,50)
 	util.ScreenShake( Hitpos, Amp, Amp, Amp/15, Radius*10 )  
 	--local Targets = ents.FindInSphere( Hitpos, Radius )
@@ -16,7 +17,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 	
 	local Fragments = math.max(math.floor((FillerMass/FragMass)*ACF.HEFrag),2)
 	local FragWeight = FragMass/Fragments
-	local FragVel = (Power*1000/FragWeight/Fragments)^0.5
+	local FragVel = (Power*50000/FragWeight/Fragments)^0.5
 	local FragAera = (FragWeight/7.8)^0.33
 	
 	local OccFilter = { NoOcc }
@@ -77,9 +78,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 						Targets[i] = nil								--Remove the thing we just hit from the table so we don't hit it again in the next round
 						local Table = {}
 							Table.Ent = Tar.Entity
-							Table.Dist = Hitpos:Distance(Hitat)
+							Table.Dist = Hitpos:Distance(Tar.Entity:GetPos())
 							Table.Vec = (Tar.Entity:GetPos() - Hitpos):GetNormal()
-							Table.Aera = math.min((Tar.ACF.MaxHealth*ACF.Threshold)/math.max(4 * 3.1415 * (Table.Dist*2.54 )^2,1 ),0.5)
+							local Sphere = math.max(4 * 3.1415 * (Table.Dist*2.54 )^2,1) --Surface Aera of the sphere at the range of that prop
+							Table.Aera = math.min((Tar.ACF.MaxHealth*ACF.Threshold)/Sphere,0.5)*MaxSphere --Project the aera of the prop to the aera of the shadow it projects at the explosion max radius
 						table.insert(Damage, Table)						--Add it to the Damage table so we know to damage it once we tallied everything
 						TotalAera = TotalAera + Table.Aera
 					end
@@ -98,21 +100,18 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			
 			local Blast = {}
 				Blast.Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05)
-				Blast.Penetration = 0.1
+				Blast.Penetration = PowerFraction^ACF.HEBlastPen*Tar.ACF.MaxHealth
 			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor )--Vel is just the speed of sound in air
 			PowerSpent = PowerSpent + PowerFraction*BlastRes.Loss/2--Removing the energy spent killing props
 			
-			--print("Momentum = "..Blast.Momentum)
-			--print(PowerSpent)
 			local FragHit = Fragments * AeraFraction
 			local FragVel = math.max(FragVel - ( (Table.Dist/FragVel) * FragVel^2 * FragWeight^0.33/10000 )/ACF.DragDiv,0)
-			local FragKE = ACF_Kinetic( FragVel , FragWeight, 1500 )
+			local FragKE = ACF_Kinetic( FragVel , FragWeight*FragHit, 1500 )
 			if FragHit < 0 then 
 				if math.Rand(0,1) > FragHit then FragHit = 1 else FragHit = 0 end
 			end
 			
 			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor )
-			
 			if BlastRes.Kill or FragRes.Kill then
 				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
 				table.insert( OccFilter , Debris )						--Add the debris created to the ignore so we don't hit it in other rounds
@@ -337,7 +336,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 				if ( Occ.Hit and Occ.Entity:EntIndex() != Found.Entity:EntIndex() ) then 
 						--Msg("Target Occluded\n")
 				else
-					local FoundHE = Found.BulletData["BoomPower"]*Found.Ammo
+					local FoundHE = Found.BulletData["BoomPower"]*Found.Ammo*2
 					--Msg("Adding " ..FoundAmmo.. " to the blast\n")
 					HEWeight = HEWeight + FoundHE
 					--Msg("Boom = " ..BoomPower.. "\n")

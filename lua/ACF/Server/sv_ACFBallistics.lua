@@ -36,9 +36,10 @@ function ACF_RemoveBullet( Index )
 
 end
 
-function ACF_CalcBulletFlight( Index, Bullet )
+function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	
 	if not Bullet.LastThink then ACF_RemoveBullet( Index ) return end
+	if BackTraceOverride then Bullet.FlightTime = 0 end
 	local Time = SysTime()
 	local DeltaTime = Time - Bullet.LastThink
 	
@@ -70,7 +71,7 @@ function ACF_DoBulletsFlight( Index, Bullet )
 			ACF_DoBulletsFlight( Index, Bullet )
 			--Msg("Retrying\n")
 		elseif Retry == "Ricochet"  then
-			ACF_CalcBulletFlight( Index, Bullet )
+			ACF_CalcBulletFlight( Index, Bullet, true )
 		else						--Else end the flight here
 			ACF_BulletEndFlight = ACF.RoundTypes[Bullet.Type]["endflight"]
 			ACF_BulletEndFlight( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )	

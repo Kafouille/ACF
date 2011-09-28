@@ -73,7 +73,7 @@ function ACF_APHEConvert( Crate, PlayerData )		--Function to convert the player'
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"] - Data["FillerMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
 		GUIData["MaxPen"] = (Energy.Penetration/Data["PenAera"])*ACF.KEtoRHA
 		
 		GUIData["BlastRadius"] = Data["FillerMass"]^0.33*5*10	
@@ -97,7 +97,7 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 	if ACF_Check( Target ) then
 	
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		
 		if HitRes.Overkill > 0 then
@@ -120,7 +120,7 @@ end
 
 function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )
