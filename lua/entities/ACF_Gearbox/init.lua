@@ -306,7 +306,7 @@ function ENT:Calc( Engine )
 	end
 	
 	if self.Dual then
-		self.Clutch = (self.LClutch + self.RClutch)/2
+		self.Clutch = math.min(self.LClutch + self.RClutch,self.MaxTorque)
 		self.Brake = self.LBrake + self.RBrake
 	end
 	
