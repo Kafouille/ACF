@@ -391,6 +391,151 @@ MobilityTable["4.5-V8"] = Engine45V8
 
 
 
+-- 1 speed reduction gearboxes
+
+local Gear1TS = {}
+	Gear1TS.id = "1Gear-T-S"
+	Gear1TS.ent = "acf_gearbox"
+	Gear1TS.type = "Mobility"
+	Gear1TS.name = "1-Speed, Transaxial, Small"
+	Gear1TS.desc = "Small, 1 speed reduction gearbox, useful for boats and aircraft\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear1TS.model = "models/engines/transaxial_s.mdl"
+	Gear1TS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1TS.weight = 20
+	Gear1TS.switch = 0.3
+	Gear1TS.maxtq = 180
+	Gear1TS.gears = 1
+	Gear1TS.doubleclutch = false
+	Gear1TS.geartable = {}
+		Gear1TS.geartable[-1] = 0.5
+		Gear1TS.geartable[0] = 0
+		Gear1TS.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1TS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1TS.guiupdate = function() return end
+	end
+MobilityTable["1Gear-T-S"] = Gear1TS
+
+local Gear1TM = {}
+	Gear1TM.id = "1Gear-T-M"
+	Gear1TM.ent = "acf_gearbox"
+	Gear1TM.type = "Mobility"
+	Gear1TM.name = "1-Speed, Transaxial, Medium"
+	Gear1TM.desc = "Medium sized single speed gearbox"
+	Gear1TM.model = "models/engines/transaxial_m.mdl"
+	Gear1TM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1TM.weight = 70
+	Gear1TM.switch = 0.4
+	Gear1TM.maxtq = 1000
+	Gear1TM.gears = 1
+	Gear1TM.doubleclutch = false
+	Gear1TM.geartable = {}
+		Gear1TM.geartable[-1] = 0.5
+		Gear1TM.geartable[0] = 0
+		Gear1TM.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1TM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1TM.guiupdate = function() return end
+	end
+MobilityTable["1Gear-T-M"] = Gear1TM
+
+local Gear1TL = {}
+	Gear1TL.id = "1Gear-T-L"
+	Gear1TL.ent = "acf_gearbox"
+	Gear1TL.type = "Mobility"
+	Gear1TL.name = "1-Speed, Transaxial, Large"
+	Gear1TL.desc = "Heavy duty single speed, best used with heavy marine vehicles and large aircraft"
+	Gear1TL.model = "models/engines/transaxial_l.mdl"
+	Gear1TL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1TL.weight = 250
+	Gear1TL.switch = 0.6
+	Gear1TL.maxtq = 10000
+	Gear1TL.gears = 1
+	Gear1TL.doubleclutch = false
+	Gear1TL.geartable = {}
+		Gear1TL.geartable[-1] = 1
+		Gear1TL.geartable[0] = 0
+		Gear1TL.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1TL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1TL.guiupdate = function() return end
+	end
+MobilityTable["1Gear-T-L"] = Gear1TL
+
+
+
+local Gear1LS = {}
+	Gear1LS.id = "1Gear-L-S"
+	Gear1LS.ent = "acf_gearbox"
+	Gear1LS.type = "Mobility"
+	Gear1LS.name = "1-Speed, Inline, Small"
+	Gear1LS.desc = "Small, 1 speed reduction gearbox, useful for boats and aircraft\n\nThe Final Drive slider is a multiplier applied to all the other gear ratios"
+	Gear1LS.model = "models/engines/linear_s.mdl"
+	Gear1LS.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1LS.weight = 20
+	Gear1LS.switch = 0.3
+	Gear1LS.maxtq = 180
+	Gear1LS.gears = 1
+	Gear1LS.doubleclutch = false
+	Gear1LS.geartable = {}
+		Gear1LS.geartable[-1] = 0.5
+		Gear1LS.geartable[0] = 0
+		Gear1LS.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1LS.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1LS.guiupdate = function() return end
+	end
+MobilityTable["1Gear-L-S"] = Gear1LS
+
+local Gear1LM = {}
+	Gear1LM.id = "1Gear-L-M"
+	Gear1LM.ent = "acf_gearbox"
+	Gear1LM.type = "Mobility"
+	Gear1LM.name = "1-Speed, Inline, Medium"
+	Gear1LM.desc = "Medium sized single speed gearbox"
+	Gear1LM.model = "models/engines/linear_m.mdl"
+	Gear1LM.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1LM.weight = 70
+	Gear1LM.switch = 0.4
+	Gear1LM.maxtq = 1000
+	Gear1LM.gears = 1
+	Gear1LM.doubleclutch = false
+	Gear1LM.geartable = {}
+		Gear1LM.geartable[-1] = 0.5
+		Gear1LM.geartable[0] = 0
+		Gear1LM.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1LM.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1LM.guiupdate = function() return end
+	end
+MobilityTable["1Gear-L-M"] = Gear1LM
+
+local Gear1LL = {}
+	Gear1LL.id = "1Gear-L-L"
+	Gear1LL.ent = "acf_gearbox"
+	Gear1LL.type = "Mobility"
+	Gear1LL.name = "1-Speed, Inline, Large"
+	Gear1LL.desc = "Heavy duty single speed, best used with heavy marine vehicles and large aircraft"
+	Gear1LL.model = "models/engines/linear_l.mdl"
+	Gear1LL.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear1LL.weight = 250
+	Gear1LL.switch = 0.6
+	Gear1LL.maxtq = 10000
+	Gear1LL.gears = 1
+	Gear1LL.doubleclutch = false
+	Gear1LL.geartable = {}
+		Gear1LL.geartable[-1] = 1
+		Gear1LL.geartable[0] = 0
+		Gear1LL.geartable[1] = 0.1
+	if ( CLIENT ) then
+		Gear1LL.guicreate = (function( Panel, Table ) ACFGearboxGUICreate( Table ) end or nil)
+		Gear1LL.guiupdate = function() return end
+	end
+MobilityTable["1Gear-L-L"] = Gear1LL
+
+
+
+
 -- 4 speed normal gearboxes
 local Gear4TS = {}
 	Gear4TS.id = "4Gear-T-S"
