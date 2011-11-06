@@ -142,3 +142,7 @@ Engines :
 
 --Dual-clutch gearboxes now have their full rated torque per clutch, but will slip if more than the rating of a single clutch is applied to the whole gearbox
 
+*r17
+
+Gearboxes :
+--Added line of 1 speed, heavy duty gearboxes aimed at aircraft and marine uses
