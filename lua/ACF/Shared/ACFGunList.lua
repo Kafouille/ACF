@@ -62,26 +62,69 @@ local MG14mm = {}
 	end
 GunTable["14.5mmMG"] = MG14mm
 	
-local MG20mm = {}
-	MG20mm.id = "20mmMG"
-	MG20mm.ent = "acf_gun"
-	MG20mm.type = "Guns"
-	MG20mm.name = "20mm Machinegun"
-	MG20mm.desc = "Machineguns are light guns that fire equally light bullets at a fast rate.\n The 20mm MG is heavier, but about as powerfull as the 14.5mm MG as it's able to fire 20mmAC sized projectiles, abeit at a reduced velocity"
-	MG20mm.model = "models/machinegun/machinegun_20mm.mdl"
-	MG20mm.caliber = 2.0
-	MG20mm.gunclass = "MG"
-	MG20mm.weight = 120
-	MG20mm.year = 1935
-		MG20mm.round = {}
-		MG20mm.round.id = "20mmMG"
-		MG20mm.round.maxlength = 12.5
-		MG20mm.round.propweight = 0.05
+local HMG20mm = {}
+	HMG20mm.id = "20mmHMG"
+	HMG20mm.ent = "acf_gun"
+	HMG20mm.type = "Guns"
+	HMG20mm.name = "20mm Heavy Machinegun"
+	HMG20mm.desc = "The lightest of the HMGs, the 20mm fires a big round, but with poor accuracy and penetration"
+	HMG20mm.model = "models/machinegun/machinegun_20mm_compact.mdl"
+	HMG20mm.caliber = 2.0
+	HMG20mm.gunclass = "HMG"
+	HMG20mm.weight = 120
+	HMG20mm.year = 1935
+		HMG20mm.round = {}
+		HMG20mm.round.id = "20mmHMG"
+		HMG20mm.round.maxlength = 12.5
+		HMG20mm.round.propweight = 0.05
 	if ( CLIENT ) then
-		MG20mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
-		MG20mm.guiupdate = function() return end
+		HMG20mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		HMG20mm.guiupdate = function() return end
 	end
-GunTable["20mmMG"] = MG20mm
+GunTable["20mmHMG"] = HMG20mm
+
+	
+	local HMG30mm = {}
+	HMG30mm.id = "30mmHMG"
+	HMG30mm.ent = "acf_gun"
+	HMG30mm.type = "Guns"
+	HMG30mm.name = "30mm Heavy Machinegun"
+	HMG30mm.desc = "30mm shell chucker, light and compact, however suffers in accuracy and ballistics. Best used in aircraft"
+	HMG30mm.model = "models/machinegun/machinegun_30mm_compact.mdl"
+	HMG30mm.caliber = 3.0
+	HMG30mm.gunclass = "HMG"
+	HMG30mm.weight = 600
+	HMG30mm.year = 1941
+		HMG30mm.round = {}
+		HMG30mm.round.id = "30mmHMG"
+		HMG30mm.round.maxlength = 29
+		HMG30mm.round.propweight = 0.13
+	if ( CLIENT ) then
+		HMG30mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		HMG30mm.guiupdate = function() return end
+	end
+GunTable["30mmHMG"] = HMG30mm
+
+local HMG40mm = {}
+	HMG40mm.id = "40mmHMG"
+	HMG40mm.ent = "acf_gun"
+	HMG40mm.type = "Guns"
+	HMG40mm.name = "40mm Heavy Machinegun"
+	HMG40mm.desc = "The heaviest of the heavy machineguns, this one boasts a useful payload, but suffers severely in ballistic performance"
+	HMG40mm.model = "models/machinegun/machinegun_40mm_compact.mdl"
+	HMG40mm.caliber = 4.0
+	HMG40mm.gunclass = "HMG"
+	HMG40mm.weight = 1250
+	HMG40mm.year = 1935
+		HMG40mm.round = {}
+		HMG40mm.round.id = "40mmHMG"
+		HMG40mm.round.maxlength = 38
+		HMG40mm.round.propweight = 0.30
+	if ( CLIENT ) then
+		HMG40mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		HMG40mm.guiupdate = function() return end
+	end
+GunTable["40mmHMG"] = HMG40mm
 	
 local AC20mm = {}
 	AC20mm.id = "20mmAC"
@@ -487,11 +530,11 @@ list.Set( "ACFEnts", "Guns", GunTable )
 local GunClass = {}	--Start gun classes listing
 
 local Machinegun = {}
-	Machinegun.spread = 2
+	Machinegun.spread = 1
 	Machinegun.name = "Machinegun"
 	Machinegun.muzzleflash = "50cal_muzzleflash_noscale"
-	Machinegun.rofmod = 0.5
-	Machinegun.sound = "weapons/ACF_Gun/mg_fire1.wav"
+	Machinegun.rofmod = 0.9
+	Machinegun.sound = "weapons/ACF_Gun/mg_fire2.wav"
 GunClass["MG"] = Machinegun	
 	
 local Autocannon = {}
@@ -501,6 +544,14 @@ local Autocannon = {}
 	Autocannon.rofmod = 0.35
 	Autocannon.sound = "weapons/ACF_Gun/ac_fire.wav"
 GunClass["AC"] = Autocannon
+
+local HeavyMachinegun = {}
+	HeavyMachinegun.spread = 2
+	HeavyMachinegun.name = "Heavy Machinegun"
+	HeavyMachinegun.muzzleflash = "50cal_muzzleflash_noscale"
+	HeavyMachinegun.rofmod = 0.25
+	HeavyMachinegun.sound = "weapons/ACF_Gun/mg_fire3.wav"
+GunClass["HMG"] = HeavyMachinegun
 
 local Gatling = {}
 	Gatling.spread = 3
