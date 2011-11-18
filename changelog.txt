@@ -156,4 +156,4 @@ Guns :
 
 Engines :
 
---Balanced a lot of the petrol engines to be more stark from the diesels (petrols trade power for torque, and vice versa)
+--Balanced a lot of the petrol engines to be more stark from the diesels (diesels trade power for torque, and vice versa)
