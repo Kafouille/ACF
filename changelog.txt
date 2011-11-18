@@ -146,3 +146,14 @@ Engines :
 
 Gearboxes :
 --Added line of 1 speed, heavy duty gearboxes aimed at aircraft and marine uses
+
+*r18
+
+Guns :
+-- Added Heavy Machinegun series, this encompasses 20, 30, and 40mm MGs; they are light and fast firing, but suffer in accuracy and ballistic performance, as they are meant for aircraft
+
+-- Changed the 12.7 and 14.5 to have lower rates of fire and are more accurate, as well as a new sound
+
+Engines :
+
+--Balanced a lot of the petrol engines to be more stark from the diesels (petrols trade power for torque, and vice versa)
