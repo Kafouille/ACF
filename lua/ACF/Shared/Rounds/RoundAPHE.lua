@@ -6,9 +6,6 @@ local DefTable = {}
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
 	DefTable.desc = "An armour piercing round with a cavity for High explosives. Less capable of defeating armour than plain Armour Piercing, but will explode after penetration"
 	DefTable.netid = 5											--Unique ammotype ID for network transmission
-
-	DefTable.limitvel = 700										--Most efficient penetration speed in m/s
-	DefTable.ricochet = 75										--Base ricochet angle
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APHECreate( Gun, BulletData ) end --Uses basic AP function
 	DefTable.convert = function( Crate, Table ) local Result = ACF_APHEConvert( Crate, Table ) return Result end --Uses custom function
@@ -48,7 +45,7 @@ function ACF_APHEConvert( Crate, PlayerData )		--Function to convert the player'
 	--Shell sturdiness calcs
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000 + math.min(PlayerData["Data5"],GUIData["ProjVolume"])*ACF.HEDensity/1000--Volume of the projectile as a cylinder - Volume of the filler * density of steel + Volume of the filler * density of TNT
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
-	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 		
 	local MaxVol = ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] )
 	GUIData["MinFillerVol"] = 0
@@ -63,6 +60,9 @@ function ACF_APHEConvert( Crate, PlayerData )		--Function to convert the player'
 	Data["ShovePower"] = 0.1
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	Data["LimitVel"] = 700										--Most efficient penetration speed in m/s
+	Data["KETransfert"] = 0.1									--Kinetic energy transfert to the target for movement purposes
+	Data["Ricochet"] = 75										--Base ricochet angle
 	
 	Data["BoomPower"] = Data["PropMass"] + Data["FillerMass"]
 
@@ -73,7 +73,7 @@ function ACF_APHEConvert( Crate, PlayerData )		--Function to convert the player'
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"] - Data["FillerMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"] - Data["FillerMass"], Data["LimitVel"] )
 		GUIData["MaxPen"] = (Energy.Penetration/Data["PenAera"])*ACF.KEtoRHA
 		
 		GUIData["BlastRadius"] = Data["FillerMass"]^0.33*5*10	
@@ -97,7 +97,7 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 	if ACF_Check( Target ) then
 	
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		
 		if HitRes.Overkill > 0 then
@@ -120,7 +120,7 @@ end
 
 function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )

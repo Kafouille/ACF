@@ -65,7 +65,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	
 	if self.Damaged then return HitRes end
 	local Ratio = (HitRes.Damage/self.BulletData["RoundVolume"])^0.2
-	print(Ratio)
+	--print(Ratio)
 	if ( Ratio * self.Capacity/self.Ammo ) > math.Rand(0,1) then  
 		self.Damaged = CurTime() + (5 - Ratio*3)
 		Wire_TriggerOutput(self.Entity, "On Fire", 1)
@@ -139,13 +139,13 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		Feedback = "New ammo type loaded, crate unlinked"
 	end
 	
-	local AmmoPercent = self.Ammo/self.Capacity
+	local AmmoPercent = self.Ammo/math.max(self.Capacity,1)
 	
 	self:CreateAmmo(ArgsTable[4], ArgsTable[5], ArgsTable[6], ArgsTable[7], ArgsTable[8], ArgsTable[9], ArgsTable[10], ArgsTable[11], ArgsTable[12], ArgsTable[13], ArgsTable[14])
 	
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
 	local AmmoMass = self:AmmoMass()
-	self.Mass = math.min(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/self.Capacity)
+	self.Mass = math.min(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 		
 	return FeedBack
 end
@@ -223,7 +223,7 @@ end
 function ENT:Think()
 	
 	local AmmoMass = self:AmmoMass()
-	self.Mass = math.max(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/self.Capacity)
+	self.Mass = math.max(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 	self.Entity:GetPhysicsObject():SetMass(self.Mass) 
 	
 	self:SetNetworkedString("Ammo",self.Ammo)
@@ -235,7 +235,7 @@ function ENT:Think()
 		if self.Damaged < CurTime() then
 			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
 		else
-			if math.Rand(0,150) > self.BulletData["RoundVolume"]^0.5 and math.Rand(0,1) < self.Ammo/self.Capacity and ACF.RoundTypes[self.BulletData["Type"]] then
+			if math.Rand(0,150) > self.BulletData["RoundVolume"]^0.5 and math.Rand(0,1) < self.Ammo/math.max(self.Capacity,1) and ACF.RoundTypes[self.BulletData["Type"]] then
 				self.Entity:EmitSound( "ambient/explosions/explode_4.wav" , 350 , math.max(255 - self.BulletData["PropMass"]*100,60)  )	
 				local MuzzlePos = self.Entity:GetPos()
 				local MuzzleVec = VectorRand()

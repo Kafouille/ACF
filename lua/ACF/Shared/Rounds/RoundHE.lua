@@ -7,10 +7,6 @@ local DefTable = {}
 	DefTable.desc = "A shell filled with explosives, detonating on impact"
 	DefTable.netid = 2											--Unique ammotype ID for network transmission
 	
-	DefTable.limitvel = 100										--Most efficient penetration speed in m/s
-	DefTable.ketransfert = 0.1									--Kinetic energy transfert to the target for movement purposes
-	DefTable.ricochet = 70										--Base ricochet angle
-	
 	DefTable.create = function( Gun, BulletData ) ACF_HECreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HEConvert( Crate, Table ) return Result end
 	DefTable.network = function( Crate, BulletData ) ACF_HENetworkData( Crate, BulletData ) end	
@@ -46,7 +42,7 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 	--Shell sturdiness calcs
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000 + math.min(PlayerData["Data5"],GUIData["ProjVolume"])*ACF.HEDensity/1000--Volume of the projectile as a cylinder - Volume of the filler * density of steel + Volume of the filler * density of TNT
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
-	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 		
 	local MaxVol = ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] )
 	GUIData["MinFillerVol"] = 0
@@ -61,6 +57,9 @@ function ACF_HEConvert( Crate, PlayerData )		--Function to convert the player's 
 	Data["ShovePower"] = 0.1
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	Data["LimitVel"] = 100										--Most efficient penetration speed in m/s
+	Data["KETransfert"] = 0.1									--Kinetic energy transfert to the target for movement purposes
+	Data["Ricochet"] = 60										--Base ricochet angle
 	
 	Data["BoomPower"] = Data["PropMass"] + Data["FillerMass"]
 
@@ -91,7 +90,7 @@ function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be 
 
 	if ACF_Check( Target ) then
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		if HitRes.Ricochet then
 			ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )

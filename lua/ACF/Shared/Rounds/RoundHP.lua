@@ -6,9 +6,6 @@ local DefTable = {}
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
 	DefTable.desc = "A solid shell with a soft point, meant to flatten against armour"
 	DefTable.netid = 3											--Unique ammotype ID for network transmission
-
-	DefTable.limitvel = 400										--Most efficient penetration speed in m/s
-	DefTable.ricochet = 85										--Base ricochet angle
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APCreate( Gun, BulletData ) end --Uses basic AP function
 	DefTable.convert = function( Crate, Table ) local Result = ACF_HPConvert( Crate, Table ) return Result end --Uses custom function
@@ -46,7 +43,7 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 	--Shell sturdiness calcs
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-PlayerData["Data5"],0)*7.9/1000  --(Volume of the projectile as a cylinder - Volume of the cavity) * density of steel 
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
-	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 	
 	local MaxVol = ACF_RoundShellCapacity( Energy.Momentum, Data["FrAera"], Data["Caliber"], Data["ProjLength"] )
 	GUIData["MinCavVol"] = 0
@@ -59,6 +56,9 @@ function ACF_HPConvert( Crate, PlayerData )		--Function to convert the player's 
 	Data["ExpCaliber"] = Data["Caliber"] + ExpRatio*Data["ProjLength"]
 	Data["PenAera"] = (3.1416 * Data["ExpCaliber"]/2)^2^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	Data["LimitVel"] = 400										--Most efficient penetration speed in m/s
+	Data["KETransfert"] = 0.1									--Kinetic energy transfert to the target for movement purposes
+	Data["Ricochet"] = 90										--Base ricochet angle
 	
 	Data["BoomPower"] = Data["PropMass"]
 
