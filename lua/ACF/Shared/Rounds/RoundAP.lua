@@ -6,9 +6,6 @@ local DefTable = {}
 	DefTable.model = "models/munitions/round_100mm_shot.mdl"	--Shell flight model
 	DefTable.desc = "A shell made out of a solid piece of steel, meant to penetrate armour"
 	DefTable.netid = 1											--Unique ammotype ID for network transmission
-
-	DefTable.limitvel = 800										--Most efficient penetration speed in m/s
-	DefTable.ricochet = 75										--Base ricochet angle
 	
 	DefTable.create = function( Gun, BulletData ) ACF_APCreate( Gun, BulletData ) end
 	DefTable.convert = function( Crate, Table ) local Result = ACF_APConvert( Crate, Table ) return Result end
@@ -46,6 +43,9 @@ function ACF_APConvert( Crate, PlayerData )		--Function to convert the player's 
 	Data["ShovePower"] = 0.2
 	Data["PenAera"] = Data["FrAera"]^ACF.PenAreaMod
 	Data["DragCoef"] = ((Data["FrAera"]/10000)/Data["ProjMass"])
+	Data["LimitVel"] = 800										--Most efficient penetration speed in m/s
+	Data["KETransfert"] = 0.1									--Kinetic energy transfert to the target for movement purposes
+	Data["Ricochet"] = 75										--Base ricochet angle
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
 	
 	Data["BoomPower"] = Data["PropMass"]
@@ -57,7 +57,7 @@ function ACF_APConvert( Crate, PlayerData )		--Function to convert the player's 
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], ACF.RoundTypes[PlayerData["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
 		GUIData["MaxPen"] = (Energy.Penetration/Data["PenAera"])*ACF.KEtoRHA
 		return table.Merge(Data,GUIData)
 	end
@@ -75,7 +75,7 @@ function ACF_APPropImpact( Index, Bullet, Target, HitNormal, HitPos )	--Can be c
 	if ACF_Check( Target ) then
 	
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
-		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], Bullet["LimitVel"] )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 		
 		if HitRes.Overkill > 0 then
@@ -98,7 +98,7 @@ end
 
 function ACF_APWorldImpact( Index, Bullet, HitPos, HitNormal )
 	
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], ACF.RoundTypes[Bullet["Type"]]["limitvel"] )
+	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )

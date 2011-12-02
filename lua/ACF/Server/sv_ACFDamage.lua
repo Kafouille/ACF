@@ -136,7 +136,7 @@ function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflicto
 	local SpallWeight = TotalWeight/Spall
 	local SpallVel = (KE*2000/SpallWeight)^0.5/Spall
 	local SpallAera = (SpallWeight/7.8)^0.33 
-	local SpallEnergy = ACF_Kinetic( SpallVel , SpallWeight, ACF.RoundTypes["AP"]["limitvel"] )
+	local SpallEnergy = ACF_Kinetic( SpallVel , SpallWeight, 600 )
 	
 	for i = 1,Spall do
 		local SpallTr = { }
@@ -176,7 +176,7 @@ function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )	--S
 	local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
 		
 	local Ricochet = 0
-	local MinAngle = ACF.RoundTypes[Bullet["Type"]]["ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
+	local MinAngle = Bullet["Ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
 	if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
 		Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
 		Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
