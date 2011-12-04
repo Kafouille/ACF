@@ -176,7 +176,7 @@ function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )	--S
 	local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
 		
 	local Ricochet = 0
-	local MinAngle = Bullet["Ricochet"] - Speed/39.37/15	--Making the chance of a ricochet get higher as the speeds increase
+	local MinAngle = math.min(Bullet["Ricochet"] - Speed/39.37/15,89)	--Making the chance of a ricochet get higher as the speeds increase
 	if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
 		Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
 		Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
