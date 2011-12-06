@@ -15,7 +15,7 @@ function ACF_CreateBullet( BulletData )
 	BulletData["TraceBackComp"] = 0
 	if BulletData["Gun"]:IsValid() then											--Check the Gun's velocity and add a modifier to the flighttime so the traceback system doesn't hit the originating contraption if it's moving along the shell path
 		BulletData["TraceBackComp"] = BulletData["Gun"]:GetPhysicsObject():GetVelocity():Dot(BulletData["Flight"]:GetNormalized())
-		print(BulletData["TraceBackComp"])
+		--print(BulletData["TraceBackComp"])
 	end
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
