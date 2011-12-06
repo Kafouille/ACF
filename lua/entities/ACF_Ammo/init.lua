@@ -213,7 +213,7 @@ function ENT:FirstLoad()
 
 	for Key,Value in pairs(self.Master) do
 		if self.Master[Key] and self.Master[Key]:IsValid() and self.Master[Key]["BulletData"]["Type"] == "Empty" then
-			print("Send FirstLoad")
+			--print("Send FirstLoad")
 			self.Master[Key]:UnloadAmmo()
 		end
 	end

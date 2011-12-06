@@ -138,6 +138,9 @@ function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflicto
 	local SpallAera = (SpallWeight/7.8)^0.33 
 	local SpallEnergy = ACF_Kinetic( SpallVel , SpallWeight, 600 )
 	
+	print(SpallWeight)
+	print(SpallVel)
+	
 	for i = 1,Spall do
 		local SpallTr = { }
 			SpallTr.start = HitPos
