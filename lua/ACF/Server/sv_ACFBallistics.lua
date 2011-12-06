@@ -12,6 +12,11 @@ function ACF_CreateBullet( BulletData )
 	BulletData["Accel"] = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)			--Those are BulletData settings that are global and shouldn't change round to round
 	BulletData["LastThink"] = SysTime()
 	BulletData["FlightTime"] = 0
+	BulletData["TraceBackComp"] = 0
+	if BulletData["Gun"]:IsValid() then											--Check the Gun's velocity and add a modifier to the flighttime so the traceback system doesn't hit the originating contraption if it's moving along the shell path
+		BulletData["TraceBackComp"] = BulletData["Gun"]:GetPhysicsObject():GetVelocity():Dot(BulletData["Flight"]:GetNormalized())
+		print(BulletData["TraceBackComp"])
+	end
 	BulletData["Filter"] = { BulletData["Gun"] }
 	BulletData["Index"] = ACF.CurBulletIndex
 		
@@ -47,7 +52,7 @@ function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	local Drag = Bullet.Flight:GetNormalized() * (Bullet.DragCoef * Speed^2)/ACF.DragDiv
 	Bullet.NextPos = Bullet.Pos + (Bullet.Flight * ACF.VelScale * DeltaTime)		--Calculates the next shell position
 	Bullet.Flight = Bullet.Flight + (Bullet.Accel - Drag)*DeltaTime				--Calculates the next shell vector
-	Bullet.StartTrace = Bullet.Pos - Bullet.Flight:GetNormalized()*math.min(ACF.PhysMaxVel*DeltaTime,Bullet.FlightTime*Speed)
+	Bullet.StartTrace = Bullet.Pos - Bullet.Flight:GetNormalized()*math.min(ACF.PhysMaxVel*DeltaTime,Bullet.FlightTime*Speed-Bullet.TraceBackComp*DeltaTime)
 	
 	Bullet.LastThink = Time
 	Bullet.FlightTime = Bullet.FlightTime + DeltaTime
