@@ -263,6 +263,135 @@ MobilityTable["17.2-I6"] = Engine172I6
 
 
 
+--Diesel V12s
+
+local Engine40V12 = {}
+	Engine40V12.id = "4.0-V12"
+	Engine40V12.ent = "acf_engine"
+	Engine40V12.type = "Mobility"
+	Engine40V12.name = "4.0L V12 Diesel"
+	Engine40V12.desc = "An old V12; not much power, but a lot of smooth torque"
+	Engine40V12.model = "models/engines/v12s.mdl"
+	Engine40V12.sound = "V12D.Small"
+	Engine40V12.weight = 475
+	Engine40V12.torque = 400		--in Meter/Kg
+	Engine40V12.idlerpm = 650	--in Rotations Per Minute
+	Engine40V12.peakminrpm = 900
+	Engine40V12.peakmaxrpm = 2800
+	Engine40V12.limitprm = 4700
+	if ( CLIENT ) then
+		Engine40V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine40V12.guiupdate = function() return end
+	end
+MobilityTable["4.0-V12"] = Engine40V12
+
+local Engine92V12 = {}
+	Engine92V12.id = "9.2-V12"
+	Engine92V12.ent = "acf_engine"
+	Engine92V12.type = "Mobility"
+	Engine92V12.name = "9.2L V12 Diesel"
+	Engine92V12.desc = "High torque V12, used mainly for vehicles that require balls"
+	Engine92V12.model = "models/engines/v12m.mdl"
+	Engine92V12.sound = "V12D.Medium"
+	Engine92V12.weight = 900
+	Engine92V12.torque = 800		--in Meter/Kg
+	Engine92V12.idlerpm = 575	--in Rotations Per Minute
+	Engine92V12.peakminrpm = 1200
+	Engine92V12.peakmaxrpm = 3300
+	Engine92V12.limitprm = 3500
+	if ( CLIENT ) then
+		Engine92V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine92V12.guiupdate = function() return end
+	end
+MobilityTable["9.2-V12"] = Engine92V12
+
+local Engine210V12 = {}
+	Engine210V12.id = "21.0-V12"
+	Engine210V12.ent = "acf_engine"
+	Engine210V12.type = "Mobility"
+	Engine210V12.name = "21.0 V12 Diesel"
+	Engine210V12.desc = "Extreme duty V12; however massively powerful, it is enormous and heavy"
+	Engine210V12.model = "models/engines/v12l.mdl"
+	Engine210V12.sound = "V12D.Large"
+	Engine210V12.weight = 3000
+	Engine210V12.torque = 2800		--in Meter/Kg
+	Engine210V12.idlerpm = 400	--in Rotations Per Minute
+	Engine210V12.peakminrpm = 500
+	Engine210V12.peakmaxrpm = 1500
+	Engine210V12.limitprm = 2500
+	if ( CLIENT ) then
+		Engine210V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine210V12.guiupdate = function() return end
+	end
+MobilityTable["21.0-V12"] = Engine210V12
+
+
+
+--Petrol V12s
+local Engine46V12 = {}
+	Engine46V12.id = "4.6-V12"
+	Engine46V12.ent = "acf_engine"
+	Engine46V12.type = "Mobility"
+	Engine46V12.name = "4.6L V12 Petrol"
+	Engine46V12.desc = "An old racing engine; low on torque, but plenty of power"
+	Engine46V12.model = "models/engines/v12s.mdl"
+	Engine46V12.sound = "V12P.Small"
+	Engine46V12.weight = 300
+	Engine46V12.torque = 250		--in Meter/Kg
+	Engine46V12.idlerpm = 1000	--in Rotations Per Minute
+	Engine46V12.peakminrpm = 4000
+	Engine46V12.peakmaxrpm = 7500
+	Engine46V12.limitprm = 8000
+	if ( CLIENT ) then
+		Engine46V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine46V12.guiupdate = function() return end
+	end
+MobilityTable["4.6-V12"] = Engine46V12
+
+local Engine70V12 = {}
+	Engine70V12.id = "7.0-V12"
+	Engine70V12.ent = "acf_engine"
+	Engine70V12.type = "Mobility"
+	Engine70V12.name = "7.0L V12 Petrol"
+	Engine70V12.desc = "A high end V12; primarily found in very expensive cars"
+	Engine70V12.model = "models/engines/v12m.mdl"
+	Engine70V12.sound = "V12P.Medium"
+	Engine70V12.weight = 450
+	Engine70V12.torque = 520		--in Meter/Kg
+	Engine70V12.idlerpm = 800	--in Rotations Per Minute
+	Engine70V12.peakminrpm = 2800
+	Engine70V12.peakmaxrpm = 5000
+	Engine70V12.limitprm = 7000
+	if ( CLIENT ) then
+		Engine70V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine70V12.guiupdate = function() return end
+	end
+MobilityTable["7.0-V12"] = Engine70V12
+
+local Engine230V12 = {}
+	Engine230V12.id = "23.0-V12"
+	Engine230V12.ent = "acf_engine"
+	Engine230V12.type = "Mobility"
+	Engine230V12.name = "23.0 V12 Petrol"
+	Engine230V12.desc = "A large, thirsty gasoline V12, likes to break down and roast crewmen"
+	Engine230V12.model = "models/engines/v12l.mdl"
+	Engine230V12.sound = "V12P.Large"
+	Engine230V12.weight = 1500
+	Engine230V12.torque = 1800		--in Meter/Kg
+	Engine230V12.idlerpm = 600	--in Rotations Per Minute
+	Engine230V12.peakminrpm = 1200
+	Engine230V12.peakmaxrpm = 3000
+	Engine230V12.limitprm = 3000
+	if ( CLIENT ) then
+		Engine230V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine230V12.guiupdate = function() return end
+	end
+MobilityTable["23.0-V12"] = Engine230V12
+
+
+
+
+
 --Petrol V8s
 local Engine180V8 = {}
 	Engine180V8.id = "18.0-V8"
@@ -377,7 +506,7 @@ local Engine45V8 = {}
 	Engine45V8.model = "models/engines/v8s.mdl"
 	Engine45V8.sound = "V8D.Small"
 	Engine45V8.weight = 400
-	Engine45V8.torque = 400		--in Meter/Kg
+	Engine45V8.torque = 325		--in Meter/Kg
 	Engine45V8.idlerpm = 800	--in Rotations Per Minute
 	Engine45V8.peakminrpm = 1000
 	Engine45V8.peakmaxrpm = 3000

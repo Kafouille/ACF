@@ -97,7 +97,7 @@ GunTable["20mmHMG"] = HMG20mm
 	HMG30mm.year = 1941
 		HMG30mm.round = {}
 		HMG30mm.round.id = "30mmHMG"
-		HMG30mm.round.maxlength = 29
+		HMG30mm.round.maxlength = 21.75
 		HMG30mm.round.propweight = 0.13
 	if ( CLIENT ) then
 		HMG30mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
@@ -118,7 +118,7 @@ local HMG40mm = {}
 	HMG40mm.year = 1935
 		HMG40mm.round = {}
 		HMG40mm.round.id = "40mmHMG"
-		HMG40mm.round.maxlength = 38
+		HMG40mm.round.maxlength = 28
 		HMG40mm.round.propweight = 0.30
 	if ( CLIENT ) then
 		HMG40mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
@@ -549,7 +549,7 @@ local HeavyMachinegun = {}
 	HeavyMachinegun.spread = 2
 	HeavyMachinegun.name = "Heavy Machinegun"
 	HeavyMachinegun.muzzleflash = "50cal_muzzleflash_noscale"
-	HeavyMachinegun.rofmod = 0.25
+	HeavyMachinegun.rofmod = 0.30
 	HeavyMachinegun.sound = "weapons/ACF_Gun/mg_fire3.wav"
 GunClass["HMG"] = HeavyMachinegun
 
