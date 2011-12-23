@@ -359,9 +359,9 @@ local Engine70V12 = {}
 	Engine70V12.weight = 450
 	Engine70V12.torque = 520		--in Meter/Kg
 	Engine70V12.idlerpm = 800	--in Rotations Per Minute
-	Engine70V12.peakminrpm = 2800
-	Engine70V12.peakmaxrpm = 5000
-	Engine70V12.limitprm = 7000
+	Engine70V12.peakminrpm = 3600
+	Engine70V12.peakmaxrpm = 6000
+	Engine70V12.limitprm = 7500
 	if ( CLIENT ) then
 		Engine70V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine70V12.guiupdate = function() return end
