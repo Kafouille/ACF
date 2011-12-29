@@ -296,7 +296,7 @@ local Engine92V12 = {}
 	Engine92V12.weight = 900
 	Engine92V12.torque = 800		--in Meter/Kg
 	Engine92V12.idlerpm = 575	--in Rotations Per Minute
-	Engine92V12.peakminrpm = 1200
+	Engine92V12.peakminrpm = 900
 	Engine92V12.peakmaxrpm = 3300
 	Engine92V12.limitprm = 3500
 	if ( CLIENT ) then
