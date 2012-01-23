@@ -160,12 +160,7 @@ Guns :
 --Fixed a crash if an ammocrate was spawned but couldn't containt at least one round of ammo
 
 --Fixed a bug that caused HEAT slugs to have an insanely high chance to ricochet
-
 *r20
-Engines :
---Added V12 lineup
---Updated a lot of sounds, replaced the 1.0's sound with something more bikey, replaced 2.0 diesel's sound
-
-Guns :
-
---Nerfed HMG shell capacity by 25% and reduced rate of fire
+Engines : 
+--Added lineup of Radials. No diesel ones, as they're not needed.
+--Improved 9.2 V12's performance.
