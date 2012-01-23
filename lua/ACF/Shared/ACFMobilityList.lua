@@ -294,8 +294,8 @@ local Engine92V12 = {}
 	Engine92V12.model = "models/engines/v12m.mdl"
 	Engine92V12.sound = "V12D.Medium"
 	Engine92V12.weight = 900
-	Engine92V12.torque = 800		--in Meter/Kg
-	Engine92V12.idlerpm = 575	--in Rotations Per Minute
+	Engine92V12.torque = 1000		--in Meter/Kg
+	Engine92V12.idlerpm = 675	--in Rotations Per Minute
 	Engine92V12.peakminrpm = 900
 	Engine92V12.peakmaxrpm = 3300
 	Engine92V12.limitprm = 3500
@@ -387,6 +387,70 @@ local Engine230V12 = {}
 		Engine230V12.guiupdate = function() return end
 	end
 MobilityTable["23.0-V12"] = Engine230V12
+
+
+
+
+--Petrol Radials
+local Engine38R7 = {}
+	Engine38R7.id = "3.8-R7"
+	Engine38R7.ent = "acf_engine"
+	Engine38R7.type = "Mobility"
+	Engine38R7.name = "3.8L R7 Petrol"
+	Engine38R7.desc = "A tiny, old worn-out radial."
+	Engine38R7.model = "models/engines/radial7s.mdl"
+	Engine38R7.sound = "R7.small"
+	Engine38R7.weight = 150
+	Engine38R7.torque = 160		--in Meter/Kg
+	Engine38R7.idlerpm = 700	--in Rotations Per Minute
+	Engine38R7.peakminrpm = 2200
+	Engine38R7.peakmaxrpm = 4500
+	Engine38R7.limitprm = 5000
+	if ( CLIENT ) then
+		Engine38R7.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine38R7.guiupdate = function() return end
+	end
+MobilityTable["3.8-R7"] = Engine38R7
+
+local Engine11R7 = {}
+	Engine11R7.id = "11.0-R7"
+	Engine11R7.ent = "acf_engine"
+	Engine11R7.type = "Mobility"
+	Engine11R7.name = "11.0 R7 Petrol"
+	Engine11R7.desc = "Mid range radial, thirsty and smooth"
+	Engine11R7.model = "models/engines/radial7m.mdl"
+	Engine11R7.sound = "R7.Medium"
+	Engine11R7.weight = 350
+	Engine11R7.torque = 550		--in Meter/Kg
+	Engine11R7.idlerpm = 600	--in Rotations Per Minute
+	Engine11R7.peakminrpm = 1800
+	Engine11R7.peakmaxrpm = 3700
+	Engine11R7.limitprm = 3700
+	if ( CLIENT ) then
+		Engine11R7.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine11R7.guiupdate = function() return end
+	end
+MobilityTable["11.0-R7"] = Engine11R7
+
+local Engine240R7 = {}
+	Engine240R7.id = "24.0-R7"
+	Engine240R7.ent = "acf_engine"
+	Engine240R7.type = "Mobility"
+	Engine240R7.name = "24.0L R7 Petrol"
+	Engine240R7.desc = "The beast of Radials, this monster was destined for fighter aircraft."
+	Engine240R7.model = "models/engines/radial7l.mdl"
+	Engine240R7.sound = "R7.Large"
+	Engine240R7.weight = 800
+	Engine240R7.torque = 1600		--in Meter/Kg
+	Engine240R7.idlerpm = 750	--in Rotations Per Minute
+	Engine240R7.peakminrpm = 1300
+	Engine240R7.peakmaxrpm = 3000
+	Engine240R7.limitprm = 3000
+	if ( CLIENT ) then
+		Engine240R7.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine240R7.guiupdate = function() return end
+	end
+MobilityTable["24.0-R7"] = Engine240R7
 
 
 
