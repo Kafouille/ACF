@@ -1,0 +1,53 @@
+"Cannon.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_155DB"
+	"wave"				"^weapons/ACF_Gun/cannon_fire3.wav"
+}
+
+"Howitzer.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_155DB"
+	"wave"				"^weapons/ACF_Gun/howitzer_fire3.wav"
+}
+
+"Mortar.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_100dB"
+	"wave"				"^weapons/ACF_Gun/mortar_fire1.wav"
+}
+
+"Autocannon.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90dB"
+	"wave"				"^weapons/ACF_Gun/AC_fire3.wav"
+}
+
+"Rotary_Autocannon.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90dB"
+	"wave"				"^weapons/ACF_Gun/rac_fire1.wav"
+}
+"Machinegun.Fire"
+{
+	"channel"			"CHAN_WEAPON"
+	"volume"			"1.0"
+	"pitch"				"PITCH_NORM"
+	"soundlevel"			"SNDLVL_90dB"
+	"wave"				"^weapons/ACF_Gun/mg_fire1.wav"
+}
+
