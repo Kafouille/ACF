@@ -104,10 +104,8 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 			ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
 			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
-			ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 			return "Penetrated"
 		elseif HitRes.Ricochet then
-			ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 			return "Ricochet"
 		else
 			return false
@@ -122,7 +120,6 @@ function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )
 	else
 		ACF_APHEEndFlight( Index, Bullet, HitPos )
@@ -132,7 +129,6 @@ end
 
 function ACF_APHEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_BulletClient( Index, Bullet, "Update" , 1 , HitPos  )
 	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	

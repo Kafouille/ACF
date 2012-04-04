@@ -141,7 +141,6 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 				table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 				ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
 				Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
-				ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 				return "Penetrated"
 			else
 				return false
@@ -154,7 +153,6 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
 			
 			if HitRes.Ricochet then
-				ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 				return "Ricochet"
 			else
 				ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
@@ -179,7 +177,6 @@ function ACF_HEATWorldImpact( Index, Bullet, HitPos, HitNormal )
 	
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], 999999 )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 		ACF_CalcBulletFlight( Index, Bullet )
 	else
 		ACF_HEATEndFlight( Index, Bullet, HitPos )
@@ -189,7 +186,6 @@ end
 
 function ACF_HEATEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_BulletClient( Index, Bullet, "Update" , 1 , HitPos  )
 	ACF_RemoveBullet( Index )
 	
 end
@@ -197,7 +193,6 @@ end
 function ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 
 	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"]/2 , Bullet["CasingMass"] , Bullet["Owner"] )
-	ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos  )
 
 	Bullet["Detonated"] = true
 	Bullet["Pos"] = HitPos
