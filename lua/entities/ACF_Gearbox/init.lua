@@ -331,7 +331,7 @@ end
 function ENT:Act( Torque )
 	
 	local ReactTq = 0
-	local AvailTq = math.min(Torque/self.TotalReqTq,1)/self.GearRatio		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
+	local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 			
 	Wire_TriggerOutput(self.Entity, "DebugN", AvailTq)
 	

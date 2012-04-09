@@ -164,3 +164,9 @@ Guns :
 Engines : 
 --Added lineup of Radials. No diesel ones, as they're not needed.
 --Improved 9.2 V12's performance.
+
+*21
+Engines : 
+--Gearboxes can now link to other gearboxes, passing the power down the line
+--Improved the behavior of the gearboxes at low gear ratios
+--Fixed some weirdness with the torque distribution
