@@ -194,32 +194,30 @@ end
 function ENT:CalcRPM( EngPhys )
 	
 	local DeltaTime = (CurTime() - self.LastThink)
-		
-	local Data = {}
-	local RPM = 0
-	local Clutch = 0
-	local Boxes = table.Count(self.GearLink)
-	//The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
-	for Key, Gearbox in pairs(self.GearLink) do 	--First, let's calculate the gearboxes RPM
-		Data[Key] = {}
-			Data[Key]["RPM"] = Gearbox:Calc()
-			Data[Key]["Clutch"] = Gearbox.Clutch
-		RPM = RPM + Data[Key]["RPM"]
-		Clutch = Clutch + Gearbox.Clutch
-	end
-	
-	local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
-	RPM = RPM / Boxes
-	local TorqueDiff = (self.FlyRPM - RPM)*self.Inertia	
-	
-	for Key, Gearbox in pairs(self.GearLink) do	--Then give the gearboxes the powa
-		Gearbox:Act(math.min(self.Torque*AutoClutch/Boxes,Gearbox.Clutch)*self.MassRatio)
-	end	
+		local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
 
-	local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
+	//local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
 	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
 	local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle)
-	self.FlyRPM = math.max(self.FlyRPM + (self.Torque - TorqueDiff*ClutchRatio*AutoClutch)/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
+	self.FlyRPM = math.max(self.FlyRPM + self.Torque/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
+	
+	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
+	
+	local Boxes = table.Count(self.GearLink) --The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
+	local MaxTqTable = {}
+	local MaxTq = 0
+	for Key, Gearbox in pairs(self.GearLink) do 
+		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+		MaxTq = MaxTq + MaxTqTable[Key]
+	end
+	
+	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes,1)		--Calculate the ratio of total requested torque versus what's avaliable
+		
+	for Key, Gearbox in pairs(self.GearLink) do
+		Gearbox:Act(MaxTqTable[Key]*AvailTq)	--Split the torque fairly between the gearboxes who need it
+	end
+	
+	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
 	
 	table.remove( self.RPM, 10 )	--Then we calc a smoothed RPM value for the sound effects
 	table.insert( self.RPM, 1, self.FlyRPM )
