@@ -101,7 +101,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			local Blast = {}
 				Blast.Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05)
 				Blast.Penetration = PowerFraction^ACF.HEBlastPen*Tar.ACF.MaxHealth
-			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor )--Vel is just the speed of sound in air
+			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor ,0 )--Vel is just the speed of sound in air
 			PowerSpent = PowerSpent + PowerFraction*BlastRes.Loss/2--Removing the energy spent killing props
 			
 			local FragHit = Fragments * AeraFraction
@@ -111,7 +111,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 				if math.Rand(0,1) > FragHit then FragHit = 1 else FragHit = 0 end
 			end
 			
-			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor )
+			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0 )
 			if BlastRes.Kill or FragRes.Kill then
 				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
 				table.insert( OccFilter , Debris )						--Add the debris created to the ignore so we don't hit it in other rounds
@@ -138,8 +138,8 @@ function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflicto
 	local SpallAera = (SpallWeight/7.8)^0.33 
 	local SpallEnergy = ACF_Kinetic( SpallVel , SpallWeight, 600 )
 	
-	print(SpallWeight)
-	print(SpallVel)
+	--print(SpallWeight)
+	--print(SpallVel)
 	
 	for i = 1,Spall do
 		local SpallTr = { }
@@ -159,7 +159,7 @@ function ACF_SpallTrace( HitVec , SpallTr , SpallEnergy , SpallAera , Inflictor 
 	if SpallRes.Hit and ACF_Check( SpallRes.Entity ) then
 	
 		local Angle = ACF_GetHitAngle( SpallRes.HitNormal , HitVec )
-		local HitRes = ACF_Damage( SpallRes.Entity , SpallEnergy , SpallAera , Angle , Inflictor )  --DAMAGE !!
+		local HitRes = ACF_Damage( SpallRes.Entity , SpallEnergy , SpallAera , Angle , Inflictor, 0 )  --DAMAGE !!
 		if HitRes.Kill then
 			ACF_APKill( SpallRes.Entity , HitVec:GetNormalized() , SpallEnergy.Kinetic )
 		end	
@@ -174,7 +174,7 @@ function ACF_SpallTrace( HitVec , SpallTr , SpallEnergy , SpallAera , Inflictor 
 	
 end
 
-function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )	--Simulate a round impacting on a prop
+function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone  )	--Simulate a round impacting on a prop
 
 	local Angle = ACF_GetHitAngle( HitNormal , Bullet["Flight"] )
 		
@@ -184,7 +184,7 @@ function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )	--S
 		Ricochet = (Angle/100)			--If ricocheting, calculate how much of the energy is dumped into the plate and how much is carried by the ricochet
 		Energy.Penetration = Energy.Penetration - Energy.Penetration*Ricochet/4 --Ricocheting can save plates that would theorically get penetrated, can add up to 1/4 rating
 	end
-	local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] )  --DAMAGE !!
+	local HitRes = ACF_Damage ( Target , Energy , Bullet["PenAera"] , Angle , Bullet["Owner"] , Bone, 0 )  --DAMAGE !!
 	
 	ACF_KEShove(Target, HitPos, Bullet["Flight"]:GetNormal(), Energy.Kinetic*HitRes.Loss*1000*Bullet["ShovePower"] )
 	
