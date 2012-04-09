@@ -166,6 +166,9 @@ Engines :
 --Improved 9.2 V12's performance.
 
 *21
+Guns : 
+--Added proper HitBox support when firing at players and NPCs.
+
 Engines : 
 --Gearboxes can now link to other gearboxes, passing the power down the line
 --Improved the behavior of the gearboxes at low gear ratios
