@@ -71,7 +71,7 @@ function ACF_DoBulletsFlight( Index, Bullet )
 	
 	if FlightRes.HitNonWorld then
 		ACF_BulletPropImpact = ACF.RoundTypes[Bullet.Type]["propimpact"]		
-		local Retry = ACF_BulletPropImpact( Index, Bullet, FlightRes.Entity , FlightRes.HitNormal , FlightRes.HitPos )				--If we hit stuff then send the resolution to the damage function	
+		local Retry = ACF_BulletPropImpact( Index, Bullet, FlightRes.Entity , FlightRes.HitNormal , FlightRes.HitPos , FlightRes.HitGroup )				--If we hit stuff then send the resolution to the damage function	
 		if Retry == "Penetrated" then		--If we should do the same trace again, then do so
 			ACF_BulletClient( Index, Bullet, "Update" , 2 , FlightRes.HitPos  )
 			ACF_DoBulletsFlight( Index, Bullet )

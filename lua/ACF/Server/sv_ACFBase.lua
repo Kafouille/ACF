@@ -54,23 +54,23 @@ function ACF_Check ( Entity )
 	
 end
 
-function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor ) 
+function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor , Bone ) 
 	
 	local Activated = ACF_Check( Entity )
 	
 	if Entity.SpecialDamage then
-		return Entity:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )
+		return Entity:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 	elseif Activated == "Prop" then	
 		
-		return ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )
+		return ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 		
 	elseif Activated == "Vehicle" then
 	
-		return ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor )
+		return ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 		
 	elseif Activated == "Squishy" then
 	
-		return ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor )
+		return ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 		
 	end
 	
@@ -94,7 +94,7 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	return HitRes
 end
 
-function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )
+function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 
 	local HitRes = ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	
@@ -110,13 +110,13 @@ function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )
 	
 end
 
-function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor )
+function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 
 	local HitRes = ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	
 	local Driver = Entity:GetDriver()
 	if Driver:IsValid() then
-		Driver:TakeDamage( HitRes.Damage*2 , Inflictor )
+		Driver:TakeDamage( HitRes.Damage*40 , Inflictor )
 	end
 
 	HitRes.Kill = false
@@ -130,7 +130,7 @@ function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor )
 	return HitRes
 end
 
-function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor )
+function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 
 	local HitRes = ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 
