@@ -16,6 +16,7 @@ function ENT:Initialize()
 	self.WheelRopeL = {}
 	self.WheelOutput = {}
 	self.WheelReqTq = {}
+	self.WheelVel = {}
 	
 	self.TotalReqTq = 0
 	self.RClutch = 0
@@ -321,6 +322,7 @@ function ENT:CalcWheel( Key, WheelEnt, SelfWorld )
 	local VelDiff = (WheelEnt:LocalToWorld(WheelPhys:GetAngleVelocity())-WheelEnt:GetPos()) - SelfWorld
 	local BaseRPM = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
 	local GearedRPM = BaseRPM / self.GearRatio / -6 --Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
+	self.WheelVel[Key] = BaseRPM
 	
 	return GearedRPM
 	
@@ -366,8 +368,9 @@ function ENT:ActWheel( Key, OutputEnt, Tq, Brake )
 	local TorqueAxis = OutputEnt:LocalToWorld(self.WheelAxis[Key]) - OutPos
 	local Cross = TorqueAxis:Cross( Vector(TorqueAxis.y,TorqueAxis.z,TorqueAxis.x) )
 	local Inertia = OutPhys:GetInertia()
+	local BrakeMult = 0
 	if Brake > 0 then
-		local BrakeMult = self.WheelVel[Key] * Inertia * self.LBrake / 10
+		BrakeMult = self.WheelVel[Key] * Inertia * self.LBrake / 10
 	end
 	local TorqueVec = TorqueAxis:Cross(Cross):GetNormalized() 
 	local Force = TorqueVec * Tq + TorqueVec * BrakeMult
