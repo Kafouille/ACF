@@ -131,12 +131,78 @@ function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone 
 end
 
 function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
+	
+	local Size = Entity:BoundingRadius()
+	local Mass = Entity:GetPhysicsObject():GetMass()
+	local HitRes = {}
+	local Damage = 0
+	local Target = {ACF = {Armour = 0.1}}		--We create a dummy table to pass armour values to the calc function
+	if (Bone) then
+		
+		if ( Bone == 1 ) then		--This means we hit the head
+			Target.ACF.Armour = Mass*0.02	--Set the skull thickness as a percentage of Squishy weight, this gives us 2mm for a player, about 22mm for an Antlion Guard. Seems about right
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , Angle )		--This is hard bone, so still sensitive to impact angle
+			Damage = HitRes.Damage*20
+			if HitRes.Overkill > 0 then									--If we manage to penetrate the skull, then MASSIVE DAMAGE
+				Target.ACF.Armour = Size*0.25*0.01						--A quarter the bounding radius seems about right for most critters head size
+				HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )
+				Damage = Damage + HitRes.Damage*100
+			end
+			Target.ACF.Armour = Mass*0.065	--Then to check if we can get out of the other side, 2x skull + 1x brains
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , Angle )	
+			Damage = Damage + HitRes.Damage*20				
+			
+		elseif ( Bone == 0 or Bone == 2 or Bone == 3 ) then		--This means we hit the torso. We are assuming body armour/tough exoskeleton/zombie don't give fuck here, so it's tough
+			Target.ACF.Armour = Mass*0.08	--Set the armour thickness as a percentage of Squishy weight, this gives us 8mm for a player, about 90mm for an Antlion Guard. Seems about right
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , Angle )		--Armour plate,, so sensitive to impact angle
+			Damage = HitRes.Damage*5
+			if HitRes.Overkill > 0 then
+				Target.ACF.Armour = Size*0.5*0.02							--Half the bounding radius seems about right for most critters torso size
+				HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )		
+				Damage = Damage + HitRes.Damage*50							--If we penetrate the armour then we get into the important bits inside, so DAMAGE
+			end
+			Target.ACF.Armour = Mass*0.185	--Then to check if we can get out of the other side, 2x armour + 1x guts
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , Angle )
+			
+		elseif ( Bone == 4 or Bone == 5 ) then 		--This means we hit an arm or appendage, so ormal damage, no armour
+		
+			Target.ACF.Armour = Size*0.2*0.02							--A fitht the bounding radius seems about right for most critters appendages
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )		--This is flesh, angle doesn't matter
+			Damage = HitRes.Damage*30							--Limbs are somewhat less important
+		
+		elseif ( Bone == 6 or Bone == 7 ) then
+		
+			Target.ACF.Armour = Size*0.2*0.02							--A fitht the bounding radius seems about right for most critters appendages
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )		--This is flesh, angle doesn't matter
+			Damage = HitRes.Damage*30							--Limbs are somewhat less important
+			
+		elseif ( Bone == 10 ) then					--This means we hit a backpack or something
+		
+			Target.ACF.Armour = Size*0.1*0.02							--Arbitrary size, most of the gear carried is pretty small
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )		--This is random junk, angle doesn't matter
+			Damage = HitRes.Damage*2								--Damage is going to be fright and shrapnel, nothing much		
 
-	local HitRes = ACF_CalcDamage( Entity , Energy , FrAera , Angle )
-
-	Entity:TakeDamage(HitRes.Damage*2 , Inflictor )
+		else 										--Just in case we hit something not standard
+		
+			Target.ACF.Armour = Size*0.2*0.02						
+			HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )
+			Damage = HitRes.Damage*30	
+			
+		end
+		
+	else 										--Just in case we hit something not standard
+	
+		Target.ACF.Armour = Size*0.2*0.02						
+		HitRes = ACF_CalcDamage( Target , Energy , FrAera , 0 )
+		Damage = HitRes.Damage*10	
+	
+	end
+		
+	Entity:TakeDamage( Damage , Inflictor )
 	
 	HitRes.Kill = false
+	--print(Damage)
+	--print(Bone)
 		
 	return HitRes
 end
