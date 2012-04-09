@@ -48,7 +48,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
 	Engine.LimitRPM = List["Mobility"][Id]["limitprm"]
-	Engine.Inertia = Engine.Weight*0.001*(3.1416)^2
+	Engine.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
 	
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	

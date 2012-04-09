@@ -19,6 +19,8 @@ local Engine10I4 = {}
 	Engine10I4.sound = "I4P.Small"
 	Engine10I4.weight = 55
 	Engine10I4.torque = 40		--in Meter/Kg
+	Engine10I4.flywheelmass = 0.055	
+
 	Engine10I4.idlerpm = 1000	--in Rotations Per Minute
 	Engine10I4.peakminrpm = 5250
 	Engine10I4.peakmaxrpm = 8000
@@ -39,6 +41,8 @@ local Engine18I4 = {}
 	Engine18I4.sound = "I4P.Medium"
 	Engine18I4.weight = 200
 	Engine18I4.torque = 150		--in Meter/Kg
+	Engine18I4.flywheelmass = 0.2
+	
 	Engine18I4.idlerpm = 900	--in Rotations Per Minute
 	Engine18I4.peakminrpm = 5400
 	Engine18I4.peakmaxrpm = 7000
@@ -59,6 +63,8 @@ local Engine160I4 = {}
 	Engine160I4.sound = "I4P.Large"
 	Engine160I4.weight = 800
 	Engine160I4.torque = 950		--in Meter/Kg
+	Engine160I4.flywheelmass = 0.8
+	
 	Engine160I4.idlerpm = 500	--in Rotations Per Minute
 	Engine160I4.peakminrpm = 1750
 	Engine160I4.peakmaxrpm = 3250
@@ -83,6 +89,8 @@ local Engine12I4 = {}
 	Engine12I4.sound = "I4D.Small"
 	Engine12I4.weight = 70
 	Engine12I4.torque = 55		--in Meter/Kg
+	Engine12I4.flywheelmass = 0.07
+	
 	Engine12I4.idlerpm = 1000	--in Rotations Per Minute
 	Engine12I4.peakminrpm = 2000
 	Engine12I4.peakmaxrpm = 4000
@@ -103,6 +111,8 @@ local Engine20I4 = {}
 	Engine20I4.sound = "I4D.Medium"
 	Engine20I4.weight = 250
 	Engine20I4.torque = 200		--in Meter/Kg
+	Engine20I4.flywheelmass = 0.25
+	
 	Engine20I4.idlerpm = 800	--in Rotations Per Minute
 	Engine20I4.peakminrpm = 1800
 	Engine20I4.peakmaxrpm = 3500
@@ -123,6 +133,8 @@ local Engine150I4 = {}
 	Engine150I4.sound = "I4D.Large"
 	Engine150I4.weight = 1500
 	Engine150I4.torque = 1800		--in Meter/Kg
+	Engine150I4.flywheelmass = 1.5
+	
 	Engine150I4.idlerpm = 300	--in Rotations Per Minute
 	Engine150I4.peakminrpm = 500
 	Engine150I4.peakmaxrpm = 1500
@@ -147,6 +159,8 @@ local Engine30I6 = {}
 	Engine30I6.sound = "L6D.Small"
 	Engine30I6.weight = 300
 	Engine30I6.torque = 240		--in Meter/Kg
+	Engine30I6.flywheelmass = 0.3
+		
 	Engine30I6.idlerpm = 650	--in Rotations Per Minute
 	Engine30I6.peakminrpm = 1000
 	Engine30I6.peakmaxrpm = 3000
@@ -167,6 +181,8 @@ local Engine65I6 = {}
 	Engine65I6.sound = "L6D.Medium"
 	Engine65I6.weight = 650
 	Engine65I6.torque = 550		--in Meter/Kg
+	Engine65I6.flywheelmass = 0.65
+	
 	Engine65I6.idlerpm = 600	--in Rotations Per Minute
 	Engine65I6.peakminrpm = 1600
 	Engine65I6.peakmaxrpm = 3500
@@ -187,6 +203,8 @@ local Engine200I6 = {}
 	Engine200I6.sound = "L6D.Large"
 	Engine200I6.weight = 1800
 	Engine200I6.torque = 2000		--in Meter/Kg
+	Engine200I6.flywheelmass = 1.8
+	
 	Engine200I6.idlerpm = 400	--in Rotations Per Minute
 	Engine200I6.peakminrpm = 500
 	Engine200I6.peakmaxrpm = 1700
@@ -210,6 +228,8 @@ local Engine22I6 = {}
 	Engine22I6.sound = "L6P.Small"
 	Engine22I6.weight = 250
 	Engine22I6.torque = 170		--in Meter/Kg
+	Engine22I6.flywheelmass = 0.250
+	
 	Engine22I6.idlerpm = 800	--in Rotations Per Minute
 	Engine22I6.peakminrpm = 4000
 	Engine22I6.peakmaxrpm = 6500
@@ -230,6 +250,8 @@ local Engine48I6 = {}
 	Engine48I6.sound = "L6P.Medium"
 	Engine48I6.weight = 350
 	Engine48I6.torque = 400		--in Meter/Kg
+	Engine48I6.flywheelmass = 0.350
+	
 	Engine48I6.idlerpm = 900	--in Rotations Per Minute
 	Engine48I6.peakminrpm = 3800
 	Engine48I6.peakmaxrpm = 5800
@@ -250,6 +272,8 @@ local Engine172I6 = {}
 	Engine172I6.sound = "L6P.Large"
 	Engine172I6.weight = 1000
 	Engine172I6.torque = 1100		--in Meter/Kg
+	Engine172I6.flywheelmass = 1
+	
 	Engine172I6.idlerpm = 500	--in Rotations Per Minute
 	Engine172I6.peakminrpm = 2300
 	Engine172I6.peakmaxrpm = 3500
@@ -275,6 +299,8 @@ local Engine40V12 = {}
 	Engine40V12.sound = "V12D.Small"
 	Engine40V12.weight = 475
 	Engine40V12.torque = 400		--in Meter/Kg
+	Engine40V12.flywheelmass = 0.475
+	
 	Engine40V12.idlerpm = 650	--in Rotations Per Minute
 	Engine40V12.peakminrpm = 900
 	Engine40V12.peakmaxrpm = 2800
@@ -295,6 +321,8 @@ local Engine92V12 = {}
 	Engine92V12.sound = "V12D.Medium"
 	Engine92V12.weight = 900
 	Engine92V12.torque = 1000		--in Meter/Kg
+	Engine92V12.flywheelmass = 0.900
+	
 	Engine92V12.idlerpm = 675	--in Rotations Per Minute
 	Engine92V12.peakminrpm = 900
 	Engine92V12.peakmaxrpm = 3300
@@ -315,6 +343,8 @@ local Engine210V12 = {}
 	Engine210V12.sound = "V12D.Large"
 	Engine210V12.weight = 3000
 	Engine210V12.torque = 2800		--in Meter/Kg
+	Engine210V12.flywheelmass = 3
+	
 	Engine210V12.idlerpm = 400	--in Rotations Per Minute
 	Engine210V12.peakminrpm = 500
 	Engine210V12.peakmaxrpm = 1500
@@ -338,6 +368,8 @@ local Engine46V12 = {}
 	Engine46V12.sound = "V12P.Small"
 	Engine46V12.weight = 300
 	Engine46V12.torque = 250		--in Meter/Kg
+	Engine46V12.flywheelmass = 0.3
+	
 	Engine46V12.idlerpm = 1000	--in Rotations Per Minute
 	Engine46V12.peakminrpm = 4000
 	Engine46V12.peakmaxrpm = 7500
@@ -358,6 +390,8 @@ local Engine70V12 = {}
 	Engine70V12.sound = "V12P.Medium"
 	Engine70V12.weight = 450
 	Engine70V12.torque = 520		--in Meter/Kg
+	Engine70V12.flywheelmass = 0.450
+	
 	Engine70V12.idlerpm = 800	--in Rotations Per Minute
 	Engine70V12.peakminrpm = 3600
 	Engine70V12.peakmaxrpm = 6000
@@ -378,6 +412,8 @@ local Engine230V12 = {}
 	Engine230V12.sound = "V12P.Large"
 	Engine230V12.weight = 1500
 	Engine230V12.torque = 1800		--in Meter/Kg
+	Engine230V12.flywheelmass = 1.5
+	
 	Engine230V12.idlerpm = 600	--in Rotations Per Minute
 	Engine230V12.peakminrpm = 1200
 	Engine230V12.peakmaxrpm = 3000
@@ -402,6 +438,8 @@ local Engine38R7 = {}
 	Engine38R7.sound = "R7.small"
 	Engine38R7.weight = 150
 	Engine38R7.torque = 160		--in Meter/Kg
+	Engine38R7.flywheelmass = 0.15
+	
 	Engine38R7.idlerpm = 700	--in Rotations Per Minute
 	Engine38R7.peakminrpm = 2200
 	Engine38R7.peakmaxrpm = 4500
@@ -422,6 +460,8 @@ local Engine11R7 = {}
 	Engine11R7.sound = "R7.Medium"
 	Engine11R7.weight = 350
 	Engine11R7.torque = 550		--in Meter/Kg
+	Engine11R7.flywheelmass = 0.350
+	
 	Engine11R7.idlerpm = 600	--in Rotations Per Minute
 	Engine11R7.peakminrpm = 1800
 	Engine11R7.peakmaxrpm = 3700
@@ -442,6 +482,8 @@ local Engine240R7 = {}
 	Engine240R7.sound = "R7.Large"
 	Engine240R7.weight = 800
 	Engine240R7.torque = 1600		--in Meter/Kg
+	Engine240R7.flywheelmass = 0.8
+	
 	Engine240R7.idlerpm = 750	--in Rotations Per Minute
 	Engine240R7.peakminrpm = 1300
 	Engine240R7.peakmaxrpm = 3000
@@ -467,6 +509,8 @@ local Engine180V8 = {}
 	Engine180V8.sound = "V8.Large"
 	Engine180V8.weight = 900
 	Engine180V8.torque = 1420		--in Meter/Kg
+	Engine180V8.flywheelmass = 0.9
+	
 	Engine180V8.idlerpm = 600	--in Rotations Per Minute
 	Engine180V8.peakminrpm = 1600
 	Engine180V8.peakmaxrpm = 2600
@@ -487,6 +531,8 @@ local Engine90V8 = {}
 	Engine90V8.sound = "V8.Medium"
 	Engine90V8.weight = 550
 	Engine90V8.torque = 500		--in Meter/Kg
+	Engine90V8.flywheelmass = 0.55
+	
 	Engine90V8.idlerpm = 700	--in Rotations Per Minute
 	Engine90V8.peakminrpm = 3800
 	Engine90V8.peakmaxrpm = 5000
@@ -507,6 +553,8 @@ local Engine57V8 = {}
 	Engine57V8.sound = "V8.Small"
 	Engine57V8.weight = 350
 	Engine57V8.torque = 340		--in Meter/Kg
+	Engine57V8.flywheelmass = 0.35
+	
 	Engine57V8.idlerpm = 800	--in Rotations Per Minute
 	Engine57V8.peakminrpm = 3000
 	Engine57V8.peakmaxrpm = 5000
@@ -531,6 +579,8 @@ local Engine190V8 = {}
 	Engine190V8.sound = "V8D.Large"
 	Engine190V8.weight = 2200
 	Engine190V8.torque = 2400		--in Meter/Kg
+	Engine190V8.flywheelmass = 2.2
+	
 	Engine190V8.idlerpm = 500	--in Rotations Per Minute
 	Engine190V8.peakminrpm = 700
 	Engine190V8.peakmaxrpm = 1650
@@ -551,6 +601,8 @@ local Engine78V8 = {}
 	Engine78V8.sound = "V8D.Medium"
 	Engine78V8.weight = 750
 	Engine78V8.torque = 710		--in Meter/Kg
+	Engine78V8.flywheelmass = 0.75
+	
 	Engine78V8.idlerpm = 650	--in Rotations Per Minute
 	Engine78V8.peakminrpm = 800
 	Engine78V8.peakmaxrpm = 3000
@@ -571,6 +623,8 @@ local Engine45V8 = {}
 	Engine45V8.sound = "V8D.Small"
 	Engine45V8.weight = 400
 	Engine45V8.torque = 325		--in Meter/Kg
+	Engine45V8.flywheelmass = 0.4
+	
 	Engine45V8.idlerpm = 800	--in Rotations Per Minute
 	Engine45V8.peakminrpm = 1000
 	Engine45V8.peakmaxrpm = 3000
