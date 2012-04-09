@@ -13,7 +13,7 @@ local DefTable = {}
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_HECrateDisplay( Crate ) return Result end	
 	
 	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_HEPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_HEWorldImpact( Bullet, Index, HitPos, HitNormal ) end
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_HEWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_HEEndFlight( Bullet, Index, HitPos, HitNormal ) end
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_HEEndEffect( Effect, Bullet ) end
@@ -102,7 +102,7 @@ end
 
 function ACF_HEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
-	ACF_HEEndFlight( Index, Bullet, HitPos, HitNormal )
+	return false
 
 end
 

@@ -86,7 +86,15 @@ function ACF_DoBulletsFlight( Index, Bullet )
 		end
 	elseif FlightRes.HitWorld then									--If we hit the world then try to see if it's thin enough to penetrate
 		ACF_BulletWorldImpact = ACF.RoundTypes[Bullet.Type]["worldimpact"]
-		ACF_BulletWorldImpact( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )
+		local Retry = ACF_BulletWorldImpact( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )
+		if Retry == "Penetrated" then 								--if it is, we soldier on	
+			ACF_BulletClient( Index, Bullet, "Update" , 2 , FlightRes.HitPos  )
+			ACF_CalcBulletFlight( Index, Bullet, true )				--The world ain't going to move, so we say True for the backtrace override
+		else														--If not, end of the line, boyo
+			ACF_BulletClient( Index, Bullet, "Update" , 1 , FlightRes.HitPos  )
+			ACF_BulletEndFlight = ACF.RoundTypes[Bullet.Type]["endflight"]
+			ACF_BulletEndFlight( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )	
+		end
 	else															--If we didn't hit anything, move the shell and schedule next think
 		Bullet.Pos = Bullet.NextPos
 	end

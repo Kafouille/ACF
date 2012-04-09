@@ -13,7 +13,7 @@ local DefTable = {}
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_HPCrateDisplay( Crate ) return Result end	
 	
 	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_APPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end --Uses basic AP function
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_APWorldImpact( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_APWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end --Uses basic AP function
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_APEndFlight( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_APEndEffect( Effect, Bullet ) end --Uses basic AP function

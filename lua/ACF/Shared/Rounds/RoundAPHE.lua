@@ -13,7 +13,7 @@ local DefTable = {}
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_APHECrateDisplay( Crate ) return Result end	
 	
 	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_APHEPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end --Uses basic AP function
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_APHEWorldImpact( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_APHEWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end --Uses basic AP function
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_APHEEndFlight( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_APHEEndEffect( Effect, Bullet ) end --Uses basic AP function
@@ -120,9 +120,9 @@ function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_CalcBulletFlight( Index, Bullet )
+		return "Penetrated"
 	else
-		ACF_APHEEndFlight( Index, Bullet, HitPos )
+		return false
 	end
 
 end

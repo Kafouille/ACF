@@ -13,7 +13,7 @@ local DefTable = {}
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_HEATCrateDisplay( Crate ) return Result end		
 	
 	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_HEATPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_HEATWorldImpact( Bullet, Index, HitPos, HitNormal ) end
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_HEATWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_HEATEndFlight( Bullet, Index, HitPos, HitNormal ) end
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_HEATEndEffect( Effect, Bullet ) end
@@ -173,13 +173,14 @@ function ACF_HEATWorldImpact( Index, Bullet, HitPos, HitNormal )
 
 	if not Bullet["Detonated"] then	
 		ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
+		return "Penetrated"
 	end
 	
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], 999999 )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_CalcBulletFlight( Index, Bullet )
+		return "Penetrated"
 	else
-		ACF_HEATEndFlight( Index, Bullet, HitPos )
+		return false
 	end
 	
 end
