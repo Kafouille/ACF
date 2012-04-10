@@ -12,8 +12,8 @@ local DefTable = {}
 	DefTable.network = function( Crate, BulletData ) ACF_APHENetworkData( Crate, BulletData ) end	
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_APHECrateDisplay( Crate ) return Result end	
 	
-	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_APHEPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end --Uses basic AP function
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_APHEWorldImpact( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
+	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos , Bone ) local Result = ACF_APHEPropImpact( Bullet, Index, Target, HitNormal, HitPos , Bone ) return Result end --Uses basic AP function
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_APHEWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end --Uses basic AP function
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_APHEEndFlight( Bullet, Index, HitPos, HitNormal ) end --Uses basic AP function
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_APHEEndEffect( Effect, Bullet ) end --Uses basic AP function
@@ -92,22 +92,20 @@ function ACF_APHECreate( Gun, BulletData )
 	
 end
 
-function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be called from other round types
+function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos , Bone ) 	--Can be called from other round types
 
 	if ACF_Check( Target ) then
 	
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
-		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
+		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone )
 		
 		if HitRes.Overkill > 0 then
 			table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 			ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
 			Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
-			ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 			return "Penetrated"
 		elseif HitRes.Ricochet then
-			ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 			return "Ricochet"
 		else
 			return false
@@ -122,17 +120,15 @@ function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
-		ACF_CalcBulletFlight( Index, Bullet )
+		return "Penetrated"
 	else
-		ACF_APHEEndFlight( Index, Bullet, HitPos )
+		return false
 	end
 
 end
 
 function ACF_APHEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_BulletClient( Index, Bullet, "Update" , 1 , HitPos  )
 	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	

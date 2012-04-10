@@ -71,19 +71,30 @@ function ACF_DoBulletsFlight( Index, Bullet )
 	
 	if FlightRes.HitNonWorld then
 		ACF_BulletPropImpact = ACF.RoundTypes[Bullet.Type]["propimpact"]		
-		local Retry = ACF_BulletPropImpact( Index, Bullet, FlightRes.Entity , FlightRes.HitNormal , FlightRes.HitPos )				--If we hit stuff then send the resolution to the damage function	
-		if Retry == "Penetrated" then												--If we should do the same trace again, then do so
+		local Retry = ACF_BulletPropImpact( Index, Bullet, FlightRes.Entity , FlightRes.HitNormal , FlightRes.HitPos , FlightRes.HitGroup )				--If we hit stuff then send the resolution to the damage function	
+		if Retry == "Penetrated" then		--If we should do the same trace again, then do so
+			ACF_BulletClient( Index, Bullet, "Update" , 2 , FlightRes.HitPos  )
 			ACF_DoBulletsFlight( Index, Bullet )
 			--Msg("Retrying\n")
 		elseif Retry == "Ricochet"  then
+			ACF_BulletClient( Index, Bullet, "Update" , 3 , FlightRes.HitPos  )
 			ACF_CalcBulletFlight( Index, Bullet, true )
 		else						--Else end the flight here
+			ACF_BulletClient( Index, Bullet, "Update" , 1 , FlightRes.HitPos  )
 			ACF_BulletEndFlight = ACF.RoundTypes[Bullet.Type]["endflight"]
 			ACF_BulletEndFlight( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )	
 		end
 	elseif FlightRes.HitWorld then									--If we hit the world then try to see if it's thin enough to penetrate
 		ACF_BulletWorldImpact = ACF.RoundTypes[Bullet.Type]["worldimpact"]
-		ACF_BulletWorldImpact( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )
+		local Retry = ACF_BulletWorldImpact( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )
+		if Retry == "Penetrated" then 								--if it is, we soldier on	
+			ACF_BulletClient( Index, Bullet, "Update" , 2 , FlightRes.HitPos  )
+			ACF_CalcBulletFlight( Index, Bullet, true )				--The world ain't going to move, so we say True for the backtrace override
+		else														--If not, end of the line, boyo
+			ACF_BulletClient( Index, Bullet, "Update" , 1 , FlightRes.HitPos  )
+			ACF_BulletEndFlight = ACF.RoundTypes[Bullet.Type]["endflight"]
+			ACF_BulletEndFlight( Index, Bullet, FlightRes.HitPos, FlightRes.HitNormal )	
+		end
 	else															--If we didn't hit anything, move the shell and schedule next think
 		Bullet.Pos = Bullet.NextPos
 	end

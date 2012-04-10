@@ -12,8 +12,8 @@ local DefTable = {}
 	DefTable.network = function( Crate, BulletData ) ACF_HENetworkData( Crate, BulletData ) end	
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_HECrateDisplay( Crate ) return Result end	
 	
-	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_HEPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_HEWorldImpact( Bullet, Index, HitPos, HitNormal ) end
+	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos , Bone ) local Result = ACF_HEPropImpact( Bullet, Index, Target, HitNormal, HitPos , Bone ) return Result end
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_HEWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_HEEndFlight( Bullet, Index, HitPos, HitNormal ) end
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_HEEndEffect( Effect, Bullet ) end
@@ -86,14 +86,13 @@ function ACF_HECreate( Gun, BulletData )
 	
 end
 
-function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be called from other round types
+function ACF_HEPropImpact( Index, Bullet, Target, HitNormal, HitPos , Bone ) 	--Can be called from other round types
 
 	if ACF_Check( Target ) then
 		local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 		local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
-		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
+		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone )
 		if HitRes.Ricochet then
-			ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 			return "Ricochet"
 		end
 	end
@@ -103,13 +102,12 @@ end
 
 function ACF_HEWorldImpact( Index, Bullet, HitPos, HitNormal )
 		
-	ACF_HEEndFlight( Index, Bullet, HitPos, HitNormal )
+	return false
 
 end
 
 function ACF_HEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_BulletClient( Index, Bullet, "Update" , 1 , HitPos  )
 	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	

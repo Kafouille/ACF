@@ -12,8 +12,8 @@ local DefTable = {}
 	DefTable.network = function( Crate, BulletData ) ACF_HEATNetworkData( Crate, BulletData ) end
 	DefTable.cratetxt = function( Crate ) local Result =  ACF_HEATCrateDisplay( Crate ) return Result end		
 	
-	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos ) local Result = ACF_HEATPropImpact( Bullet, Index, Target, HitNormal, HitPos ) return Result end
-	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) ACF_HEATWorldImpact( Bullet, Index, HitPos, HitNormal ) end
+	DefTable.propimpact = function( Bullet, Index, Target, HitNormal, HitPos , Bone ) local Result = ACF_HEATPropImpact( Bullet, Index, Target, HitNormal, HitPos , Bone ) return Result end
+	DefTable.worldimpact = function( Bullet, Index, HitPos, HitNormal ) local Result = ACF_HEATWorldImpact( Bullet, Index, HitPos, HitNormal ) return Result end
 	DefTable.endflight = function( Bullet, Index, HitPos, HitNormal ) ACF_HEATEndFlight( Bullet, Index, HitPos, HitNormal ) end
 	
 	DefTable.endeffect = function( Effect, Bullet ) ACF_HEATEndEffect( Effect, Bullet ) end
@@ -127,7 +127,7 @@ function ACF_HEATCreate( Gun, BulletData )
 	
 end
 
-function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can be called from other round types
+function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos , Bone ) 	--Can be called from other round types
 
 	if ACF_Check( Target ) then
 			
@@ -135,13 +135,12 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			
 			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"], 999999 )
-			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
+			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone )
 			
 			if HitRes.Overkill > 0 then
 				table.insert( Bullet["Filter"] , Target )					--"Penetrate" (Ingoring the prop for the retry trace)
 				ACF_Spall( HitPos , Bullet["Flight"] , Bullet["Filter"] , Energy.Kinetic*HitRes.Loss , Bullet["Caliber"] , Target.ACF.Armour , Bullet["Owner"] ) --Do some spalling
 				Bullet["Flight"] = Bullet["Flight"]:GetNormalized() * (Energy.Kinetic*(1-HitRes.Loss)*2000/Bullet["ProjMass"])^0.5 * 39.37
-				ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
 				return "Penetrated"
 			else
 				return false
@@ -151,10 +150,9 @@ function ACF_HEATPropImpact( Index, Bullet, Target, HitNormal, HitPos ) 	--Can b
 			
 			local Speed = Bullet["Flight"]:Length() / ACF.VelScale
 			local Energy = ACF_Kinetic( Speed , Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
-			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal )
+			local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone )
 			
 			if HitRes.Ricochet then
-				ACF_BulletClient( Index, Bullet, "Update" , 3 , HitPos )
 				return "Ricochet"
 			else
 				ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
@@ -175,21 +173,20 @@ function ACF_HEATWorldImpact( Index, Bullet, HitPos, HitNormal )
 
 	if not Bullet["Detonated"] then	
 		ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
+		return "Penetrated"
 	end
 	
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], 999999 )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
-		ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos )
-		ACF_CalcBulletFlight( Index, Bullet )
+		return "Penetrated"
 	else
-		ACF_HEATEndFlight( Index, Bullet, HitPos )
+		return false
 	end
 	
 end
 
 function ACF_HEATEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_BulletClient( Index, Bullet, "Update" , 1 , HitPos  )
 	ACF_RemoveBullet( Index )
 	
 end
@@ -197,7 +194,6 @@ end
 function ACF_HEATDetonate( Index, Bullet, HitPos, HitNormal )
 
 	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"]/2 , Bullet["CasingMass"] , Bullet["Owner"] )
-	ACF_BulletClient( Index, Bullet, "Update" , 2 , HitPos  )
 
 	Bullet["Detonated"] = true
 	Bullet["Pos"] = HitPos
