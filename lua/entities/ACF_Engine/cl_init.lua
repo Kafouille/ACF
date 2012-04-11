@@ -19,6 +19,27 @@ function ENT:DoNormalDraw()
 	end
 end
 
+function ENT:GetOverlayText()
+	local name = self.Entity:GetNetworkedString("WireName")
+	local Type = self.Entity:GetNetworkedBeamString("Type")
+	local Power = self.Entity:GetNetworkedBeamInt("Power")
+	local Torque = self.Entity:GetNetworkedBeamInt("Torque")
+	local MinRPM = self.Entity:GetNetworkedBeamInt("MinRPM")
+	local MaxRPM = self.Entity:GetNetworkedBeamInt("MaxRPM")
+	local LimitRPM = self.Entity:GetNetworkedBeamInt("LimitRPM")
+	local txt = Type.."\nMax Power : "..Power.."KW\nMax Torque : "..Torque.."N/m\nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM" or ""
+	if (not SinglePlayer()) then
+		local PlayerName = self:GetPlayerName()
+		txt = txt .. "\n(" .. PlayerName .. ")"
+	end
+	if(name and name ~= "") then
+	    if (txt == "") then
+	        return "- "..name.." -"
+	    end
+	    return "- "..name.." -\n"..txt
+	end
+	return txt
+end
 
 function ACFEngineGUICreate( Table )
 	

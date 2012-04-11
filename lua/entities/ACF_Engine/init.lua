@@ -66,6 +66,13 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 		phys:SetMass( Engine.Weight ) 
 	end
 	
+	Engine:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
+	Engine:SetNetworkedBeamInt("Torque",Engine.PeakTorque)
+	Engine:SetNetworkedBeamInt("Power",math.floor(Engine.PeakTorque * Engine.PeakMaxRPM / 9548.8))
+	Engine:SetNetworkedBeamInt("MinRPM",Engine.PeakMinRPM)
+	Engine:SetNetworkedBeamInt("MaxRPM",Engine.PeakMaxRPM)
+	Engine:SetNetworkedBeamInt("LimitRPM",Engine.LimitRPM)
+	
 	undo.Create("ACF Engine")
 		undo.AddEntity( Engine )
 		undo.SetPlayer( Owner )
