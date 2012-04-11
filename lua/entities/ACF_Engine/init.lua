@@ -17,6 +17,7 @@ function ENT:Initialize()
 	self.PhysMass = 0
 	self.MassRatio = 1
 	self.Legal = true
+	self.CanUpdate = true
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Throttle" } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
@@ -85,6 +86,53 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 end
 list.Set( "ACFCvars", "acf_engine" , {"id"} )
 duplicator.RegisterEntityClass("acf_engine", MakeACF_Engine, "Pos", "Angle", "Id")
+
+function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
+		
+	local Feedback = "Engine updated, all links are now undone"
+	if self.Active then
+		Feedback = "Please turn off the engine before updating it"
+	return end
+	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
+		Feedback = "You don't own that engine !"
+	return end
+	
+	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+	local List = list.Get("ACFEnts")
+	
+	if ( List["Mobility"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
+		Feedback = "The new engine needs to have the same model as the old one !"
+	return end
+		
+	self.Id = Id
+	self.SoundPath = List["Mobility"][Id]["sound"]
+	self.Weight = List["Mobility"][Id]["weight"]
+	self.PeakTorque = List["Mobility"][Id]["torque"]
+	self.IdleRPM = List["Mobility"][Id]["idlerpm"]
+	self.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
+	self.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
+	self.LimitRPM = List["Mobility"][Id]["limitprm"]
+	self.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
+	
+	self:SetModel( self.Model )	
+	self:SetSolid( SOLID_VPHYSICS )
+	self.Out = self:WorldToLocal(self:GetAttachment(self:LookupAttachment( "driveshaft" )).Pos)
+
+	local phys = self:GetPhysicsObject()  	
+	if (phys:IsValid()) then 
+		phys:SetMass( self.Weight ) 
+	end
+	
+	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
+	self:SetNetworkedBeamInt("Torque",self.PeakTorque)
+	self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+	self:SetNetworkedBeamInt("MinRPM",self.PeakMinRPM)
+	self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
+	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
+	
+	
+	return Feedback
+end
 
 function ENT:TriggerInput( iname , value )
 
