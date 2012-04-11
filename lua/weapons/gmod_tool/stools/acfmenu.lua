@@ -73,7 +73,7 @@ function TOOL:LeftClick( trace )
 		local Feedback = nil
 		if ( trace.Entity:GetClass() == ACF.Weapons[Type][Id]["ent"] and trace.Entity.CanUpdate ) then
 			table.insert(ArgTable,1,ply)
-			local Feedback = trace.Entity:Update( ArgTable )
+			Feedback = trace.Entity:Update( ArgTable )
 		else
 			local Ent = DupeClass.Func(ply, unpack(ArgTable))		--Using the Duplicator entity register to find the right factory function
 			Ent:Activate()
