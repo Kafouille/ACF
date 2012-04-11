@@ -86,7 +86,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		
 	Gearbox:SetModel( Gearbox.Model )	
 		
-	local Inputs = {"Gear"}
+	local Inputs = {"Gear","Gear Up","Gear Down"}
 	if Gearbox.Dual then
 		table.insert(Inputs,"Left Clutch")
 		table.insert(Inputs,"Right Clutch")
@@ -98,7 +98,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	end
 	
 	Gearbox.Inputs = Wire_CreateInputs( Gearbox.Entity, Inputs )
-	Gearbox.Outputs = WireLib.CreateSpecialOutputs( Gearbox.Entity, { "Ratio", "Entity" , "DebugN" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Gearbox.Outputs = WireLib.CreateSpecialOutputs( Gearbox.Entity, { "Ratio", "Entity" , "Current Gear" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(Gearbox.Entity, "Entity", Gearbox.Entity)
 	Gearbox.WireDebugName = "ACF Gearbox"
 	
@@ -138,11 +138,21 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Feedback = "Gearbox updated successfully"
 	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
 		Feedback = "You don't own that gearbox !"
-	return end
+	return Feedback end
 		
-	if ( ArgsTable[4] != self.Id ) then --Argtable[4] is the gearbox ID, if it doesn't match don't load the new settings
-		Feedback = "Wrong gearbox model ! You need to load settings made with the same gearbox"
-	return end
+	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+	local List = list.Get("ACFEnts")
+	
+	if ( List["Mobility"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
+		Feedback = "The new gearbox needs to have the same size and orientation as the old one !"
+	return Feedback end
+	
+	self.Id = Id
+	self.Mass = List["Mobility"][Id]["weight"]
+	self.SwitchTime = List["Mobility"][Id]["switch"]
+	self.MaxTorque = List["Mobility"][Id]["maxtq"]
+	self.Gears = List["Mobility"][Id]["gears"]
+	self.Dual = List["Mobility"][Id]["doubleclutch"]
 	
 	self.GearTable["Final"] = ArgsTable[14]
 	self.GearTable[1] = ArgsTable[5]
@@ -169,6 +179,19 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		
 	self.Gear = 0
 	
+	local Inputs = {"Gear","Gear Up","Gear Down"}
+	if self.Dual then
+		table.insert(Inputs,"Left Clutch")
+		table.insert(Inputs,"Right Clutch")
+		table.insert(Inputs,"Left Brake")
+		table.insert(Inputs,"Right Brake")
+	else
+		table.insert(Inputs, "Clutch")
+		table.insert(Inputs, "Brake")
+	end
+	
+	self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
+	
 	self:UpdateHUD()
 	
 	return Feedback
@@ -192,6 +215,14 @@ function ENT:TriggerInput( iname , value )
 
 	if ( iname == "Gear" and self.Gear != math.floor(value) ) then
 		self:ChangeGear(math.floor(value))
+	elseif ( iname == "Gear Up" ) then
+		if ( self.Gear < self.Gears and value > 0 ) then
+			self:ChangeGear(math.floor(self.Gear + 1))
+		end
+	elseif ( iname == "Gear Down" ) then
+		if ( self.Gear > 1 and value > 0 ) then
+			self:ChangeGear(math.floor(self.Gear - 1))
+		end
 	elseif ( iname == "Clutch" ) then
 		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
 		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
@@ -332,8 +363,6 @@ function ENT:Act( Torque )
 	
 	local ReactTq = 0
 	local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
-			
-	Wire_TriggerOutput(self.Entity, "DebugN", AvailTq)
 	
 	for Key, OutputEnt in pairs(self.WheelLink) do
 		if self.WheelSide[Key] == 0 then
@@ -386,6 +415,7 @@ function ENT:ChangeGear(value)
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
 	
+	Wire_TriggerOutput(self.Entity, "Current Gear", self.Gear)
 	self:EmitSound("buttons/lever7.wav",250,100)
 	Wire_TriggerOutput(self.Entity, "Ratio", self.GearRatio)
 	
