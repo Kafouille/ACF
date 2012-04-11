@@ -211,7 +211,7 @@ function ENT:CalcRPM( EngPhys )
 		MaxTq = MaxTq + MaxTqTable[Key]
 	end
 	
-	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes,1)		--Calculate the ratio of total requested torque versus what's avaliable
+	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes*self.MassRatio,1)		--Calculate the ratio of total requested torque versus what's avaliable
 		
 	for Key, Gearbox in pairs(self.GearLink) do
 		Gearbox:Act(MaxTqTable[Key]*AvailTq)	--Split the torque fairly between the gearboxes who need it
