@@ -173,3 +173,5 @@ Engines :
 --Gearboxes can now link to other gearboxes, passing the power down the line
 --Improved the behavior of the gearboxes at low gear ratios
 --Fixed some weirdness with the torque distribution
+--Added Gear Up / Gear Down inputs and Current Gear output to the Gearbox
+--You can now update the Engines and Gearboxes with other types as long as they share the same model
