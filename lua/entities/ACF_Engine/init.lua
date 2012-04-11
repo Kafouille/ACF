@@ -92,10 +92,10 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Feedback = "Engine updated, all links are now undone"
 	if self.Active then
 		Feedback = "Please turn off the engine before updating it"
-	return end
+	return Feedback end
 	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
 		Feedback = "You don't own that engine !"
-	return end
+	return Feedback end
 	
 	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
