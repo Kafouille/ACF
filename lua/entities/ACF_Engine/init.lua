@@ -89,7 +89,7 @@ duplicator.RegisterEntityClass("acf_engine", MakeACF_Engine, "Pos", "Angle", "Id
 
 function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
 		
-	local Feedback = "Engine updated, all links are now undone"
+	local Feedback = "Engine updated"
 	if self.Active then
 		Feedback = "Please turn off the engine before updating it"
 	return Feedback end
