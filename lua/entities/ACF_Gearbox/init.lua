@@ -374,8 +374,13 @@ end
 function ENT:Act( Torque, DeltaTime )
 	
 	local ReactTq = 0
-	local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
-	
+	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
+	 local AvailTq = 0
+	if Torque != 0 then
+		AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))
+	end
+
+
 	for Key, OutputEnt in pairs(self.WheelLink) do
 		if self.WheelSide[Key] == 0 then
 			Brake = self.LBrake
