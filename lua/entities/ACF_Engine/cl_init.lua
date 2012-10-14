@@ -28,7 +28,7 @@ function ENT:GetOverlayText()
 	local MaxRPM = self.Entity:GetNetworkedBeamInt("MaxRPM")
 	local LimitRPM = self.Entity:GetNetworkedBeamInt("LimitRPM")
 	local txt = Type.."\nMax Power : "..Power.."KW / "..math.Round(Power*1.34).."HP \nMax Torque : "..Torque.."N/m / "..math.Round(Torque*0.73).."ft-lb \nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM" or ""
-	if (not SinglePlayer()) then
+	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"
 	end

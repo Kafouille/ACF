@@ -48,13 +48,13 @@ function EFFECT:Core()
 				Whisp:SetRollDelta( math.Rand(-0.2, 0.2) )			
 				Whisp:SetAirResistance( 100 ) 			 
 				Whisp:SetGravity( Vector( math.random(-5,5)*self.Radius, math.random(-5,5)*self.Radius, 0 ) ) 			
-				Whisp:SetColor( 150,150,150 )
+				Whisp:SetColor( Color(150,150,150 ))
 			end
 	end
 	
 
-	WorldSound( "ambient/explosions/explode_5.wav", self.Origin , math.Clamp(self.Radius*10,75,165), math.Clamp(300 - self.Radius*12,15,255))
-	WorldSound( "ambient/explosions/explode_4.wav", self.Origin , math.Clamp(self.Radius*10,75,165), math.Clamp(300 - self.Radius*25,15,255))
+	sound.Play( "ambient/explosions/explode_5.wav", self.Origin , math.Clamp(self.Radius*10,75,165), math.Clamp(300 - self.Radius*12,15,255))
+	sound.Play( "ambient/explosions/explode_4.wav", self.Origin , math.Clamp(self.Radius*10,75,165), math.Clamp(300 - self.Radius*25,15,255))
 	
 end
 
@@ -81,7 +81,7 @@ function EFFECT:Shockwave( Ground, SmokeColor )
 			Smoke:SetRollDelta( math.Rand(-0.2, 0.2) )			
 			Smoke:SetAirResistance( 200 ) 			 
 			Smoke:SetGravity( Vector( math.Rand( -20 , 20 ), math.Rand( -20 , 20 ), math.Rand( 10 , 100 ) ) )			
-			Smoke:SetColor( SmokeColor.x,SmokeColor.y,SmokeColor.z )
+			Smoke:SetColor( Color(SmokeColor.x,SmokeColor.y,SmokeColor.z ))
 		end	
 	
 	end

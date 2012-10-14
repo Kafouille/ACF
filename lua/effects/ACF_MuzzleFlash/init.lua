@@ -15,10 +15,10 @@
 	if Gun:IsValid() then
 		if Propellant > 0 then
 			local SoundPressure = (Propellant*1000)^0.5
-			WorldSound( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
-			WorldSound( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
-			WorldSound( ACF.Classes["GunClass"][Class]["soundDistance"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
-			WorldSound( ACF.Classes["GunClass"][Class]["soundNormal"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			sound.Play( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			sound.Play( ACF.Classes["GunClass"][Class]["sound"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			sound.Play( ACF.Classes["GunClass"][Class]["soundDistance"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			sound.Play( ACF.Classes["GunClass"][Class]["soundNormal"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
 	
 	
 
