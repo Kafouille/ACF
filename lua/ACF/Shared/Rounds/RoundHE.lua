@@ -108,7 +108,7 @@ end
 
 function ACF_HEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
+	ACF_HE( HitPos - Bullet["Flight"] * 0.015, HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	
 end
@@ -116,6 +116,8 @@ end
 --Ammocrate stuff
 function ACF_HENetworkData( Crate, BulletData )
 
+	Crate:SetNetworkedString("AmmoType","HE")
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])

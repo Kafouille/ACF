@@ -112,7 +112,8 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc )	
 			end
 			
 			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0 )
-			if BlastRes.Kill or FragRes.Kill then
+			
+			if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
 				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
 				table.insert( OccFilter , Debris )						--Add the debris created to the ignore so we don't hit it in other rounds
 				LoopKill = true
@@ -131,6 +132,9 @@ end
 
 function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflictor )
 	
+	if(!ACF.Spalling) then
+		return
+	end
 	local TotalWeight = 3.1416*(Caliber/2)^2 * Armour * 0.00079
 	local Spall = math.max(math.floor(Caliber*ACF.KEtoSpall),2)
 	local SpallWeight = TotalWeight/Spall
@@ -254,6 +258,13 @@ end
 
 function ACF_HEKill( Entity , HitVector , Energy )
 
+	local obj = Entity:GetPhysicsObject()
+	local grav = true
+	local mass = nil
+	if obj:IsValid() and ISSITP then
+		grav = obj:IsGravityEnabled()
+		mass = obj:GetMass()
+	end
 	constraint.RemoveAll( Entity )
 	Entity:Remove()
 	
@@ -269,6 +280,10 @@ function ACF_HEKill( Entity , HitVector , Energy )
 	local phys = Debris:GetPhysicsObject() 
 	if (phys:IsValid()) then
 		phys:ApplyForceOffset( HitVector:GetNormal() * Energy * 350 , Debris:GetPos()+VectorRand()*20 ) 	
+		phys:EnableGravity( grav )
+		if(mass != nil) then
+			phys:SetMass(mass)
+		end
 	end
 
 	return Debris
@@ -311,6 +326,12 @@ function ACF_AmmoExplosion( Origin , Pos )
 	local Radius = (HEWeight)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
 	local Search = true
 	local Filter = {Origin}
+	
+	local Inflictor = nil
+	if( Origin.Inflictor ) then
+		Inflictor = Origin.Inflictor
+	end
+	
 	Origin.IsExplosive = false
 	Origin.Exploding = true
 	Origin:Remove()
@@ -364,7 +385,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 		
 	end	
 	
-	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Origin , Origin )
+	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin )
 	
 	local Flash = EffectData()
 		Flash:SetOrigin( Pos )

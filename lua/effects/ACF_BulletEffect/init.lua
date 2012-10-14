@@ -60,7 +60,7 @@ function EFFECT:Init( data )
 		end
 		
 		
-		BulletData.Accel = Vector(0,0,600*-1)
+		BulletData.Accel = BulletData.Crate:GetNetworkedVector( "Accel" ) or Vector(0,0,600*-1)
 		
 		BulletData.LastThink = CurTime()
 		BulletData.Effect = self.Entity
@@ -132,7 +132,7 @@ function EFFECT:ApplyMovement( Bullet )
 				--Smoke:SetVelocity( Vector(0,0,0) )
 				Smoke:SetColor( 200 , 200 , 200 )
 				Smoke:SetDieTime( 1.2 )
-				Smoke:SetStartAlpha( 60 )
+				Smoke:SetStartAlpha( 10 )
 				Smoke:SetEndAlpha( 0 )
 				Smoke:SetStartSize( 1 )
 				Smoke:SetEndSize( Length/400*Bullet.Caliber )

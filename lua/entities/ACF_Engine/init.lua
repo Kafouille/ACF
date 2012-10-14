@@ -50,6 +50,10 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
 	Engine.LimitRPM = List["Mobility"][Id]["limitprm"]
 	Engine.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
+	Engine.iselec = List["Mobility"][Id]["iselec"]
+	Engine.elecpower = List["Mobility"][Id]["elecpower"]
+	Engine.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"]
+
 	
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
@@ -69,7 +73,14 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	
 	Engine:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	Engine:SetNetworkedBeamInt("Torque",Engine.PeakTorque)
-	Engine:SetNetworkedBeamInt("Power",math.floor(Engine.PeakTorque * Engine.PeakMaxRPM / 9548.8))
+	
+	-- add in the variable to check if its an electric motor
+	if (Engine.iselec == true )then
+		Engine:SetNetworkedBeamInt("Power",Engine.elecpower) -- add in the value from the elecpower
+	else
+		Engine:SetNetworkedBeamInt("Power",math.floor(Engine.PeakTorque * Engine.PeakMaxRPM / 9548.8))
+	end
+	
 	Engine:SetNetworkedBeamInt("MinRPM",Engine.PeakMinRPM)
 	Engine:SetNetworkedBeamInt("MaxRPM",Engine.PeakMaxRPM)
 	Engine:SetNetworkedBeamInt("LimitRPM",Engine.LimitRPM)
@@ -113,6 +124,9 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
 	self.LimitRPM = List["Mobility"][Id]["limitprm"]
 	self.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
+	self.iselec = List["Mobility"][Id]["iselec"] -- is the engine electric?
+	self.elecpower = List["Mobility"][Id]["elecpower"] -- how much power does it output
+	self.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"] -- how much power does it output
 	
 	self:SetModel( self.Model )	
 	self:SetSolid( SOLID_VPHYSICS )
@@ -125,7 +139,12 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("Torque",self.PeakTorque)
-	self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+	-- add in the variable to check if its an electric motor
+	if (self.iselec == true)  then
+		self:SetNetworkedBeamInt("Power",self.elecpower) -- add in the value from the elecpower
+	else
+		self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+	end
 	self:SetNetworkedBeamInt("MinRPM",self.PeakMinRPM)
 	self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
@@ -253,23 +272,28 @@ function ENT:CalcRPM( EngPhys )
 
 	//local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
 	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
-	local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle)
+	--local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle) /self.Inertia
+	local Drag 
+		if (self.iselec == true)  then
+		 Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.FlywheelOverride)*(1-self.Throttle) /self.Inertia
+	else
+		 Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle) /self.Inertia
+	end
 	self.FlyRPM = math.max(self.FlyRPM + self.Torque/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
-	
-	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
-	
+		
 	local Boxes = table.Count(self.GearLink) --The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	local MaxTqTable = {}
 	local MaxTq = 0
 	for Key, Gearbox in pairs(self.GearLink) do 
-		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM, self.Inertia )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
 		MaxTq = MaxTq + MaxTqTable[Key]
 	end
 	
-	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes*self.MassRatio,1)		--Calculate the ratio of total requested torque versus what's avaliable
-		
+	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
+	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes,1)		--Calculate the ratio of total requested torque versus what's avaliable
+
 	for Key, Gearbox in pairs(self.GearLink) do
-		Gearbox:Act(MaxTqTable[Key]*AvailTq)	--Split the torque fairly between the gearboxes who need it
+		Gearbox:Act(MaxTqTable[Key]*AvailTq*self.MassRatio,DeltaTime)	--Split the torque fairly between the gearboxes who need it
 	end
 	
 	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
@@ -287,7 +311,7 @@ function ENT:CalcRPM( EngPhys )
 	Wire_TriggerOutput(self.Entity, "Power", math.floor(Power))
 	Wire_TriggerOutput(self.Entity, "RPM", self.FlyRPM)
 	self.Sound:ChangePitch(math.min(20 + SmoothRPM/50,255))
-	self.Sound:ChangeVolume(0.5 + self.Throttle/1.5)
+	self.Sound:ChangeVolume(0.25 + self.Throttle/1.5)
 	
 	return RPM
 	
@@ -448,5 +472,3 @@ end
 function ENT:OnRestore()
     Wire_Restored(self.Entity)
 end
-
-

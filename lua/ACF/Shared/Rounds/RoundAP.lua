@@ -26,6 +26,7 @@ local DefTable = {}
 list.Set( "ACFRoundTypes", "AP", DefTable )  --Set the round properties
 list.Set( "ACFIdRounds", DefTable.netid , "AP" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
 
+ACF.AmmoBlacklist["AP"] = { "MO" }
 
 function ACF_APConvert( Crate, PlayerData )		--Function to convert the player's slider data into the complete round data
 	
@@ -115,6 +116,8 @@ end
 --Ammocrate stuff
 function ACF_APNetworkData( Crate, BulletData )
 
+	Crate:SetNetworkedString("AmmoType","AP")
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
@@ -174,7 +177,7 @@ end
 --GUI stuff after this
 function ACF_APGUICreate( Panel, Table )
 
-	acfmenupanel:AmmoSelect()
+	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist["AP"] )
 	
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)

@@ -26,6 +26,7 @@ local DefTable = {}
 list.Set( "ACFRoundTypes", "APHE", DefTable )  --Set the round properties
 list.Set( "ACFIdRounds", DefTable.netid , "APHE" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
 
+ACF.AmmoBlacklist["APHE"] = { "MO", "MG" }
 
 AddCSLuaFile( "ACF/Shared/Rounds/RoundHE.lua" )
 
@@ -117,7 +118,6 @@ function ACF_APHEPropImpact( Index, Bullet, Target, HitNormal, HitPos , Bone ) 	
 end
 
 function ACF_APHEWorldImpact( Index, Bullet, HitPos, HitNormal )
-		
 	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"] - Bullet["FillerMass"], Bullet["LimitVel"] )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		return "Penetrated"
@@ -129,7 +129,7 @@ end
 
 function ACF_APHEEndFlight( Index, Bullet, HitPos, HitNormal )
 	
-	ACF_HE( HitPos , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
+	ACF_HE( HitPos - Bullet["Flight"] * 0.015 , HitNormal , Bullet["FillerMass"] , Bullet["ProjMass"] - Bullet["FillerMass"] , Bullet["Owner"] )
 	ACF_RemoveBullet( Index )
 	
 end
@@ -137,6 +137,8 @@ end
 --Ammocrate stuff
 function ACF_APHENetworkData( Crate, BulletData )
 
+	Crate:SetNetworkedString("AmmoType","APHE")
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
@@ -204,7 +206,7 @@ end
 --GUI stuff after this
 function ACF_APHEGUICreate( Panel, Table )
 
-	acfmenupanel:AmmoSelect()
+	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist["APHE"] )
 
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)
