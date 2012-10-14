@@ -86,7 +86,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	local Width = 30
 	local length = 105
 	local Scale = Gun.Caliber/30
-	local VertexFile = file.Read(Gun.Class..".txt")
+	local VertexFile = file.Read(Gun.Class..".txt", "DATA")
 	local PerVertex = string.Explode( "v", VertexFile )
 	local Import = {}
 	for Key, Value in pairs(PerVertex) do
@@ -175,7 +175,7 @@ end
 function ENT:TriggerInput( iname , value )
 
 	if (iname == "Unload" and value > 0) then
-		timer.Simple( 0, self.UnloadAmmo, self )
+		timer.Simple( 0, self.UnloadAmmo() )
 	elseif ( iname == "Fire" and value > 0 ) then
 		if self.Entity.NextFire < CurTime() then
 			self.Entity:FireShell()

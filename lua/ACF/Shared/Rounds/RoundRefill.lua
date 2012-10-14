@@ -33,10 +33,14 @@ end
 --Ammocrate stuff
 function ACF_RefillNetworkData( Crate, BulletData )
 
+	Crate:SetNetworkedString("AmmoType","Refill")
+	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
+	
 	Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])	
 	Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
 	Crate:SetNetworkedInt("FillerMass",BulletData["FillerMass"])
 	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
+	
 	Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
 	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
 	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])

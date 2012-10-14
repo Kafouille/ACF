@@ -34,7 +34,7 @@ function ACFGearboxCreateDisplayString( data, Timer )
 		Ent:SetBodygroup(1,0)
 	end
 	
-	if (not SinglePlayer()) then
+	if (not game.SinglePlayer()) then
 		local PlayerName = Ent:GetPlayerName()
 		Ent.DisplayString = Ent.DisplayString .."(" .. PlayerName .. ")"
 	end

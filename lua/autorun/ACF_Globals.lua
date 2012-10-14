@@ -82,6 +82,10 @@ ACF.RoundTypes = list.Get("ACFRoundTypes")
 
 ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds classes from clientside with just an integer
 
+game.AddParticles("particles/acf_muzzleflashes.pcf")
+game.AddParticles("particles/explosion1.pcf")
+game.AddParticles("particles/rocket_motor.pcf")
+
 PrecacheParticleSystem("tracer_tail_white")
 for Class,Table in pairs(ACF.Classes["GunClass"]) do
 	PrecacheParticleSystem(Table["muzzleflash"])
@@ -144,7 +148,7 @@ function ACF_UpdateChecking( )
 	
 	print("Checking for updates....")
 	
-	http.Get("http://acf.googlecode.com/svn/","",function(contents,size)
+	http.Fetch("http://acf.googlecode.com/svn/",function(contents,size)
 		local rev = tonumber(string.match( contents, "Revision ([0-9]+)" ))
 		if rev and ACF.Version >= rev then
 			print("ACF Is Up To Date, Latest Version: "..rev)
@@ -158,7 +162,7 @@ function ACF_UpdateChecking( )
 		end
 		ACF.CurrentVersion = rev
 		
-	end)
+	end, function() end)
 end
 ACF_UpdateChecking( )
 
