@@ -143,7 +143,7 @@ function PANEL:Init( )
 	
 	
 
-	local Missiles = self.WeaponSelect:AddNode( "Missiles" )
+	/*local Missiles = self.WeaponSelect:AddNode( "Missiles" )
 	for MisID, MisTable in pairs(self.WeaponDisplay["Missiles"]) do
 
 		local EndNode = Missiles:AddNode( MisTable.name or "No Name" )
@@ -156,7 +156,7 @@ function PANEL:Init( )
     
 		EndNode.Icon:SetImage( "gui/silkicons/newspaper")
     
-	end
+	end*/
 	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
 	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
 		
@@ -255,10 +255,10 @@ function ACFHomeGUICreate( Table )
 	local versionstring
 	if ACF.Version >= ACF.CurrentVersion then
 		versionstring = "Up To Date"
-		color = Color(0,255,0,255)
+		color = Color(0,225,0,255)
 	else
 		versionstring = "Out Of Date"
-		color = Color(255,0,0,255)
+		color = Color(225,0,0,255)
 
 	end
 	
@@ -315,7 +315,7 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Get("http://acf.googlecode.com/svn/trunk/changelog.txt", "", ACFChangelogHTTPCallBack) 
+http.Fetch("http://acf.googlecode.com/svn/trunk/changelog.txt", ACFChangelogHTTPCallBack, function() end)
 
 function PANEL:AmmoSelect( Blacklist )
 	
@@ -330,7 +330,7 @@ function PANEL:AmmoSelect( Blacklist )
 	end
 	
 	--Creating the ammo crate selection
-	acfmenupanel.CData.CrateSelect = vgui.Create( "DMultiChoice", acfmenupanel.CustomDisplay )	--Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
+	acfmenupanel.CData.CrateSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )	--Every display and slider is placed in the Round table so it gets trashed when selecting a new round type
 		acfmenupanel.CData.CrateSelect:SetSize(100, 30)
 		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Ammo"] ) do
 			acfmenupanel.CData.CrateSelect:AddChoice( Value.id , Key )
@@ -343,7 +343,7 @@ function PANEL:AmmoSelect( Blacklist )
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.CrateSelect )
 	
 	--Create the caliber selection display
-	acfmenupanel.CData.CaliberSelect = vgui.Create( "DMultiChoice", acfmenupanel.CustomDisplay )	
+	acfmenupanel.CData.CaliberSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )	
 		acfmenupanel.CData.CaliberSelect:SetSize(100, 30)
 		for Key, Value in pairs( acfmenupanel.WeaponDisplay["Guns"] ) do
 			if( !table.HasValue( Blacklist, Value.gunclass ) ) then

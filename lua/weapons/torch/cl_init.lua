@@ -1,7 +1,7 @@
 --Chad provided a fix for multicore rendering.
 include('shared.lua')
 
-surface.CreateFont("Arial", 40, 1000, true, false, "TorchFont")
+surface.CreateFont("TorchFont", {size=40, weight=1000, antialias=true, additive=false, font="Arial"})
 
 -- moved these to the top, you don't want to be calling this every frame
 local RT = GetRenderTarget( "GModToolgunScreen", 256, 256 )

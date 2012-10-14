@@ -228,9 +228,12 @@ function ENT:Think()
 	self.Entity:GetPhysicsObject():SetMass(self.Mass) 
 	
 	self:SetNetworkedString("Ammo",self.Ammo)
-	self:SetNetworkedVector("TracerColour",self.Entity:GetColor())	
 	
-	local vec = Vector(0,0,server_settings.Int( "sv_gravity", 600 )*-1)
+	local color = self.Entity:GetColor();
+	self:SetNetworkedVector("TracerColour", Vector( color.r, color.g, color.b ) )
+	
+	local cvarGrav = GetConVar("sv_gravity")
+	local vec = Vector(0,0,cvarGrav:GetInt()*-1)
 	if( self.sitp_inspace ) then
 		vec = Vector(0, 0, 0)
 	end

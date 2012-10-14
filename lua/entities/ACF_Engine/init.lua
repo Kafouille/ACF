@@ -53,7 +53,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.iselec = List["Mobility"][Id]["iselec"]
 	Engine.elecpower = List["Mobility"][Id]["elecpower"]
 	Engine.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"]
-
 	
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
@@ -72,15 +71,13 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	end
 	
 	Engine:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
-	Engine:SetNetworkedBeamInt("Torque",Engine.PeakTorque)
-	
+	Engine:SetNetworkedBeamInt("Torque",Engine.PeakTorque)	
 	-- add in the variable to check if its an electric motor
 	if (Engine.iselec == true )then
 		Engine:SetNetworkedBeamInt("Power",Engine.elecpower) -- add in the value from the elecpower
 	else
 		Engine:SetNetworkedBeamInt("Power",math.floor(Engine.PeakTorque * Engine.PeakMaxRPM / 9548.8))
 	end
-	
 	Engine:SetNetworkedBeamInt("MinRPM",Engine.PeakMinRPM)
 	Engine:SetNetworkedBeamInt("MaxRPM",Engine.PeakMaxRPM)
 	Engine:SetNetworkedBeamInt("LimitRPM",Engine.LimitRPM)
@@ -127,7 +124,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.iselec = List["Mobility"][Id]["iselec"] -- is the engine electric?
 	self.elecpower = List["Mobility"][Id]["elecpower"] -- how much power does it output
 	self.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"] -- how much power does it output
-	
+
 	self:SetModel( self.Model )	
 	self:SetSolid( SOLID_VPHYSICS )
 	self.Out = self:WorldToLocal(self:GetAttachment(self:LookupAttachment( "driveshaft" )).Pos)
@@ -145,6 +142,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	else
 		self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
 	end
+	
 	self:SetNetworkedBeamInt("MinRPM",self.PeakMinRPM)
 	self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
@@ -217,14 +215,14 @@ function ENT:ACFInit()
 	
 	for _,Ent in pairs(Constrained) do
 	
-		if validEntity(Ent) then
+		if IsValid(Ent) then
 			local Phys = Ent:GetPhysicsObject()
 			
 			if Phys and Phys:IsValid() then
 				self.Mass = self.Mass + Phys:GetMass()
 				local Parent = Ent:GetParent()
 				
-				if validEntity(Parent) then
+				if IsValid(Parent) then
 					
 					local Constraints = {}
 					table.Add(Constraints,constraint.FindConstraints(Ent, "Weld"))
@@ -472,3 +470,5 @@ end
 function ENT:OnRestore()
     Wire_Restored(self.Entity)
 end
+
+

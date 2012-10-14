@@ -300,7 +300,7 @@ function ACF_APKill( Entity , HitVector , Power )
 		Debris:SetAngles( Entity:GetAngles() )
 		Debris:SetPos( Entity:GetPos() )
 		Debris:SetMaterial(Entity:GetMaterial())
-		Debris:SetColor(120,120,120,255)
+		Debris:SetColor(Color(120,120,120,255))
 		Debris:Spawn()
 		Debris:Activate()
 		
@@ -320,7 +320,7 @@ end
 
 function ACF_AmmoExplosion( Origin , Pos )
 
-	local HEWeight = Origin.BulletData["BoomPower"]*Origin.Ammo/2
+	local HEWeight = Origin.Ammo/2
 	local LastHE = 0
 	local Power = HEWeight * ACF.HEPower					--Power in KiloJoules of the filler mass of  TNT 
 	local Radius = (HEWeight)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
@@ -360,7 +360,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 				if ( Occ.Hit and Occ.Entity:EntIndex() != Found.Entity:EntIndex() ) then 
 						--Msg("Target Occluded\n")
 				else
-					local FoundHE = Found.BulletData["BoomPower"]*Found.Ammo*2
+					local FoundHE = Found.Ammo*2
 					--Msg("Adding " ..FoundAmmo.. " to the blast\n")
 					HEWeight = HEWeight + FoundHE
 					--Msg("Boom = " ..BoomPower.. "\n")
