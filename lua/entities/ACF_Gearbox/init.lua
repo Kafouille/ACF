@@ -316,7 +316,7 @@ end
 
 function ENT:Calc( InputRPM, InputInertia )
 
-	if self.LastActive == CurTime() then return self.CurRPM end
+	if self.LastActive == CurTime() then return math.min(self.TotalReqTq, self.MaxTorque) end
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
 	end
