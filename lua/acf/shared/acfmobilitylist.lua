@@ -1,4 +1,4 @@
-AddCSLuaFile( "acf/shared/acfmobilitylist.lua" )
+AddCSLuaFile( "ACF/Shared/ACFMobilityList.lua" )
 
 local MobilityTable = {}  --Start mobility listing
 
@@ -6,9 +6,12 @@ local MobilityTable = {}  --Start mobility listing
 
 --Overall Gearbox size torque limits
 local GearSMT = 550
-local GearMMT = 1900
+local GearMMT = 1700
 local GearLMT = 10000
-local GearTDSMT = 800 --Max torque for 1/2 speed smalls
+
+local GearTCS = 25000  --Transfer case/diff torque ratings (They are high to compensate for gearbox linking)
+local GearTCM = 50000
+local GearTCL = 100000
 
 --1 speed weights
 local Gear1SW = 10
@@ -39,6 +42,154 @@ local Gear8LW = 320
 
 
 --fix 6.5l i6 sound & 1l sound
+--Special engines
+
+local Engine29V8 = {}
+	Engine29V8.id = "2.9-V8"
+	Engine29V8.ent = "acf_engine"
+	Engine29V8.type = "Mobility"
+	Engine29V8.name = "2.9L V8 Petrol"
+	Engine29V8.desc = "Racing V8, very high revving and loud"
+	Engine29V8.model = "models/engines/v8s.mdl"
+	Engine29V8.sound = "ACF_engines/v8_special.wav"
+	Engine29V8.category = "Special"
+	Engine29V8.weight = 180
+	Engine29V8.torque = 250		--in Meter/Kg
+	Engine29V8.flywheelmass = 0.075
+	--Engine29V8.idlesound = "ACF_engines/v8idle_petrolsmall.wav"
+	
+	Engine29V8.idlerpm = 1000	--in Rotations Per Minute
+	Engine29V8.peakminrpm = 5500
+	Engine29V8.peakmaxrpm = 9000
+	Engine29V8.limitprm = 10000
+	if ( CLIENT ) then
+		Engine29V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine29V8.guiupdate = function() return end
+	end
+MobilityTable["2.9-V8"] = Engine29V8
+
+local Engine130V12 = {}
+	Engine130V12.id = "13.0-V12"
+	Engine130V12.ent = "acf_engine"
+	Engine130V12.type = "Mobility"
+	Engine130V12.name = "13.0L V12 Petrol"
+	Engine130V12.desc = "Thirsty gasoline v12, good torque and power for medium applications."
+	Engine130V12.model = "models/engines/v12m.mdl"
+	Engine130V12.sound = "ACF_engines/v12_special.wav"
+	Engine130V12.category = "Special"
+	Engine130V12.weight = 520
+	Engine130V12.torque = 750		--in Meter/Kg
+	Engine130V12.flywheelmass = 1
+	
+	Engine130V12.idlerpm = 700	--in Rotations Per Minute
+	Engine130V12.peakminrpm = 2500
+	Engine130V12.peakmaxrpm = 4000
+	Engine130V12.limitprm = 4000
+	if ( CLIENT ) then
+		Engine130V12.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine130V12.guiupdate = function() return end
+	end
+MobilityTable["13.0-V12"] = Engine130V12
+
+local Engine19I4= {}
+	Engine19I4.id = "1.9L-I4"
+	Engine19I4.ent = "acf_engine"
+	Engine19I4.type = "Mobility"
+	Engine19I4.name = "1.9L I4 Petrol"
+	Engine19I4.desc = "Supercharged racing 4 cylinder, most of the power in the high revs."
+	Engine19I4.model = "models/engines/inline4s.mdl"
+	Engine19I4.sound = "ACF_engines/i4_special.wav"
+	Engine19I4.category = "Special"
+	Engine19I4.weight = 150
+	Engine19I4.torque = 220		--in Meter/Kg
+	Engine19I4.flywheelmass = 0.06
+	
+
+	Engine19I4.idlerpm = 950	--in Rotations Per Minute
+	Engine19I4.peakminrpm = 5200
+	Engine19I4.peakmaxrpm = 8500
+	Engine19I4.limitprm = 9000
+	if ( CLIENT ) then
+		Engine19I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine19I4.guiupdate = function() return end
+	end
+MobilityTable["1.9L-I4"] = Engine19I4
+
+
+-- Spankels
+
+local Engine9Wank= {}
+	Engine9Wank.id = "900cc-R"
+	Engine9Wank.ent = "acf_engine"
+	Engine9Wank.type = "Mobility"
+	Engine9Wank.name = "900cc Rotary"
+	Engine9Wank.desc = "Small rotary engine, very high strung and suited for yard use."
+	Engine9Wank.model = "models/engines/emotorsmall2.mdl"
+	Engine9Wank.sound = "ACF_engines/wankel_small.wav"
+	Engine9Wank.category = "Rotary"
+	Engine9Wank.weight = 35
+	Engine9Wank.torque = 78		--in Meter/Kg
+	Engine9Wank.flywheelmass = 0.06
+	
+
+	Engine9Wank.idlerpm = 950	--in Rotations Per Minute
+	Engine9Wank.peakminrpm = 4500
+	Engine9Wank.peakmaxrpm = 9000
+	Engine9Wank.limitprm = 9200
+	if ( CLIENT ) then
+		Engine9Wank.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine9Wank.guiupdate = function() return end
+	end
+MobilityTable["900cc-R"] = Engine9Wank
+
+local Engine13Wank= {}
+	Engine13Wank.id = "1.3L-R"
+	Engine13Wank.ent = "acf_engine"
+	Engine13Wank.type = "Mobility"
+	Engine13Wank.name = "1.3L Rotary"
+	Engine13Wank.desc = "Medium Wankel for general use. Wankels have a somewhat wide powerband, but very high strung."
+	Engine13Wank.model = "models/engines/emotorsmall2.mdl"
+	Engine13Wank.sound = "ACF_engines/wankel_medium.wav"
+	Engine13Wank.category = "Rotary"
+	Engine13Wank.weight = 70
+	Engine13Wank.torque = 155		--in Meter/Kg
+	Engine13Wank.flywheelmass = 0.06
+	
+
+	Engine13Wank.idlerpm = 950	--in Rotations Per Minute
+	Engine13Wank.peakminrpm = 4100
+	Engine13Wank.peakmaxrpm = 8500
+	Engine13Wank.limitprm = 9000
+	if ( CLIENT ) then
+		Engine13Wank.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine13Wank.guiupdate = function() return end
+	end
+MobilityTable["1.3L-R"] = Engine13Wank
+
+local Engine20Wank= {}
+	Engine20Wank.id = "2.0L-R"
+	Engine20Wank.ent = "acf_engine"
+	Engine20Wank.type = "Mobility"
+	Engine20Wank.name = "2.0L Rotary"
+	Engine20Wank.desc = "High performance rotary engine."
+	Engine20Wank.model = "models/engines/emotormed2.mdl"
+	Engine20Wank.sound = "ACF_engines/wankel_large.wav"
+	Engine20Wank.category = "Rotary"
+	Engine20Wank.weight = 125
+	Engine20Wank.torque = 235		--in Meter/Kg
+	Engine20Wank.flywheelmass = 0.1
+	
+
+	Engine20Wank.idlerpm = 950	--in Rotations Per Minute
+	Engine20Wank.peakminrpm = 4100
+	Engine20Wank.peakmaxrpm = 8500
+	Engine20Wank.limitprm = 9500
+	if ( CLIENT ) then
+		Engine20Wank.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
+		Engine20Wank.guiupdate = function() return end
+	end
+MobilityTable["2.0L-R"] = Engine20Wank
+
 
 -- Gas Turbines
 local EngineGTsmall = {}
@@ -50,13 +201,13 @@ local EngineGTsmall = {}
 	EngineGTsmall.model = "models/engines/gasturbine_s.mdl"
 	EngineGTsmall.sound = "ACF_engines/turbine_small.wav"
 	EngineGTsmall.category = "Turbine"
-	EngineGTsmall.weight = 150
-	EngineGTsmall.torque = 300	
+	EngineGTsmall.weight = 200
+	EngineGTsmall.torque = 400	
     EngineGTsmall.flywheelmass = 1		--in Meter/Kg
 	EngineGTsmall.idlerpm = 2000	--in Rotations Per Minute
 	EngineGTsmall.peakminrpm = 1
 	EngineGTsmall.peakmaxrpm = 1
-	EngineGTsmall.limitprm = 15000
+	EngineGTsmall.limitprm = 10000
 	EngineGTsmall.iselec = true
 	EngineGTsmall.elecpower = 134
 	EngineGTsmall.flywheeloverride = 6000
@@ -127,10 +278,10 @@ local EngineEsmall = {}
 	EngineEsmall.type = "Mobility"
 	EngineEsmall.name = "Electric motor, Small"
 	EngineEsmall.desc = "A small electric motor, loads of torque, but low power\n\nElectric motors provide huge amounts of torque, but are very heavy"
-	EngineEsmall.model = "models/engines/emotorsmall.mdl"
+	EngineEsmall.model = "models/engines/emotorsmall2.mdl"
 	EngineEsmall.sound = "ACF_engines/electric_small.wav"
 	EngineEsmall.category = "Electric"
-	EngineEsmall.weight = 350
+	EngineEsmall.weight = 250
 	EngineEsmall.torque = 400	
     EngineEsmall.flywheelmass = 0.25	--in Meter/Kg
 	EngineEsmall.idlerpm = 10	--in Rotations Per Minute
@@ -157,7 +308,7 @@ local EngineEmedium = {}
 	EngineEmedium.model = "models/engines/emotormed.mdl"
 	EngineEmedium.sound = "ACF_engines/electric_medium.wav"
 	EngineEmedium.category = "Electric"
-	EngineEmedium.weight = 1000
+	EngineEmedium.weight = 850
 	EngineEmedium.torque = 1200
     EngineEmedium.flywheelmass = 1.2		--in Meter/Kg
 	EngineEmedium.idlerpm = 10	--in Rotations Per Minute
@@ -185,7 +336,7 @@ local EngineElarge = {}
 	EngineElarge.model = "models/engines/emotorlarge.mdl"
 	EngineElarge.sound = "ACF_engines/electric_large.wav"
 	EngineElarge.category = "Electric"
-	EngineElarge.weight = 2000
+	EngineElarge.weight = 1900
 	EngineElarge.torque = 3000	
     EngineElarge.flywheelmass = 8		--in Meter/Kg
 	EngineElarge.idlerpm = 10	--in Rotations Per Minute
@@ -237,7 +388,7 @@ local Engine5I1 = {}
 	Engine5I1.model = "models/engines/1cylm.mdl"
 	Engine5I1.sound = "acf_engines/i1_medium.wav"
 	Engine5I1.category = "Single"
-	Engine5I1.weight = 30
+	Engine5I1.weight = 20
 	Engine5I1.torque = 40		--in Meter/Kg
 	Engine5I1.flywheelmass = 0.005	
 
@@ -260,7 +411,7 @@ local Engine13I1 = {}
 	Engine13I1.model = "models/engines/1cylb.mdl"
 	Engine13I1.sound = "acf_engines/i1_large.wav"
 	Engine13I1.category = "Single"
-	Engine13I1.weight = 55
+	Engine13I1.weight = 50
 	Engine13I1.torque = 90		--in Meter/Kg
 	Engine13I1.flywheelmass = 0.1	
 
@@ -284,7 +435,7 @@ local Engine6V2 = {}
 	Engine6V2.model = "models/engines/v-twins.mdl"
 	Engine6V2.sound = "acf_engines/vtwin_small.wav"
 	Engine6V2.category = "V-Twin"
-	Engine6V2.weight = 40
+	Engine6V2.weight = 30
 	Engine6V2.torque = 50		--in Meter/Kg
 	Engine6V2.flywheelmass = 0.01	
 
@@ -307,7 +458,7 @@ local Engine12V2 = {}
 	Engine12V2.model = "models/engines/v-twinm.mdl"
 	Engine12V2.sound = "acf_engines/vtwin_medium.wav"
 	Engine12V2.category = "V-Twin"
-	Engine12V2.weight = 60
+	Engine12V2.weight = 50
 	Engine12V2.torque = 85		--in Meter/Kg
 	Engine12V2.flywheelmass = 0.02	
 
@@ -330,7 +481,7 @@ local Engine24V2 = {}
 	Engine24V2.model = "models/engines/v-twinb.mdl"
 	Engine24V2.sound = "acf_engines/vtwin_large.wav"
 	Engine24V2.category = "V-Twin"
-	Engine24V2.weight = 120
+	Engine24V2.weight = 100
 	Engine24V2.torque = 160		--in Meter/Kg
 	Engine24V2.flywheelmass = 0.075	
 
@@ -348,7 +499,7 @@ MobilityTable["2.4-V2"] = Engine24V2
 
 
 -- Petrol I4s
-local Engine15I4 = {}
+local Engine15I4= {}
 	Engine15I4.id = "1.5-I4"
 	Engine15I4.ent = "acf_engine"
 	Engine15I4.type = "Mobility"
@@ -357,7 +508,7 @@ local Engine15I4 = {}
 	Engine15I4.model = "models/engines/inline4s.mdl"
 	Engine15I4.sound = "ACF_engines/i4_petrolsmall2.wav"
 	Engine15I4.category = "I4"
-	Engine15I4.weight = 125
+	Engine15I4.weight = 50
 	Engine15I4.torque = 90		--in Meter/Kg
 	Engine15I4.flywheelmass = 0.06
 	Engine15I4.powermod = 1
@@ -381,7 +532,7 @@ local Engine37I4 = {}
 	Engine37I4.model = "models/engines/inline4m.mdl"
 	Engine37I4.sound = "ACF_engines/i4_petrolmedium2.wav"
 	Engine37I4.category = "I4"
-	Engine37I4.weight = 250
+	Engine37I4.weight = 200
 	Engine37I4.torque = 300		--in Meter/Kg
 	Engine37I4.flywheelmass = 0.2
 	
@@ -404,7 +555,7 @@ local Engine160I4 = {}
 	Engine160I4.model = "models/engines/inline4l.mdl"
 	Engine160I4.sound = "ACF_engines/i4_petrollarge.wav"
 	Engine160I4.category = "I4"
-	Engine160I4.weight = 800
+	Engine160I4.weight = 600
 	Engine160I4.torque = 950		--in Meter/Kg
 	Engine160I4.flywheelmass = 1.5
 	
@@ -431,7 +582,7 @@ local Engine16I4 = {}
 	Engine16I4.model = "models/engines/inline4s.mdl"
 	Engine16I4.sound = "ACF_engines/i4_diesel2.wav"
 	Engine16I4.category = "I4"
-	Engine16I4.weight = 150
+	Engine16I4.weight = 90
 	Engine16I4.torque = 150		--in Meter/Kg
 	Engine16I4.flywheelmass = 0.2
 	
@@ -454,7 +605,7 @@ local Engine31I4 = {}
 	Engine31I4.model = "models/engines/inline4m.mdl"
 	Engine31I4.sound = "ACF_engines/i4_dieselmedium.wav"
 	Engine31I4.category = "I4"
-	Engine31I4.weight = 350
+	Engine31I4.weight = 250
 	Engine31I4.torque = 400		--in Meter/Kg
 	Engine31I4.flywheelmass = 1
 	
@@ -501,7 +652,7 @@ local Engine14B4 = {}
 	Engine14B4.model = "models/engines/b4small.mdl"
 	Engine14B4.sound = "ACF_engines/b4_petrolsmall.wav"
 	Engine14B4.category = "B4"
-	Engine14B4.weight = 75
+	Engine14B4.weight = 60
 	Engine14B4.torque = 105		--in Meter/Kg
 	Engine14B4.flywheelmass = 0.06
 	
@@ -524,7 +675,7 @@ local Engine21B4 = {}
 	Engine21B4.model = "models/engines/b4small.mdl"
 	Engine21B4.sound = "ACF_engines/b4_petrolmedium.wav"
 	Engine21B4.category = "B4"
-	Engine21B4.weight = 150
+	Engine21B4.weight = 140
 	Engine21B4.torque = 225		--in Meter/Kg
 	Engine21B4.flywheelmass = 0.15
 	
@@ -547,8 +698,8 @@ local Engine32B4 = {}
 	Engine32B4.model = "models/engines/b4med.mdl"
 	Engine32B4.sound = "ACF_engines/b4_petrollarge.wav"
 	Engine32B4.category = "B4"
-	Engine32B4.weight = 200
-	Engine32B4.torque = 375		--in Meter/Kg
+	Engine32B4.weight = 210
+	Engine32B4.torque = 315	--in Meter/Kg
 	Engine32B4.flywheelmass = 0.15
 	
 	Engine32B4.idlerpm = 900	--in Rotations Per Minute
@@ -571,7 +722,7 @@ local Engine28B6 = {}
 	Engine28B6.model = "models/engines/b6small.mdl"
 	Engine28B6.sound = "ACF_engines/b6_petrolsmall.wav"
 	Engine28B6.category = "B6"
-	Engine28B6.weight = 200
+	Engine28B6.weight = 100
 	Engine28B6.torque = 170		--in Meter/Kg
 	Engine28B6.flywheelmass = 0.08
 	
@@ -594,7 +745,7 @@ local Engine50B6 = {}
 	Engine50B6.model = "models/engines/b6med.mdl"
 	Engine50B6.sound = "ACF_engines/b6_petrolmedium.wav"
 	Engine50B6.category = "B6"
-	Engine50B6.weight = 275
+	Engine50B6.weight = 240
 	Engine50B6.torque = 360		--in Meter/Kg
 	Engine50B6.flywheelmass = 0.1
 	
@@ -617,7 +768,7 @@ local Engine10B6 = {}
 	Engine10B6.model = "models/engines/b6large.mdl"
 	Engine10B6.sound = "ACF_engines/b6_petrollarge.wav"
 	Engine10B6.category = "B6"
-	Engine10B6.weight = 600
+	Engine10B6.weight = 630
 	Engine10B6.torque = 900		--in Meter/Kg
 	Engine10B6.flywheelmass = 1
 	
@@ -642,7 +793,7 @@ local Engine36V6 = {}
 	Engine36V6.model = "models/engines/v6small.mdl"
 	Engine36V6.sound = "ACF_engines/v6_petrolsmall.wav"
 	Engine36V6.category = "V6"
-	Engine36V6.weight = 280
+	Engine36V6.weight = 190
 	Engine36V6.torque = 285		--in Meter/Kg
 	Engine36V6.flywheelmass = 0.25
 	
@@ -665,7 +816,7 @@ local Engine62V6 = {}
 	Engine62V6.model = "models/engines/v6med.mdl"
 	Engine62V6.sound = "ACF_engines/v6_petrolmedium.wav"
 	Engine62V6.category = "V6"
-	Engine62V6.weight = 450
+	Engine62V6.weight = 360
 	Engine62V6.torque = 525		--in Meter/Kg
 	Engine62V6.flywheelmass = 0.45
 	
@@ -688,7 +839,7 @@ local Engine120V6 = {}
 	Engine120V6.model = "models/engines/v6large.mdl"
 	Engine120V6.sound = "ACF_engines/v6_petrollarge.wav"
 	Engine120V6.category = "V6"
-	Engine120V6.weight = 750
+	Engine120V6.weight = 920
 	Engine120V6.torque = 1300		--in Meter/Kg
 	Engine120V6.flywheelmass = 2.5
 	
@@ -712,7 +863,7 @@ local Engine30I6 = {}
 	Engine30I6.model = "models/engines/inline6s.mdl"
 	Engine30I6.sound = "ACF_engines/l6_dieselsmall.wav"
 	Engine30I6.category = "I6"
-	Engine30I6.weight = 300
+	Engine30I6.weight = 150
 	Engine30I6.torque = 240		--in Meter/Kg
 	Engine30I6.flywheelmass = 0.5
 		
@@ -735,13 +886,13 @@ local Engine65I6 = {}
 	Engine65I6.model = "models/engines/inline6m.mdl"
 	Engine65I6.sound = "ACF_engines/l6_dieselmedium4.wav"
 	Engine65I6.category = "I6"
-	Engine65I6.weight = 650
-	Engine65I6.torque = 550		--in Meter/Kg
+	Engine65I6.weight = 450
+	Engine65I6.torque = 650		--in Meter/Kg
 	Engine65I6.flywheelmass = 1.5
 	
 	Engine65I6.idlerpm = 600	--in Rotations Per Minute
-	Engine65I6.peakminrpm = 1100
-	Engine65I6.peakmaxrpm = 3500
+	Engine65I6.peakminrpm = 1000
+	Engine65I6.peakmaxrpm = 3000
 	Engine65I6.limitprm = 4000
 	if ( CLIENT ) then
 		Engine65I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -758,14 +909,14 @@ local Engine200I6 = {}
 	Engine200I6.model = "models/engines/inline6l.mdl"
 	Engine200I6.sound = "ACF_engines/l6_diesellarge2.wav"
 	Engine200I6.category = "I6"
-	Engine200I6.weight = 1000
+	Engine200I6.weight = 1200
 	Engine200I6.torque = 2000		--in Meter/Kg
 	Engine200I6.flywheelmass = 8
 	
 	Engine200I6.idlerpm = 400	--in Rotations Per Minute
-	Engine200I6.peakminrpm = 500
-	Engine200I6.peakmaxrpm = 1700
-	Engine200I6.limitprm = 2250
+	Engine200I6.peakminrpm = 650
+	Engine200I6.peakmaxrpm = 2100
+	Engine200I6.limitprm = 2600
 	if ( CLIENT ) then
 		Engine200I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine200I6.guiupdate = function() return end
@@ -784,7 +935,7 @@ local Engine22I6 = {}
 	Engine22I6.model = "models/engines/inline6s.mdl"
 	Engine22I6.sound = "ACF_engines/l6_petrolsmall2.wav"
 	Engine22I6.category = "I6"
-	Engine22I6.weight = 250
+	Engine22I6.weight = 120
 	Engine22I6.torque = 190		--in Meter/Kg
 	Engine22I6.flywheelmass = 0.1
 	
@@ -807,14 +958,14 @@ local Engine48I6 = {}
 	Engine48I6.model = "models/engines/inline6m.mdl"
 	Engine48I6.sound = "ACF_engines/l6_petrolmedium.wav"
 	Engine48I6.category = "I6"
-	Engine48I6.weight = 350
-	Engine48I6.torque = 400		--in Meter/Kg
+	Engine48I6.weight = 300
+	Engine48I6.torque = 450		--in Meter/Kg
 	Engine48I6.flywheelmass = 0.2
 	
 	Engine48I6.idlerpm = 900	--in Rotations Per Minute
-	Engine48I6.peakminrpm = 3500
-	Engine48I6.peakmaxrpm = 5800
-	Engine48I6.limitprm = 6500
+	Engine48I6.peakminrpm = 3100
+	Engine48I6.peakmaxrpm = 5000
+	Engine48I6.limitprm = 5500
 	if ( CLIENT ) then
 		Engine48I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine48I6.guiupdate = function() return end
@@ -830,13 +981,13 @@ local Engine172I6 = {}
 	Engine172I6.model = "models/engines/inline6l.mdl"
 	Engine172I6.sound = "ACF_engines/l6_petrollarge2.wav"
 	Engine172I6.category = "I6"
-	Engine172I6.weight = 700
+	Engine172I6.weight = 850
 	Engine172I6.torque = 1200		--in Meter/Kg
 	Engine172I6.flywheelmass = 2.5
 	
 	Engine172I6.idlerpm = 800	--in Rotations Per Minute
 	Engine172I6.peakminrpm = 2000
-	Engine172I6.peakmaxrpm = 3300
+	Engine172I6.peakmaxrpm = 4000
 	Engine172I6.limitprm = 4000
 	if ( CLIENT ) then
 		Engine172I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -858,7 +1009,7 @@ local Engine40V12 = {}
 	Engine40V12.model = "models/engines/v12s.mdl"
 	Engine40V12.sound = "ACF_engines/v12_dieselsmall.wav"
 	Engine40V12.category = "V12"
-	Engine40V12.weight = 400
+	Engine40V12.weight = 260
 	Engine40V12.torque = 400		--in Meter/Kg
 	Engine40V12.flywheelmass = 0.475
 	
@@ -881,8 +1032,8 @@ local Engine92V12 = {}
 	Engine92V12.model = "models/engines/v12m.mdl"
 	Engine92V12.sound = "ACF_engines/v12_dieselmedium.wav"
 	Engine92V12.category = "V12"
-	Engine92V12.weight = 900
-	Engine92V12.torque = 1000		--in Meter/Kg
+	Engine92V12.weight = 600
+	Engine92V12.torque = 860		--in Meter/Kg
 	Engine92V12.flywheelmass = 2.5
 	
 	Engine92V12.idlerpm = 675	--in Rotations Per Minute
@@ -896,7 +1047,7 @@ local Engine92V12 = {}
 MobilityTable["9.2-V12"] = Engine92V12
 
 local Engine210V12 = {}
-	Engine210V12.id = "21.0-V12"
+	Engine210V12.id = "21.0L-V12"
 	Engine210V12.ent = "acf_engine"
 	Engine210V12.type = "Mobility"
 	Engine210V12.name = "21.0 V12 Diesel"
@@ -904,7 +1055,7 @@ local Engine210V12 = {}
 	Engine210V12.model = "models/engines/v12l.mdl"
 	Engine210V12.sound = "ACF_engines/v12_diesellarge.wav"
 	Engine210V12.category = "V12"
-	Engine210V12.weight = 1500
+	Engine210V12.weight = 1800
 	Engine210V12.torque = 2800		--in Meter/Kg
 	Engine210V12.flywheelmass = 7
 	
@@ -930,7 +1081,7 @@ local Engine46V12 = {}
 	Engine46V12.model = "models/engines/v12s.mdl"
 	Engine46V12.sound = "ACF_engines/v12_petrolsmall.wav"
 	Engine46V12.category = "V12"
-	Engine46V12.weight = 300
+	Engine46V12.weight = 160
 	Engine46V12.torque = 250		--in Meter/Kg
 	Engine46V12.flywheelmass = 0.2
 	
@@ -953,7 +1104,7 @@ local Engine70V12 = {}
 	Engine70V12.model = "models/engines/v12m.mdl"
 	Engine70V12.sound = "ACF_engines/v12_petrolmedium.wav"
 	Engine70V12.category = "V12"
-	Engine70V12.weight = 450
+	Engine70V12.weight = 360
 	Engine70V12.torque = 520		--in Meter/Kg
 	Engine70V12.flywheelmass = 0.450
 	
@@ -968,7 +1119,7 @@ local Engine70V12 = {}
 MobilityTable["7.0-V12"] = Engine70V12
 
 local Engine230V12 = {}
-	Engine230V12.id = "23.0-V12"
+	Engine230V12.id = "23.0L-V12"
 	Engine230V12.ent = "acf_engine"
 	Engine230V12.type = "Mobility"
 	Engine230V12.name = "23.0 V12 Petrol"
@@ -976,7 +1127,7 @@ local Engine230V12 = {}
 	Engine230V12.model = "models/engines/v12l.mdl"
 	Engine230V12.sound = "ACF_engines/v12_petrollarge.wav"
 	Engine230V12.category = "V12"
-	Engine230V12.weight = 1300
+	Engine230V12.weight = 1350
 	Engine230V12.torque = 1800		--in Meter/Kg
 	Engine230V12.flywheelmass = 5
 	
@@ -1003,7 +1154,7 @@ local Engine38R7 = {}
 	Engine38R7.model = "models/engines/radial7s.mdl"
 	Engine38R7.sound = "ACF_engines/R7_petrolsmall.wav"
 	Engine38R7.category = "Radial"
-	Engine38R7.weight = 150
+	Engine38R7.weight = 120
 	Engine38R7.torque = 250		--in Meter/Kg
 	Engine38R7.flywheelmass = 0.15
 	
@@ -1026,7 +1177,7 @@ local Engine11R7 = {}
 	Engine11R7.model = "models/engines/radial7m.mdl"
 	Engine11R7.sound = "ACF_engines/R7_petrolmedium.wav"
 	Engine11R7.category = "Radial"
-	Engine11R7.weight = 350
+	Engine11R7.weight = 300
 	Engine11R7.torque = 550		--in Meter/Kg
 	Engine11R7.flywheelmass = 0.350
 	
@@ -1077,7 +1228,7 @@ local Engine180V8 = {}
 	Engine180V8.model = "models/engines/v8l.mdl"
 	Engine180V8.sound = "ACF_engines/v8_petrollarge.wav"
 	Engine180V8.category = "V8"
-	Engine180V8.weight = 900
+	Engine180V8.weight = 850
 	Engine180V8.torque = 1420		--in Meter/Kg
 	Engine180V8.flywheelmass = 2.8
 	
@@ -1100,7 +1251,7 @@ local Engine90V8 = {}
 	Engine90V8.model = "models/engines/v8m.mdl"
 	Engine90V8.sound = "ACF_engines/v8_petrolmedium.wav"
 	Engine90V8.category = "V8"
-	Engine90V8.weight = 500
+	Engine90V8.weight = 400
 	Engine90V8.torque = 575		--in Meter/Kg
 	Engine90V8.flywheelmass = 0.25
 	
@@ -1123,7 +1274,7 @@ local Engine57V8 = {}
 	Engine57V8.model = "models/engines/v8s.mdl"
 	Engine57V8.sound = "ACF_engines/v8_petrolsmall.wav"
 	Engine57V8.category = "V8"
-	Engine57V8.weight = 350
+	Engine57V8.weight = 260
 	Engine57V8.torque = 400		--in Meter/Kg
 	Engine57V8.flywheelmass = 0.15
 	--Engine57V8.idlesound = "ACF_engines/v8idle_petrolsmall.wav"
@@ -1151,7 +1302,7 @@ local Engine190V8 = {}
 	Engine190V8.model = "models/engines/v8l.mdl"
 	Engine190V8.sound = "ACF_engines/v8_diesellarge.wav"
 	Engine190V8.category = "V8"
-	Engine190V8.weight = 1300
+	Engine190V8.weight = 1500
 	Engine190V8.torque = 2400		--in Meter/Kg
 	Engine190V8.flywheelmass = 4.5
 	
@@ -1174,7 +1325,7 @@ local Engine78V8 = {}
 	Engine78V8.model = "models/engines/v8m.mdl"
 	Engine78V8.sound = "ACF_engines/v8_dieselmedium2.wav"
 	Engine78V8.category = "V8"
-	Engine78V8.weight = 600
+	Engine78V8.weight = 500
 	Engine78V8.torque = 710		--in Meter/Kg
 	Engine78V8.flywheelmass = 1.5
 	
@@ -1197,7 +1348,7 @@ local Engine45V8 = {}
 	Engine45V8.model = "models/engines/v8s.mdl"
 	Engine45V8.sound = "ACF_engines/v8_dieselsmall.wav"
 	Engine45V8.category = "V8"
-	Engine45V8.weight = 400
+	Engine45V8.weight = 320
 	Engine45V8.torque = 475		--in Meter/Kg
 	Engine45V8.flywheelmass = 0.75
 	
@@ -1228,7 +1379,7 @@ local Gear1TS = {}
 	Gear1TS.category = "Differential"
 	Gear1TS.weight = Gear1SW
 	Gear1TS.switch = 0.3
-	Gear1TS.maxtq = GearTDSMT
+	Gear1TS.maxtq = GearTCS
 	Gear1TS.gears = 1
 	Gear1TS.doubleclutch = false
 	Gear1TS.geartable = {}
@@ -1252,7 +1403,7 @@ local Gear1TM = {}
 	Gear1TM.category = "Differential"
 	Gear1TM.weight = Gear1MW
 	Gear1TM.switch = 0.4
-	Gear1TM.maxtq = GearMMT
+	Gear1TM.maxtq = GearTCM
 	Gear1TM.gears = 1
 	Gear1TM.doubleclutch = false
 	Gear1TM.geartable = {}
@@ -1276,7 +1427,7 @@ local Gear1TL = {}
 	Gear1TL.category = "Differential"
 	Gear1TL.weight = Gear1LW
 	Gear1TL.switch = 0.6
-	Gear1TL.maxtq = GearLMT
+	Gear1TL.maxtq = GearTCL
 	Gear1TL.gears = 1
 	Gear1TL.doubleclutch = false
 	Gear1TL.geartable = {}
@@ -1302,7 +1453,7 @@ local Gear1LS = {}
 	Gear1LS.category = "Differential"
 	Gear1LS.weight = Gear1SW
 	Gear1LS.switch = 0.3
-	Gear1LS.maxtq = GearTDSMT
+	Gear1LS.maxtq = GearTCS
 	Gear1LS.gears = 1
 	Gear1LS.doubleclutch = false
 	Gear1LS.geartable = {}
@@ -1326,7 +1477,7 @@ local Gear1LM = {}
 	Gear1LM.category = "Differential"
 	Gear1LM.weight = Gear1MW
 	Gear1LM.switch = 0.4
-	Gear1LM.maxtq = GearMMT
+	Gear1LM.maxtq = GearTCM
 	Gear1LM.gears = 1
 	Gear1LM.doubleclutch = false
 	Gear1LM.geartable = {}
@@ -1350,7 +1501,7 @@ local Gear1LL = {}
 	Gear1LL.category = "Differential"
 	Gear1LL.weight = Gear1LW
 	Gear1LL.switch = 0.6
-	Gear1LL.maxtq = GearLMT
+	Gear1LL.maxtq = GearTCL
 	Gear1LL.gears = 1
 	Gear1LL.doubleclutch = false
 	Gear1LL.geartable = {}
@@ -1377,7 +1528,7 @@ local Gear1TDS = {}
 	Gear1TDS.category = "Differential"
 	Gear1TDS.weight = Gear1SW
 	Gear1TDS.switch = 0.3
-	Gear1TDS.maxtq = GearTDSMT
+	Gear1TDS.maxtq = GearTCS
 	Gear1TDS.gears = 1
 	Gear1TDS.doubleclutch = true
 	Gear1TDS.geartable = {}
@@ -1401,7 +1552,7 @@ local Gear1TDM = {}
 	Gear1TDM.category = "Differential"
 	Gear1TDM.weight = Gear1MW
 	Gear1TDM.switch = 0.4
-	Gear1TDM.maxtq = GearMMT
+	Gear1TDM.maxtq = GearTCM
 	Gear1TDM.gears = 1
 	Gear1TDM.doubleclutch = true
 	Gear1TDM.geartable = {}
@@ -1425,7 +1576,7 @@ local Gear1TDL = {}
 	Gear1TDL.category = "Differential"
 	Gear1TDL.weight = Gear1LW
 	Gear1TDL.switch = 0.6
-	Gear1TDL.maxtq = GearLMT
+	Gear1TDL.maxtq = GearTCL
 	Gear1TDL.gears = 1
 	Gear1TDL.doubleclutch = true
 	Gear1TDL.geartable = {}
@@ -1451,7 +1602,7 @@ local Gear1LDS = {}
 	Gear1LDS.category = "Differential"
 	Gear1LDS.weight = Gear1SW
 	Gear1LDS.switch = 0.3
-	Gear1LDS.maxtq = GearTDSMT
+	Gear1LDS.maxtq = GearTCS
 	Gear1LDS.gears = 1
 	Gear1LDS.doubleclutch = true
 	Gear1LDS.geartable = {}
@@ -1475,7 +1626,7 @@ local Gear1LDM = {}
 	Gear1LDM.category = "Differential"
 	Gear1LDM.weight = Gear1MW
 	Gear1LDM.switch = 0.4
-	Gear1LDM.maxtq = GearMMT
+	Gear1LDM.maxtq = GearTCM
 	Gear1LDM.gears = 1
 	Gear1LDM.doubleclutch = true
 	Gear1LDM.geartable = {}
@@ -1499,7 +1650,7 @@ local Gear1LDL = {}
 	Gear1LDL.category = "Differential"
 	Gear1LDL.weight = Gear1LW
 	Gear1LDL.switch = 0.6
-	Gear1LDL.maxtq = GearLMT
+	Gear1LDL.maxtq = GearTCL
 	Gear1LDL.gears = 1
 	Gear1LDL.doubleclutch = true
 	Gear1LDL.geartable = {}
@@ -1526,7 +1677,7 @@ local Gear2TS = {}
 	Gear2TS.category = "Transfer"
 	Gear2TS.weight = Gear2SW
 	Gear2TS.switch = 0.3
-	Gear2TS.maxtq = GearTDSMT
+	Gear2TS.maxtq = GearTCS
 	Gear2TS.gears = 2
 	Gear2TS.doubleclutch = true
 	Gear2TS.geartable = {}
@@ -1551,7 +1702,7 @@ local Gear2TM = {}
 	Gear2TM.category = "Transfer"
 	Gear2TM.weight = Gear2MW
 	Gear2TM.switch = 0.4
-	Gear2TM.maxtq = GearMMT
+	Gear2TM.maxtq = GearTCM
 	Gear2TM.gears = 2
 	Gear2TM.doubleclutch = true
 	Gear2TM.geartable = {}
@@ -1576,7 +1727,7 @@ local Gear2TL = {}
 	Gear2TL.category = "Transfer"
 	Gear2TL.weight = Gear2LW
 	Gear2TL.switch = 0.6
-	Gear2TL.maxtq = GearLMT
+	Gear2TL.maxtq = GearTCL
 	Gear2TL.gears = 2
 	Gear2TL.doubleclutch = true
 	Gear2TL.geartable = {}
@@ -1601,7 +1752,7 @@ local Gear2LS = {}
 	Gear2LS.category = "Transfer"
 	Gear2LS.weight = Gear2SW
 	Gear2LS.switch = 0.3
-	Gear2LS.maxtq = GearTDSMT
+	Gear2LS.maxtq = GearTCS
 	Gear2LS.gears = 2
 	Gear2LS.doubleclutch = true
 	Gear2LS.geartable = {}
@@ -1626,7 +1777,7 @@ local Gear2LM = {}
 	Gear2LM.category = "Transfer"
 	Gear2LM.weight = Gear2MW
 	Gear2LM.switch = 0.4
-	Gear2LM.maxtq = GearMMT
+	Gear2LM.maxtq = GearTCM
 	Gear2LM.gears = 2
 	Gear2LM.doubleclutch = true
 	Gear2LM.geartable = {}
@@ -1651,7 +1802,7 @@ local Gear2LL = {}
 	Gear2LL.category = "Transfer"
 	Gear2LL.weight = Gear2LW
 	Gear2LL.switch = 0.6
-	Gear2LL.maxtq = GearLMT
+	Gear2LL.maxtq = GearTCL
 	Gear2LL.gears = 2
 	Gear2LL.doubleclutch = true
 	Gear2LL.geartable = {}
@@ -1678,7 +1829,7 @@ local Gear1LS = {}
 	Gear1LS.category = "Differential"
 	Gear1LS.weight = Gear1SW
 	Gear1LS.switch = 0.3
-	Gear1LS.maxtq = GearTDSMT
+	Gear1LS.maxtq = GearTCS
 	Gear1LS.gears = 1
 	Gear1LS.doubleclutch = false
 	Gear1LS.geartable = {}
@@ -1702,7 +1853,7 @@ local Gear1LM = {}
 	Gear1LM.category = "Differential"
 	Gear1LM.weight = Gear1MW
 	Gear1LM.switch = 0.4
-	Gear1LM.maxtq = GearMMT
+	Gear1LM.maxtq = GearTCM
 	Gear1LM.gears = 1
 	Gear1LM.doubleclutch = false
 	Gear1LM.geartable = {}
@@ -1726,7 +1877,7 @@ local Gear1LL = {}
 	Gear1LL.category = "Differential"
 	Gear1LL.weight = Gear1LW
 	Gear1LL.switch = 0.6
-	Gear1LL.maxtq = GearLMT
+	Gear1LL.maxtq = GearTCL
 	Gear1LL.gears = 1
 	Gear1LL.doubleclutch = false
 	Gear1LL.geartable = {}
@@ -1753,7 +1904,7 @@ local Gear1TDS = {}
 	Gear1TDS.category = "Differential"
 	Gear1TDS.weight = Gear1SW
 	Gear1TDS.switch = 0.3
-	Gear1TDS.maxtq = GearTDSMT
+	Gear1TDS.maxtq = GearTCS
 	Gear1TDS.gears = 1
 	Gear1TDS.doubleclutch = true
 	Gear1TDS.geartable = {}
@@ -1777,7 +1928,7 @@ local Gear1TDM = {}
 	Gear1TDM.category = "Differential"
 	Gear1TDM.weight = Gear1MW
 	Gear1TDM.switch = 0.4
-	Gear1TDM.maxtq = GearMMT
+	Gear1TDM.maxtq = GearTCM
 	Gear1TDM.gears = 1
 	Gear1TDM.doubleclutch = true
 	Gear1TDM.geartable = {}
@@ -1801,7 +1952,7 @@ local Gear1TDL = {}
 	Gear1TDL.category = "Differential"
 	Gear1TDL.weight = Gear1LW
 	Gear1TDL.switch = 0.6
-	Gear1TDL.maxtq = GearLMT
+	Gear1TDL.maxtq = GearTCL
 	Gear1TDL.gears = 1
 	Gear1TDL.doubleclutch = true
 	Gear1TDL.geartable = {}
@@ -1827,7 +1978,7 @@ local Gear1LDS = {}
 	Gear1LDS.category = "Differential"
 	Gear1LDS.weight = Gear1SW
 	Gear1LDS.switch = 0.3
-	Gear1LDS.maxtq = GearTDSMT
+	Gear1LDS.maxtq = GearTCS
 	Gear1LDS.gears = 1
 	Gear1LDS.doubleclutch = true
 	Gear1LDS.geartable = {}
@@ -1851,7 +2002,7 @@ local Gear1LDM = {}
 	Gear1LDM.category = "Differential"
 	Gear1LDM.weight = Gear1MW
 	Gear1LDM.switch = 0.4
-	Gear1LDM.maxtq = GearMMT
+	Gear1LDM.maxtq = GearTCM
 	Gear1LDM.gears = 1
 	Gear1LDM.doubleclutch = true
 	Gear1LDM.geartable = {}
@@ -1875,7 +2026,7 @@ local Gear1LDL = {}
 	Gear1LDL.category = "Differential"
 	Gear1LDL.weight = Gear1LW
 	Gear1LDL.switch = 0.6
-	Gear1LDL.maxtq = GearLMT
+	Gear1LDL.maxtq = GearTCL
 	Gear1LDL.gears = 1
 	Gear1LDL.doubleclutch = true
 	Gear1LDL.geartable = {}
