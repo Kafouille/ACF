@@ -1,5 +1,5 @@
 TOOL.Category		= "Construction"
-TOOL.Name			= "#ACFMenu"
+TOOL.Name			= "#Tool.acfmenu.listname"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
 
@@ -19,7 +19,8 @@ TOOL.ClientConVar[ "data10" ] = 0
 
 cleanup.Register( "acfmenu" )
 
-if CLIENT then	
+if CLIENT then
+	language.Add( "Tool.acfmenu.listname", "ACFMenu" )
 	language.Add( "Tool.acfmenu.name", "Armored Combat Framework" )
 	language.Add( "Tool.acfmenu.desc", "Spawn the Armored Combat Framework weapons and ammo" )
 	language.Add( "Tool.acfmenu.0", "Left click to spawn the entity of your choice, Right click to link an entity to another (+Use to unlink)" )
