@@ -27,6 +27,10 @@ if CLIENT then
 	language.Add( "Tool.acfmenu.1", "Right click to link the selected sensor to a pod" )
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
+	language.Add( "Undone_ACF Engine", "Undone ACF Engine" )
+	language.Add( "Undone_ACF Gearbox", "Undone ACF Gearbox" )
+	language.Add( "Undone_ACF Ammo", "Undone ACF Ammo" )
+	language.Add( "Undone_ACF Gun", "Undone ACF Gun" )
 	language.Add( "SBoxLimit_acf_gun", "You've reached the ACF Guns limit!" )
 	language.Add( "SBoxLimit_acf_rack", "You've reached the ACF Launchers limit!" )
 	language.Add( "SBoxLimit_acf_ammo", "You've reached the ACF Explosives limit!" )

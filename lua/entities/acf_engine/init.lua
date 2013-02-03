@@ -19,9 +19,9 @@ function ENT:Initialize()
 	self.Legal = true
 	self.CanUpdate = true
 
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Throttle" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Wire_TriggerOutput( self, "Entity", self )
 	self.WireDebugName = "ACF Engine"
 
 end  
@@ -169,10 +169,11 @@ function ENT:TriggerInput( iname , value )
 				self.Sound:Stop()
 			end
 			self.Sound = nil
+			Wire_TriggerOutput( self, "RPM", 0 )
+			Wire_TriggerOutput( self, "Torque", 0 )
+			Wire_TriggerOutput( self, "Power", 0 )
 		end
-	end		
-
-
+	end
 end
 
 function ENT:Think()
@@ -180,34 +181,32 @@ function ENT:Think()
 	local Time = CurTime()
 
 	if self.Active then
-
-		if self.Legal then		
-			local EngPhys = self:GetPhysicsObject()
-			local RPM = self:CalcRPM( EngPhys )
+		if self.Legal then
+			self:CalcRPM()
 		end
 
 		if self.LastCheck < CurTime() then
 			self:CheckRopes()
-			if self.Entity:GetPhysicsObject():GetMass() < self.Weight or self.Entity:GetParent():IsValid() then
+			if self:GetPhysicsObject():GetMass() < self.Weight or self:GetParent():IsValid() then
 				self.Legal = false
 			else 
 				self.Legal = true
 			end
 
-			self.LastCheck = Time + math.Rand(5,10)
+			self.LastCheck = Time + math.Rand(5, 10)
 		end
 
 	end
 
 	self.LastThink = Time
-	self.Entity:NextThink(Time)
+	self:NextThink( Time )
 	return true
 
 end
 
 function ENT:ACFInit()
 
-	if not constraint.HasConstraints(self) then return end
+	if not constraint.HasConstraints( self ) then return end
 
 	local Constrained = constraint.GetAllConstrainedEntities(self)
 	self.Mass = 0
@@ -254,8 +253,8 @@ function ENT:ACFInit()
 
 	self.MassRatio = self.PhysMass/self.Mass
 
-	Wire_TriggerOutput(self.Entity, "Mass", math.floor(self.Mass))
-	Wire_TriggerOutput(self.Entity, "Physical Mass", math.floor(self.PhysMass))
+	Wire_TriggerOutput(self, "Mass", math.floor(self.Mass))
+	Wire_TriggerOutput(self, "Physical Mass", math.floor(self.PhysMass))
 
 	self.LastThink = CurTime()
 	self.Torque = self.PeakTorque
@@ -263,56 +262,70 @@ function ENT:ACFInit()
 
 end
 
-function ENT:CalcRPM( EngPhys )
+function ENT:CalcRPM()
 
-	local DeltaTime = (CurTime() - self.LastThink)
-		local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
+	local DeltaTime = CurTime() - self.LastThink
+	-- local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
 
 	//local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
-	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM/self.PeakMinRPM , (self.LimitRPM - self.FlyRPM)/(self.LimitRPM - self.PeakMaxRPM), 1 ),0 ) --Calculate the current torque from flywheel RPM
-	--local Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle) /self.Inertia
+	
+	-- Calculate the current torque from flywheel RPM
+	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
+	
 	local Drag 
-		if (self.iselec == true)  then
-		 Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.FlywheelOverride)*(1-self.Throttle) /self.Inertia
+	if self.iselec == true then
+		 Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
 	else
-		 Drag = self.PeakTorque*(math.max(self.FlyRPM-self.IdleRPM,0)/self.PeakMaxRPM)*(1-self.Throttle) /self.Inertia
+		 Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.PeakMaxRPM) * ( 1 - self.Throttle) / self.Inertia
 	end
-	self.FlyRPM = math.max(self.FlyRPM + self.Torque/self.Inertia - Drag,1)		--Let's accelerate the flywheel based on that torque	
-
-	local Boxes = table.Count(self.GearLink) --The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
+	
+	-- Let's accelerate the flywheel based on that torque
+	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
+	
+	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
+	local Boxes = table.Count( self.GearLink )
+	
 	local MaxTqTable = {}
 	local MaxTq = 0
-	for Key, Gearbox in pairs(self.GearLink) do 
-		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM, self.Inertia )		--Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+	for Key, Gearbox in pairs(self.GearLink) do
+		-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM, self.Inertia )
 		MaxTq = MaxTq + MaxTqTable[Key]
 	end
 
-	local TorqueDiff = math.max(self.FlyRPM - self.IdleRPM,0)*self.Inertia		--This is the presently avaliable torque from the engine
-	local AvailTq = math.min(TorqueDiff/MaxTq/Boxes,1)		--Calculate the ratio of total requested torque versus what's avaliable
+	-- This is the presently avaliable torque from the engine
+	local TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+	
+	-- Calculate the ratio of total requested torque versus what's avaliable
+	local AvailTq = math.min( TorqueDiff / MaxTq / Boxes, 1 )
 
 	for Key, Gearbox in pairs(self.GearLink) do
-		Gearbox:Act(MaxTqTable[Key]*AvailTq*self.MassRatio,DeltaTime)	--Split the torque fairly between the gearboxes who need it
+		-- Split the torque fairly between the gearboxes who need it
+		Gearbox:Act( MaxTqTable[Key] * AvailTq * self.MassRatio, DeltaTime )
 	end
 
 	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
 
-	table.remove( self.RPM, 10 )	--Then we calc a smoothed RPM value for the sound effects
+	-- Then we calc a smoothed RPM value for the sound effects
+	table.remove( self.RPM, 10 )
 	table.insert( self.RPM, 1, self.FlyRPM )
 	local SmoothRPM = 0
-	for Key, RPM in pairs(self.RPM) do
+	for Key, RPM in pairs( self.RPM ) do
 		SmoothRPM = SmoothRPM + (RPM or 0)
 	end
-	SmoothRPM = SmoothRPM/10
+	SmoothRPM = SmoothRPM / 10
 
 	local Power = self.Torque * SmoothRPM / 9548.8
-	Wire_TriggerOutput(self.Entity, "Torque", math.floor(self.Torque))
-	Wire_TriggerOutput(self.Entity, "Power", math.floor(Power))
-	Wire_TriggerOutput(self.Entity, "RPM", self.FlyRPM)
-	self.Sound:ChangePitch(math.min(20 + SmoothRPM/50,255),0)
-	self.Sound:ChangeVolume(0.25 + self.Throttle/1.5,0)
-
+	Wire_TriggerOutput(self, "Torque", math.floor(self.Torque))
+	Wire_TriggerOutput(self, "Power", math.floor(Power))
+	Wire_TriggerOutput(self, "RPM", self.FlyRPM)
+	
+	if self.Sound then
+		self.Sound:ChangePitch( math.min( 20 + SmoothRPM / 50, 255 ), 0 )
+		self.Sound:ChangeVolume( 0.25 + self.Throttle / 1.5, 0 )
+	end
+	
 	return RPM
-
 end
 
 function ENT:CheckRopes()
@@ -323,7 +336,7 @@ function ENT:CheckRopes()
 
 			local Clean = false
 			for Key,Rope in pairs(Constraints) do
-				if Rope.Ent1 == self.Entity or Rope.Ent2 == self.Entity then
+				if Rope.Ent1 == self or Rope.Ent2 == self then
 					if Rope.length + Rope.addlength < self.GearRope[GearboxKey]*1.5 then
 						Clean = true
 					end
@@ -338,7 +351,7 @@ function ENT:CheckRopes()
 			self:Unlink( Ent )
 		end
 
-		local DrvAngle = (self.Entity:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct( self:GetForward() )
+		local DrvAngle = (self:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct( self:GetForward() )
 		if ( DrvAngle < 0.7 ) then
 			self:Unlink( Ent )
 		end
@@ -361,16 +374,16 @@ function ENT:Link( Target )
 	if not Duplicate then
 
 		local InPos = Target:LocalToWorld(Target.In)
-		local OutPos = self.Entity:LocalToWorld(self.Out)
+		local OutPos = self:LocalToWorld(self.Out)
 		local DrvAngle = (OutPos - InPos):GetNormalized():DotProduct((self:GetForward()))
 		if ( DrvAngle < 0.7 ) then
 			return 'ERROR : Excessive driveshaft angle'
 		end
 
 		table.insert(self.GearLink,Target)
-		table.insert(Target.Master,self.Entity)
+		table.insert(Target.Master,self)
 		local RopeL = (OutPos-InPos):Length()
-		constraint.Rope( self.Entity, Target, 0, 0, self.Out, Target.In, RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
+		constraint.Rope( self, Target, 0, 0, self.Out, Target.In, RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
 		table.insert(self.GearRope,RopeL)
 
 		return false
@@ -390,7 +403,7 @@ function ENT:Unlink( Target )
 			local Constraints = constraint.FindConstraints(Value, "Rope")
 			if Constraints then
 				for Key,Rope in pairs(Constraints) do
-					if Rope.Ent1 == self.Entity or Rope.Ent2 == self.Entity then
+					if Rope.Ent1 == self or Rope.Ent2 == self then
 						Rope.Constraint:Remove()
 					end
 				end
@@ -426,13 +439,13 @@ function ENT:PreEntityCopy()
 
 	info.entities = entids
 	if info.entities then
-		duplicator.StoreEntityModifier( self.Entity, "GearLink", info )
+		duplicator.StoreEntityModifier( self, "GearLink", info )
 	end
 
 	//Wire dupe info
-	local DupeInfo = WireLib.BuildDupeInfo(self.Entity)
-	if(DupeInfo) then
-		duplicator.StoreEntityModifier(self.Entity,"WireDupeInfo",DupeInfo)
+	local DupeInfo = WireLib.BuildDupeInfo( self )
+	if DupeInfo then
+		duplicator.StoreEntityModifier( self, "WireDupeInfo", DupeInfo )
 	end
 
 end
@@ -464,10 +477,9 @@ function ENT:OnRemove()
 	if self.Sound then
 		self.Sound:Stop()
 	end
-	Wire_Remove(self.Entity)
+	Wire_Remove( self )
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+	Wire_Restored( self )
 end
-

@@ -7,11 +7,11 @@ ENT.AutomaticFrameAdvance = true
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
-    Wire_Render(self.Entity)
+    Wire_Render(self)
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		if(self:GetOverlayText() ~= "") then
 			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
@@ -20,13 +20,13 @@ function ENT:DoNormalDraw()
 end
 
 function ENT:GetOverlayText()
-	local name = self.Entity:GetNetworkedString("WireName")
-	local Type = self.Entity:GetNetworkedBeamString("Type")
-	local Power = self.Entity:GetNetworkedBeamInt("Power")
-	local Torque = self.Entity:GetNetworkedBeamInt("Torque")
-	local MinRPM = self.Entity:GetNetworkedBeamInt("MinRPM")
-	local MaxRPM = self.Entity:GetNetworkedBeamInt("MaxRPM")
-	local LimitRPM = self.Entity:GetNetworkedBeamInt("LimitRPM")
+	local name = self:GetNetworkedString("WireName")
+	local Type = self:GetNetworkedBeamString("Type")
+	local Power = self:GetNetworkedBeamInt("Power")
+	local Torque = self:GetNetworkedBeamInt("Torque")
+	local MinRPM = self:GetNetworkedBeamInt("MinRPM")
+	local MaxRPM = self:GetNetworkedBeamInt("MaxRPM")
+	local LimitRPM = self:GetNetworkedBeamInt("LimitRPM")
 	local txt = Type.."\nMax Power : "..Power.."KW / "..math.Round(Power*1.34).."HP \nMax Torque : "..Torque.."N/m / "..math.Round(Torque*0.73).."ft-lb \nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM" or ""
 	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()

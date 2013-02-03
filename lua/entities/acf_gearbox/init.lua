@@ -46,7 +46,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	local Gearbox = ents.Create("ACF_Gearbox")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
-	if not Gearbox:IsValid() then return false end
+	if not IsValid( Gearbox ) then return false end
 	Gearbox:SetAngles(Angle)
 	Gearbox:SetPos(Pos)
 	Gearbox:Spawn()
@@ -110,7 +110,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox:SetSolid( SOLID_VPHYSICS )
 
 	local phys = Gearbox:GetPhysicsObject()  	
-	if (phys:IsValid()) then 
+	if IsValid( phys ) then 
 		phys:SetMass( Gearbox.Mass ) 
 	end
 	
@@ -128,7 +128,18 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	
 	Gearbox:ChangeGear(1)
 	
-	timer.Simple(0.5, function() Gearbox:UpdateHUD() end ) 
+	if Gearbox.Dual then
+		Gearbox:SetBodygroup(1, 1)
+	else
+		Gearbox:SetBodygroup(1, 0)
+	end
+	
+	Gearbox:SetNetworkedBeamString( "ID", Id )
+	Gearbox:SetNetworkedBeamFloat( "FinalDrive", Gearbox.Gear0 )
+	
+	for i = 1, Gearbox.Gears do
+		Gearbox:SetNetworkedBeamFloat( "Gear" .. i, Gearbox.GearTable[i] )
+	end 
 		
 	return Gearbox
 end
@@ -168,7 +179,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		self.Gears = List["Mobility"][Id]["gears"]
 		self.Dual = List["Mobility"][Id]["doubleclutch"]
 		
-		self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
+		self.Inputs = Wire_CreateInputs( self, Inputs )
 		
 	end
 	
@@ -194,26 +205,23 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Gear7 = ArgsTable[11]
 	self.Gear8 = ArgsTable[12]
 	self.Gear9 = ArgsTable[13]
-		
+	
 	self:ChangeGear(1)
-		
-	self:UpdateHUD()
+	
+	if self.Dual then
+		self:SetBodygroup(1, 1)
+	else
+		self:SetBodygroup(1, 0)
+	end	
+	
+	self:SetNetworkedBeamString( "ID", Id )
+	self:SetNetworkedBeamFloat( "FinalDrive", self.Gear0 )
+	
+	for i = 1, self.Gears do
+		self:SetNetworkedBeamFloat( "Gear" .. i, self.GearTable[i] )
+	end
 	
 	return Feedback
-end
-
-function ENT:UpdateHUD()
-
-	umsg.Start( "ACFGearbox_SendRatios", ply )
-		umsg.Entity( self.Entity )
-		umsg.String( self.Id )
-		umsg.Short( self.Gear0*100 )
-		for I=1 , self.Gears do
-			umsg.Short( self.GearTable[I]*100 )
-		end
-		umsg.Bool( self.Dual )
-	umsg.End()
-	
 end
 
 function ENT:TriggerInput( iname , value )
@@ -252,7 +260,7 @@ function ENT:Think()
 	
 	if self.LegalThink < Time and self.LastActive+2 > Time then
 		self:CheckRopes()
-		if self.Entity:GetPhysicsObject():GetMass() < self.Mass or self.Entity:GetParent():IsValid() then
+		if self:GetPhysicsObject():GetMass() < self.Mass or IsValid( self:GetParent() ) then
 			self.Legal = false
 		else 
 			self.Legal = true
@@ -260,7 +268,7 @@ function ENT:Think()
 		self.LegalThink = Time + (math.random(5,10))
 	end
 	
-	self.Entity:NextThink(Time+0.2)
+	self:NextThink(Time+0.2)
 	return true
 	
 end
@@ -273,7 +281,7 @@ function ENT:CheckRopes()
 		
 			local Clean = false
 			for Key,Rope in pairs(Constraints) do
-				if Rope.Ent1 == self.Entity or Rope.Ent2 == self.Entity then
+				if Rope.Ent1 == self or Rope.Ent2 == self then
 					if Rope.length + Rope.addlength < self.WheelRopeL[WheelKey]*1.5 then
 						Clean = true
 					end
@@ -288,7 +296,7 @@ function ENT:CheckRopes()
 			self:Unlink( Ent )
 		end
 		
-		local DrvAngle = (self.Entity:LocalToWorld(self.WheelOutput[WheelKey]) - Ent:GetPos()):GetNormalized():DotProduct( (self:GetRight()*self.WheelOutput[WheelKey].y):GetNormalized() )
+		local DrvAngle = (self:LocalToWorld(self.WheelOutput[WheelKey]) - Ent:GetPos()):GetNormalized():DotProduct( (self:GetRight()*self.WheelOutput[WheelKey].y):GetNormalized() )
 		if ( DrvAngle < 0.7 ) then
 			self:Unlink( Ent )
 		end
@@ -315,21 +323,25 @@ function ENT:CheckEnts()		--Check if every entity we are linked to still actuall
 end
 
 function ENT:Calc( InputRPM, InputInertia )
-
-	if self.LastActive == CurTime() then return math.min(self.TotalReqTq, self.MaxTorque) end
+	if self.LastActive == CurTime() then
+		return math.min(self.TotalReqTq, self.MaxTorque)
+	end
+	
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
-	else return 0 end
-
+	else
+		return 0
+	end
+	
 	self:CheckEnts()
 
 	local BoxPhys = self:GetPhysicsObject()
-	local SelfWorld = self:LocalToWorld(BoxPhys:GetAngleVelocity())-self:GetPos()
+	local SelfWorld = self:LocalToWorld( BoxPhys:GetAngleVelocity() ) - self:GetPos()
 	self.WheelReqTq = {}
 	self.TotalReqTq = 0
 	
 	for Key, WheelEnt in pairs(self.WheelLink) do
-		if ( WheelEnt:IsValid() ) then
+		if IsValid( WheelEnt ) then
 			local Clutch = 0
 			if self.WheelSide[Key] == 0 then
 				Clutch = self.LClutch
@@ -357,7 +369,7 @@ function ENT:Calc( InputRPM, InputInertia )
 end
 
 function ENT:CalcWheel( Key, WheelEnt, SelfWorld )
-	if ( WheelEnt:IsValid() ) then
+	if IsValid( WheelEnt ) then
 		local WheelPhys = WheelEnt:GetPhysicsObject()
 		local VelDiff = (WheelEnt:LocalToWorld(WheelPhys:GetAngleVelocity())-WheelEnt:GetPos()) - SelfWorld
 		local BaseRPM = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
@@ -374,12 +386,12 @@ end
 function ENT:Act( Torque, DeltaTime )
 	
 	local ReactTq = 0
-	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
-	 local AvailTq = 0
+	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		
+	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
+	local AvailTq = 0
 	if Torque != 0 then
 		AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))
 	end
-
 
 	for Key, OutputEnt in pairs(self.WheelLink) do
 		if self.WheelSide[Key] == 0 then
@@ -387,6 +399,8 @@ function ENT:Act( Torque, DeltaTime )
 		elseif self.WheelSide[Key] == 1 then
 			Brake = self.RBrake
 		end
+		
+		self.WheelReqTq[Key] = self.WheelReqTq[Key] or 0
 		
 		if OutputEnt.IsGeartrain then
 			OutputEnt:Act( self.WheelReqTq[Key]*AvailTq , DeltaTime )
@@ -397,7 +411,7 @@ function ENT:Act( Torque, DeltaTime )
 	end
 	
 	local BoxPhys = self:GetPhysicsObject()
-	if BoxPhys:IsValid() and ReactTq != 0 then	
+	if IsValid( BoxPhys ) and ReactTq != 0 then	
 		local Force = self:GetForward() * ReactTq - self:GetForward() * BrakeMult
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp()*-39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp()*39.37 )
@@ -407,7 +421,7 @@ function ENT:Act( Torque, DeltaTime )
 	
 end
 
-function ENT:ActWheel( Key, OutputEnt, Tq, Brake , DeltaTime )
+function ENT:ActWheel( Key, OutputEnt, Tq, Brake, DeltaTime )
 
 	local OutPhys = OutputEnt:GetPhysicsObject()
 	local OutPos = OutputEnt:GetPos()
@@ -432,9 +446,9 @@ function ENT:ChangeGear(value)
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
 	
-	Wire_TriggerOutput(self.Entity, "Current Gear", self.Gear)
+	Wire_TriggerOutput(self, "Current Gear", self.Gear)
 	self:EmitSound("buttons/lever7.wav",250,100)
-	Wire_TriggerOutput(self.Entity, "Ratio", self.GearRatio)
+	Wire_TriggerOutput(self, "Ratio", self.GearRatio)
 	
 end
 
@@ -452,7 +466,7 @@ function ENT:Link( Target )
 	end
 	local LinkPos = Vector(0,0,0)
 	local Side = 0
-	if self.Entity:WorldToLocal(TargetPos).y < 0 then
+	if self:WorldToLocal(TargetPos).y < 0 then
 		LinkPos = self.OutL
 		Side = 0
 	else
@@ -460,7 +474,7 @@ function ENT:Link( Target )
 		Side = 1
 	end
 	
-	local DrvAngle = (self.Entity:LocalToWorld(LinkPos) - TargetPos):GetNormalized():DotProduct( (self:GetRight()*LinkPos.y):GetNormalized() )
+	local DrvAngle = (self:LocalToWorld(LinkPos) - TargetPos):GetNormalized():DotProduct( (self:GetRight()*LinkPos.y):GetNormalized() )
 	if ( DrvAngle < 0.7 ) then
 		return "Cannot link due to excessive driveshaft angle"
 	end
@@ -469,10 +483,10 @@ function ENT:Link( Target )
 	table.insert(self.WheelSide,Side)
 	if not self.WheelCount[Side] then self.WheelCount[Side] = 0 end
 	self.WheelCount[Side] = self.WheelCount[Side] + 1
-	table.insert(self.WheelAxis,Target:WorldToLocal(self.Entity:GetRight()+TargetPos))
+	table.insert(self.WheelAxis,Target:WorldToLocal(self:GetRight()+TargetPos))
 	
-	local RopeL = ( self.Entity:LocalToWorld(LinkPos)-TargetPos ):Length()
-	constraint.Rope( self.Entity, Target, 0, 0, LinkPos, Target:WorldToLocal(TargetPos), RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
+	local RopeL = ( self:LocalToWorld(LinkPos)-TargetPos ):Length()
+	constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal(TargetPos), RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
 	table.insert( self.WheelRopeL,RopeL )
 	table.insert( self.WheelOutput,LinkPos )
 	
@@ -488,7 +502,7 @@ function ENT:Unlink( Target )
 			local Constraints = constraint.FindConstraints(Value, "Rope")
 			if Constraints then
 				for Key,Rope in pairs(Constraints) do
-					if Rope.Ent1 == self.Entity or Rope.Ent2 == self.Entity then
+					if Rope.Ent1 == self or Rope.Ent2 == self then
 						Rope.Constraint:Remove()
 					end
 				end
@@ -518,7 +532,7 @@ function ENT:PreEntityCopy()
 	local info = {}
 	local entids = {}
 	for Key, Value in pairs(self.WheelLink) do					--Clean the table of any invalid entities
-		if not Value:IsValid() then
+		if not IsValid( Value ) then
 			table.remove(self.WheelLink, Key)
 		end
 	end
@@ -528,13 +542,13 @@ function ENT:PreEntityCopy()
 	
 	info.entities = entids
 	if info.entities then
-		duplicator.StoreEntityModifier( self.Entity, "WheelLink", info )
+		duplicator.StoreEntityModifier( self, "WheelLink", info )
 	end
 	
 	//Wire dupe info
-	local DupeInfo = WireLib.BuildDupeInfo(self.Entity)
+	local DupeInfo = WireLib.BuildDupeInfo(self)
 	if(DupeInfo) then
-		duplicator.StoreEntityModifier(self.Entity,"WireDupeInfo",DupeInfo)
+		duplicator.StoreEntityModifier(self, "WireDupeInfo", DupeInfo)
 	end
 	
 end
@@ -547,7 +561,7 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		if WheelLink.entities and table.Count(WheelLink.entities) > 0 then
 			for _,ID in pairs(WheelLink.entities) do
 				local Linked = CreatedEntities[ ID ]
-				if Linked and Linked:IsValid() then
+				if IsValid( Linked ) then
 					self:Link( Linked )
 				end
 			end
@@ -565,16 +579,16 @@ end
 function ENT:OnRemove()
 
 	for Key,Value in pairs(self.Master) do		--Let's unlink ourselves from the engines properly
-		if self.Master[Key] and self.Master[Key]:IsValid() then
-			self.Master[Key]:Unlink( self.Entity )
+		if IsValid( self.Master[Key] ) then
+			self.Master[Key]:Unlink( self )
 		end
 	end
 	
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
 
 
