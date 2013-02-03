@@ -1047,7 +1047,7 @@ local Engine92V12 = {}
 MobilityTable["9.2-V12"] = Engine92V12
 
 local Engine210V12 = {}
-	Engine210V12.id = "21.0L-V12"
+	Engine210V12.id = "21.0-V12"
 	Engine210V12.ent = "acf_engine"
 	Engine210V12.type = "Mobility"
 	Engine210V12.name = "21.0 V12 Diesel"
@@ -1119,7 +1119,7 @@ local Engine70V12 = {}
 MobilityTable["7.0-V12"] = Engine70V12
 
 local Engine230V12 = {}
-	Engine230V12.id = "23.0L-V12"
+	Engine230V12.id = "23.0-V12"
 	Engine230V12.ent = "acf_engine"
 	Engine230V12.type = "Mobility"
 	Engine230V12.name = "23.0 V12 Petrol"

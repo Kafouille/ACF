@@ -1,7 +1,7 @@
 include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
--- local maxtorque = 0  -- this is for the max torque output on the tooltip - Wrex
+
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
@@ -17,7 +17,7 @@ function ENT:DoNormalDraw()
 		end
 	end
 end
-	
+
 function ENT:GetOverlayText()
 	local List = list.Get( "ACFEnts" )
 	
@@ -49,32 +49,6 @@ function ENT:GetOverlayText()
 	
 	return txt
 end
-
-/*function ACFGearboxCreateDisplayString( data, Timer )
-	
-	local Ent = data:ReadEntity()
-	local Id = data:ReadString()
-	local List = list.Get("ACFEnts")
-	local FinalGear = data:ReadShort()/100
-	
-	Ent.DisplayString = List["Mobility"][Id]["name"].."\n"
-	for I = 1,List["Mobility"][Id]["gears"] do
-		Ent.DisplayString = Ent.DisplayString.."Gear "..I.." : "..tostring(data:ReadShort()/100).."\n"
-	end
-	Ent.DisplayString = Ent.DisplayString.."Final Gear : "..tostring(FinalGear).."\n Maximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb"
-	if data:ReadBool() then
-		Ent:SetBodygroup(1,1)
-	else
-		Ent:SetBodygroup(1,0)
-	end
-	
-	if (not game.SinglePlayer()) then
-		local PlayerName = Ent:GetPlayerName()
-		Ent.DisplayString = Ent.DisplayString .."(" .. PlayerName .. ")"
-	end
- 
-end
-usermessage.Hook( "ACFGearbox_SendRatios", ACFGearboxCreateDisplayString )*/
 
 function ACFGearboxGUICreate( Table )
 
