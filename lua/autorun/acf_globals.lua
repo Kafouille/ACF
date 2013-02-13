@@ -82,12 +82,11 @@ ACF.RoundTypes = list.Get("ACFRoundTypes")
 
 ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds classes from clientside with just an integer
 
-timer.Simple(5,function()
-	game.AddParticles("particles/acf_muzzleflashes.pcf")
-	game.AddParticles("particles/explosion1.pcf")
-	game.AddParticles("particles/rocket_motor.pcf")
+game.AddParticles("particles/acf_muzzleflashes.pcf")
+game.AddParticles("particles/explosion1.pcf")
+game.AddParticles("particles/rocket_motor.pcf")
 
-
+timer.Simple(0, function()
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
 		PrecacheParticleSystem(Table["muzzleflash"])
 	end
@@ -146,7 +145,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 end
 
 
-function ACF_UpdateChecking( )
+/*function ACF_UpdateChecking( )
 	
 	print("Checking for updates....")
 	
@@ -180,7 +179,7 @@ function ACF_ChatVersionPrint(ply)
 	end	
 end
 
-hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)
+hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)*/
 
 
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
