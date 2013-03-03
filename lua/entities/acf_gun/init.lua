@@ -176,7 +176,7 @@ function ENT:TriggerInput( iname , value )
 
 	if (iname == "Unload" and value > 0) then
 		timer.Simple( 0, self.UnloadAmmo() )
-	elseif ( iname == "Fire" and value > 0 ) then
+	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
 		if self.Entity.NextFire < CurTime() then
 			self.Entity:FireShell()
 			self.Entity:Think()
