@@ -206,8 +206,6 @@ end
 
 function ENT:ACFInit()
 
-	if not constraint.HasConstraints( self ) then return end
-
 	local Constrained = constraint.GetAllConstrainedEntities(self)
 	self.Mass = 0
 	self.PhysMass = 0
