@@ -181,6 +181,9 @@ end
 
 function ENT:GetUser( inp )
 	if inp:GetClass() == "gmod_wire_adv_pod" then
+		local User = inp.Pod:GetDriver()
+	elseif inp:GetClass() == "gmod_wire_pod" then
+		local User = inp.Pod:GetDriver()
 	elseif inp:GetClass() == "gmod_wire_expression2" then
 		if inp.Inputs["Fire"] then
 			return self:GetUser(inp.Inputs["Fire"].Src) 
