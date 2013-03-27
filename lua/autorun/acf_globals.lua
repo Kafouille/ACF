@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 244 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 246 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -78,15 +78,15 @@ elseif (CLIENT) then
 	include("acf/client/cl_acfballistics.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
-	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_C", "HUD/killicons/acf_C", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_GL", "HUD/killicons/acf_GL", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_HMG", "HUD/killicons/acf_HMG", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_HW", "HUD/killicons/acf_HW", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_MG", "HUD/killicons/acf_MG", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_MO", "HUD/killicons/acf_MO", Color( 181, 48, 48, 255 ) )
-	killicon.Add( "acf_RAC", "HUD/killicons/acf_RAC", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_C", "HUD/killicons/acf_C", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_GL", "HUD/killicons/acf_GL", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_HMG", "HUD/killicons/acf_HMG", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_HW", "HUD/killicons/acf_HW", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_MG", "HUD/killicons/acf_MG", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_MO", "HUD/killicons/acf_MO", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_RAC", "HUD/killicons/acf_RAC", Color( 200, 200, 48, 255 ) )
 	
 end
 
