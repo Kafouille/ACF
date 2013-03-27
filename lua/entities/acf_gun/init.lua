@@ -26,7 +26,7 @@ function ENT:Initialize()
 	self.Inaccuracy 	= 1
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload", "Reload" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left" }, { "NORMAL" , "NORMAL" , "ENTITY", "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left", "Fire Rate", "Muzzle Weight", "Muzzle Velocity" }, { "NORMAL" , "NORMAL" , "ENTITY", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	self.WireDebugName = "ACF Gun"
 
@@ -72,6 +72,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun.Muzzleflash = Classes["GunClass"][Gun.Class]["muzzleflash"]
 	Gun.RoFmod = Classes["GunClass"][Gun.Class]["rofmod"]
 	Gun.Sound = Classes["GunClass"][Gun.Class]["sound"]
+	Gun:SetNWString( "Sound", Gun.Sound )
 	Gun.Inaccuracy = Classes["GunClass"][Gun.Class]["spread"]
 	Gun:SetModel( Gun.Model )	
 	
@@ -149,6 +150,12 @@ function ENT:Link( Target )
 	if ( self.BulletData["Type"] == "Empty" and Target["Load"] ) then
 		self:UnloadAmmo()
 	end
+	
+	self.ReloadTime = ((Target.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod*self.PGRoFmod
+	self.RateOfFire = (60/self.ReloadTime)
+	Wire_TriggerOutput(self.Entity, "Fire Rate", self.RateOfFire)
+	Wire_TriggerOutput(self.Entity, "Muzzle Weight", math.floor(Target.BulletData["ProjMass"]*1000) )
+	Wire_TriggerOutput(self.Entity, "Muzzle Velocity", math.floor(Target.BulletData["MuzzleVel"]*ACF.VelScale) )
 
 	return false
 	
@@ -172,12 +179,30 @@ function ENT:Unlink( Target )
 	
 end
 
-function ENT:TriggerInput( iname , value )
+function ENT:GetUser( inp )
+	if inp:GetClass() == "gmod_wire_adv_pod" then
+	elseif inp:GetClass() == "gmod_wire_expression2" then
+		if inp.Inputs["Fire"] then
+			return self:GetUser(inp.Inputs["Fire"].Src) 
+		elseif inp.Inputs["Shoot"] then
+			return self:GetUser(inp.Inputs["Shoot"].Src) 
+		else
+			return inp.Owner or inp:GetOwner()
+		end
+	else
+		return inp.Owner or inp:GetOwner()
+	end
+	
+end
 
+function ENT:TriggerInput( iname , value )
+	
 	if (iname == "Unload" and value > 0) then
 		timer.Simple( 0, self.UnloadAmmo() )
-	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
+	elseif ( iname == "Fire" and value > 0 ) then
 		if self.Entity.NextFire < CurTime() then
+			self.User = self:GetUser(self.Inputs["Fire"].Src)
+			if not IsValid(self.User) then self.User = self.Owner end
 			self.Entity:FireShell()
 			self.Entity:Think()
 		end
@@ -226,6 +251,7 @@ function ENT:Think()
 		self.Entity:SetNetworkedBeamString("Type",self.BulletData["Type"])
 		self.Entity:SetNetworkedBeamInt("Mass",self.BulletData["ProjMass"]*100)
 		self.Entity:SetNetworkedBeamInt("Propellant",self.BulletData["PropMass"]*1000)
+		self.Entity:SetNetworkedBeamInt("FireRate",self.RateOfFire)
 		
 		self.LastSend = Time
 	
@@ -325,7 +351,7 @@ function ENT:FireShell()
 			
 			self.BulletData["Pos"] = MuzzlePos
 			self.BulletData["Flight"] = (MuzzleVec+Inaccuracy):GetNormalized() * self.BulletData["MuzzleVel"] * 39.37 + self:GetVelocity()
-			self.BulletData["Owner"] = self.Owner
+			self.BulletData["Owner"] = self.User
 			self.BulletData["Gun"] = self.Entity
 			self.CreateShell = ACF.RoundTypes[self.BulletData["Type"]]["create"]
 			self:CreateShell( self.BulletData )
@@ -393,6 +419,11 @@ function ENT:LoadAmmo( AddTime, Reload )
 		
 		self.ReloadTime = ((self.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod*self.PGRoFmod
 		Wire_TriggerOutput(self.Entity, "Loaded", self.BulletData["Type"])
+		
+		self.RateOfFire = (60/self.ReloadTime)
+		Wire_TriggerOutput(self.Entity, "Fire Rate", self.RateOfFire)
+		Wire_TriggerOutput(self.Entity, "Muzzle Weight", math.floor(self.BulletData["ProjMass"]*1000) )
+		Wire_TriggerOutput(self.Entity, "Muzzle Velocity", math.floor(self.BulletData["MuzzleVel"]*ACF.VelScale) )
 		
 		self.NextFire = CurTime() + self.ReloadTime
 		if AddTime then

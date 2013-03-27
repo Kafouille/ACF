@@ -12,12 +12,14 @@ function ENT:Initialize()
 	self.Damaged = false
 	self.CanUpdate = true
 	self.Load = false
+	self.EmptyMass = 0
+	self.Ammo = 0
 	
 	self.Master = {}
 	self.Sequence = 0
 	
 	self.WireDebugName = "Ammo Crate"
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active"} )
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Ignite"} ) --, "Fuse Length"
 	self.Outputs = Wire_CreateOutputs( self.Entity, { "Munitions" , "On Fire" } )
 		
 	self.NextThink = CurTime() +  1
@@ -197,6 +199,26 @@ function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was f
 	return math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Capacity * 2 )
 end
 
+function ENT:GetUser( inp )
+	if inp:GetClass() == "gmod_wire_adv_pod" then
+	elseif inp:GetClass() == "gmod_wire_expression2" then
+		if inp.Inputs["Fire"] then
+			return self:GetUser(inp.Inputs["Fire"].Src) 
+		elseif inp.Inputs["Shoot"] then
+			return self:GetUser(inp.Inputs["Shoot"].Src)
+		elseif inp.Inputs["Ignite"] then
+			return self:GetUser(inp.Inputs["Ignite"].Src)
+		elseif inp.Inputs["Explode"] then
+			return self:GetUser(inp.Inputs["Explode"].Src) 
+		else
+			return inp.Owner or inp:GetOwner()
+		end
+	else
+		return inp.Owner or inp:GetOwner()
+	end
+	
+end
+
 function ENT:TriggerInput( iname , value )
 
 	if (iname == "Active") then
@@ -206,7 +228,17 @@ function ENT:TriggerInput( iname , value )
 		else
 			self.Load = false
 		end
-	end		
+	elseif (iname == "Fuse Length" and value > 0 and (self.BulletData["RoundType"] == "HE" or self.BulletData["RoundType"] == "APHE")) then
+		self.BulletData["FuseLength"] = math.Clamp(value,0,10)
+	elseif (iname == "Ignite" and value > 0) then
+		self.Exploding = true
+		self.Inflictor = self:GetUser( self.Inputs["Ignite"].Src )
+		if self.Ammo > 1 then
+			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
+		else
+			ACF_HEKill( self.Entity , VectorRand() )
+		end
+	end
 
 end
 
@@ -222,7 +254,6 @@ function ENT:FirstLoad()
 end
 
 function ENT:Think()
-	
 	local AmmoMass = self:AmmoMass()
 	self.Mass = math.max(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 	self.Entity:GetPhysicsObject():SetMass(self.Mass) 

@@ -245,7 +245,6 @@ function ACFHomeGUICreate( Table )
 	acfmenupanel["CData"]["VersionInit"] = vgui.Create( "DLabel" )
 	versiontext = "Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
 	acfmenupanel["CData"]["VersionInit"]:SetText(versiontext)	
-	acfmenupanel["CData"]["VersionInit"]:SetDark( true )
 	acfmenupanel["CData"]["VersionInit"]:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionInit"] )
 	
@@ -264,7 +263,6 @@ function ACFHomeGUICreate( Table )
 	end
 	
 	acfmenupanel["CData"]["VersionText"]:SetText("ACF Is "..versionstring.."!\n\n\n\n")
-	acfmenupanel["CData"]["VersionText"]:SetDark( true )
 	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
 	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
 	
@@ -273,25 +271,27 @@ function ACFHomeGUICreate( Table )
 	
 	acfmenupanel:CPanelText("Header", "Changelog")
 	
-	acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
-	for Rev,Changes in pairs(acfmenupanel.Changelog) do
+	if acfmenupanel.Changelog then
+		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
+		for Rev,Changes in pairs(acfmenupanel.Changelog) do
+			
+			local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
+			Node.mytable = {}
+				Node.mytable["rev"] = Rev
+			function Node:DoClick()
+				acfmenupanel:UpdateAttribs( Node.mytable )
+			end
+			Node.Icon:SetImage( "gui/silkicons/newspaper" )
+			
+		end	
+		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
 		
-		local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
-		Node.mytable = {}
-			Node.mytable["rev"] = Rev
-		function Node:DoClick()
-			acfmenupanel:UpdateAttribs( Node.mytable )
-		end
-		Node.Icon:SetImage( "gui/silkicons/newspaper" )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
 		
-	end	
-	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
-	
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
-	
-	acfmenupanel.CustomDisplay:PerformLayout()
-	
-	acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+		acfmenupanel.CustomDisplay:PerformLayout()
+		
+		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+	end
 	
 end
 
@@ -367,7 +367,6 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel["CData"][Name]:SetText( Title )
-			acfmenupanel["CData"][Name]:SetDark( true )
 			acfmenupanel["CData"][Name]:SetMin( 0 )
 			acfmenupanel["CData"][Name]:SetMax( 1000 )
 			acfmenupanel["CData"][Name]:SetDecimals( Decimals )
@@ -389,7 +388,6 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
@@ -403,7 +401,6 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DCheckBoxLabel" )
 			acfmenupanel["CData"][Name]:SetText( Title or "" )
-			acfmenupanel["CData"][Name]:SetDark( true )
 			acfmenupanel["CData"][Name]:SizeToContents()
 			if acfmenupanel.AmmoData[Name] != nil then
 				acfmenupanel["CData"][Name]:SetChecked(acfmenupanel.AmmoData[Name])
@@ -422,7 +419,6 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
 			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
@@ -436,7 +432,6 @@ function PANEL:CPanelText(Name, Desc)
 	if not acfmenupanel["CData"][Name.."_text"] then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
 			acfmenupanel["CData"][Name.."_text"]:SetWrap(true)
 			acfmenupanel["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )

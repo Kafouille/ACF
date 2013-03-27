@@ -2,9 +2,9 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 324 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 240 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
-print("ACF Loaded")
+print("[[ ACF Loaded ]]")
 
 ACF.Threshold = 150	--Health Divisor
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
@@ -16,7 +16,6 @@ ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
 ACF.Spalling = 0
-ACF.GunfireEnabled = true
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -54,10 +53,40 @@ if (SERVER) then
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
 	
+	resource.AddFile( "materials/HUD/killicons/acf_AC.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_AC.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_AL.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_AL.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_C.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_C.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_GL.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_GL.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_HMG.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_HMG.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_HW.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_HW.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_MG.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_MG.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_MO.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_MO.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_RAC.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_RAC.vmt" )
+
+	
 elseif (CLIENT) then
 
 	include("acf/client/cl_acfballistics.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
+	
+	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_C", "HUD/killicons/acf_C", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_GL", "HUD/killicons/acf_GL", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_HMG", "HUD/killicons/acf_HMG", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_HW", "HUD/killicons/acf_HW", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_MG", "HUD/killicons/acf_MG", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_MO", "HUD/killicons/acf_MO", Color( 181, 48, 48, 255 ) )
+	killicon.Add( "acf_RAC", "HUD/killicons/acf_RAC", Color( 181, 48, 48, 255 ) )
 	
 end
 
@@ -83,11 +112,12 @@ ACF.RoundTypes = list.Get("ACFRoundTypes")
 
 ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds classes from clientside with just an integer
 
-game.AddParticles("particles/acf_muzzleflashes.pcf")
-game.AddParticles("particles/explosion1.pcf")
-game.AddParticles("particles/rocket_motor.pcf")
+timer.Simple(5,function()
+	game.AddParticles("particles/acf_muzzleflashes.pcf")
+	game.AddParticles("particles/explosion1.pcf")
+	game.AddParticles("particles/rocket_motor.pcf")
 
-timer.Simple(0, function()
+
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
 		PrecacheParticleSystem(Table["muzzleflash"])
 	end
@@ -124,7 +154,6 @@ CreateConVar("acf_healthmod", 1)
 CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
 CreateConVar("acf_spalling", 0)
-CreateConVar("acf_gunfire", 1)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
@@ -143,32 +172,24 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "on"
 		end
 		print ("ACF Spalling is now " .. text)
-	elseif( CVar == "acf_gunfire" ) then
-		ACF.GunfireEnabled = tobool( New )
-		local text = "disabled"
-		if ACF.GunfireEnabled then 
-			text = "enabled" 
-		end
-		print ("Gunfire has been " .. text)
 	end	
 end
 
 
-/*function ACF_UpdateChecking( )
+function ACF_UpdateChecking( )
 	
-	print("Checking for updates....")
+	print("[ACF] Checking for updates....")
 	
-	http.Fetch("http://acf.googlecode.com/svn/",function(contents,size)
-		local rev = tonumber(string.match( contents, "Revision ([0-9]+)" ))
+	http.Fetch("https://github.com/nrlulz/ACF",function(contents,size)
+		local rev = tonumber(string.match( contents, "([0-9]+) commits" ))
 		if rev and ACF.Version >= rev then
-			print("ACF Is Up To Date, Latest Version: "..rev)
+			print("[ACF] ACF Is Up To Date, Latest Version: "..rev)
 			
 		elseif !rev then
-			print("No Internet Connection Detected! ACF Update Check Failed")
+			print("[ACF] No Internet Connection Detected! ACF Update Check Failed")
 		else
-			print("A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
-			
-			print("Please update!")
+			print("[ACF] A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
+			print("[ACF] Please update!")
 		end
 		ACF.CurrentVersion = rev
 		
@@ -176,23 +197,142 @@ end
 end
 ACF_UpdateChecking( )
 
+if SERVER then
+	duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
+		if !IsValid( Entity ) then return end
+		local sound = data[1]
+		timer.Simple(1, function()
+			if Entity:GetClass() == "acf_engine" then
+				Entity.SoundPath = sound
+			elseif Entity:GetClass() == "acf_gun" then
+				Entity.Sound = sound
+			end
+		end)
+		
+		duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
+	end)
+end
 
+concommand.Add("acf_replacesound", function(ply, _, args)
+	if CLIENT then return end
+	local sound
+	if type(args) == "table" then 
+		sound = args[1]
+	else
+		sound = args
+	end
+	
+	if not sound then return end
+	
+	if not file.Find("sounds"..sound, "GAME") then
+		print("sounds/"..sound.."*")
+		print("There is no such sound!")
+		return
+	end
+	
+	local tr = ply:GetEyeTrace()
+	if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
+		print("You need to look at engine or gun to change it's sound")
+		return
+	end
+	local ent = tr.Entity
+	if ent:GetClass() == "acf_engine" then
+		ent.SoundPath = sound
+	elseif ent:GetClass() == "acf_gun" then
+		ent.Sound = sound
+		ent:SetNWString( "Sound", sound )
+	end
+	duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
+end)
 
 function ACF_ChatVersionPrint(ply)
-	if ACF.Version < ACF.CurrentVersion then
+	if not ACF.Version or ACF.Version < ACF.CurrentVersion then
 	timer.Simple( 2,function()
 		ply:SendLua(
-			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available! Version: \"..ACF.CurrentVersion)"
+			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available!\")"
 			) 
 		end)
 	end	
 end
 
-hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)*/
-
+hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)
 
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
-cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
+
+/*
+ONE HUGE HACK to get good killicons.
+*/
+
+if SERVER then
+	util.AddNetworkString( "ACF_KilledByACF" )
+	
+	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
+		if victim.KilledByAmmo then
+			net.Start("ACF_KilledByACF")
+				net.WriteString( victim:Nick()..";ammo;"..attacker:Nick() )
+			net.Broadcast()
+		elseif inflictor:GetClass() == "acf_gun" then
+			net.Start("ACF_KilledByACF")
+				net.WriteString( victim:Nick()..";"..inflictor.Class..";"..attacker:Nick() )
+			net.Broadcast()
+		end
+	end)
+end
+
+
+if CLIENT then
+	
+	net.Receive("ACF_KilledByACF", function()
+		local Table = string.Explode(";", net.ReadString())
+		local victim, gun, attacker = Table[1], Table[2], Table[3]
+		
+		if attacker == "worldspawn" then attacker = "" end
+		GAMEMODE:AddDeathNotice( attacker, -1, "acf_"..gun, victim, 1001 )
+	end)
+	
+	if not ACF.replacedPlayerKilled then
+		timer.Create("ACF_replacePlayerKilled", 1, 0, function()
+			local Hooks = usermessage.GetTable()
+			if Hooks["PlayerKilled"] then
+				local ACF_PlayerKilled = Hooks["PlayerKilled"].Function
+				ACF.replacedPlayerKilled = true
+				Hooks["PlayerKilled"].Function = function(msg)
+					local victim     = msg:ReadEntity()
+					if ( !IsValid( victim ) ) then return end
+					local inflictor    = msg:ReadString()
+					local attacker     = msg:ReadString()
+					if inflictor != "acf_gun" then
+						ACF_PlayerKilled(msg)
+					end
+				end
+				timer.Destroy("ACF_replacePlayerKilled")
+				Msg("[ACF] Replaced PlayerKilled\n")
+			end
+		end)
+	end
+	if not ACF.replacedPlayerKilledByPlayer then
+		timer.Create("ACF_replacePlayerKilledByPlayer", 1, 0, function()
+			local Hooks = usermessage.GetTable()
+			if Hooks["PlayerKilledByPlayer"] then
+				local ACF_PlayerKilledByPlayer = Hooks["PlayerKilledByPlayer"].Function
+				ACF.replacedPlayerKilledByPlayer = true
+				Hooks["PlayerKilledByPlayer"].Function = function(msg)
+					local victim     = msg:ReadEntity()
+					local inflictor    = msg:ReadString()
+					local attacker     = msg:ReadEntity()
+
+					if ( !IsValid( attacker ) ) then return end
+					if ( !IsValid( victim ) ) then return end
+					if inflictor != "acf_gun" then
+						ACF_PlayerKilledByPlayer(msg)
+					end
+				end
+				timer.Destroy("ACF_replacePlayerKilledByPlayer")
+				Msg("[ACF] Replaced PlayerKilledByPlayer\n")
+			end
+		end)
+	end
+end

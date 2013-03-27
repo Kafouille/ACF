@@ -10,10 +10,11 @@ function ENT:GetOverlayText()
 	local GunType = self.Entity:GetNetworkedBeamString("GunType")
 	local Ammo = self.Entity:GetNetworkedBeamInt("Ammo")
 	local RoundType = self.Entity:GetNetworkedBeamString("Type")
+	local FireRate = self.Entity:GetNetworkedBeamInt("FireRate")
 	local Mass = self.Entity:GetNetworkedBeamInt("Mass")/100
 	local Filler =self.Entity:GetNetworkedBeamInt("Filler")/100
 	local Propellant = self.Entity:GetNetworkedBeamInt("Propellant")/1000
-	local txt = GunType.." : "..Ammo.." : \nRound Type : "..RoundType.."\nRound Mass : "..Mass.."\nFiller Mass : "..Filler.."\nPropellant : "..Propellant or ""
+	local txt = GunType.." : "..Ammo.." : \nRound Type : "..RoundType.."\nRound Mass : "..Mass.."\nFiller Mass : "..Filler.."\nPropellant : "..Propellant.."\nRounds Per Minute: "..FireRate or ""
 	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"

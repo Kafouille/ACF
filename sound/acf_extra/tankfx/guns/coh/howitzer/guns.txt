@@ -1,0 +1,25 @@
+76mm_firefly		needs registration
+75mm_panther		needs registration
+75mm_sherman		needs registration
+90mm_m1			needs registration (Slugger)
+90mm_m3			needs registration (Pershing)
+75mm_stuk42		needs registration (Stug 4g)
+88mm_tiger2		needs registration (pz-6b)
+75mm_pak40		needs registration (pak40)
+
+
+
+37mm is from stuart
+45mm is from bt-7
+50mm is from pz-3
+75mm is from pz-4
+76mm is from t-34-41
+85mm is from t-34-85
+88mm is from Tiger
+122mm is from is-2
+128mm is from Jagdtiger
+152mm is from ISU
+
+
+
+type xy are japanese guns

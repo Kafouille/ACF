@@ -1,7 +1,11 @@
 INSTALL:
 
-If you are updating a previous installation of ACF, DELETE YOUR PARTICLES FOLDER. This will fix vanilla particles.
-COPY SCRIPTS FOLDER TO MAIN GMOD DIRECTORY.
+MAIN GMOD DIRECTORY:
+
+Scripts
+Particles
+
+
 
 -----------------------
 IF YOU WANT ACF POWERED STUFF TO GO MORE REALISTIC SPEEDS:

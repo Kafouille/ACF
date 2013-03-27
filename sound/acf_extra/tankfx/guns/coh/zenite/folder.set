@@ -1,0 +1,4 @@
+{sound
+	{loudness "shoot normal"}
+	{signal shot 50}
+}

@@ -94,7 +94,6 @@ function ACF_GearsSlider(Gear, Value, ID, Desc)
 	if Gear and not acfmenupanel["CData"][Gear] then	
 		acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel["CData"][Gear]:SetText( Desc or "Gear "..Gear )
-			acfmenupanel["CData"][Gear]:SetDark( true )
 			acfmenupanel["CData"][Gear]:SetMin( -1 )
 			acfmenupanel["CData"][Gear]:SetMax( 1 )
 			acfmenupanel["CData"][Gear]:SetDecimals( 2 )

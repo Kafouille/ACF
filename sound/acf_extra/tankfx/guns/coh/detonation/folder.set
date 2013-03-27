@@ -1,0 +1,5 @@
+{sound
+	{tag effects}
+	{loudness "blast big"}
+	{signal explosion 20}
+}
