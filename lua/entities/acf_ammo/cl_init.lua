@@ -5,6 +5,25 @@ ENT.RenderGroup 		= RENDERGROUP_OPAQUE
 function ENT:Draw()
 	self:DoNormalDraw()
     Wire_Render(self.Entity)
+	
+	if self.RefillAmmoEffect then
+		self:DrawRefillAmmo()
+	end
+	
+end
+
+function ENT:DrawRefillAmmo()
+	for k,v in pairs( self.RefillAmmoEffect ) do
+		local Time = SysTime() - v.StTime
+		local Pos = (v.EntTo:GetPos() - v.EntFrom:GetPos()) * (Time/5) + v.EntFrom:GetPos()
+		local Dir = (v.EntTo:GetPos() - v.EntFrom:GetPos()):GetAngle()
+		for i=0,v.Amount do
+			cam.Start3D2D(Pos, Dir, 1)
+				surface.SetDrawColor( Color( 0, 0, 0 ) )
+				surface.DrawRect( -5, -5, 10, 10 )
+			cam.End3D2D()
+		end
+	end
 end
 
 function ENT:DoNormalDraw()
@@ -35,3 +54,11 @@ function ENT:Think()
 		Wire_UpdateRenderBounds(self.Entity)
 	end
 end
+
+net.Receive("ACF_RefillEffect", function()
+	local Amount, EntFrom, EntTo = net.ReadFloat(), ents.GetByIndex( net.ReadFloat() ), ents.GetByIndex( net.ReadFloat() )
+	if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end
+	ENT.RefillAmmoEffect = ENT.RefillAmmoEffect or {}
+	table.insert( ENT.RefillAmmoEffect, {Amount = Amount,EntFrom = EntFrom, EntTo = EntTo,StTime = SysTime()} )
+	
+end)

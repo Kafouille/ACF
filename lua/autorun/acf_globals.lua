@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 246 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 247 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -34,6 +34,9 @@ ACF.PScale = 1	--Gun Propellant power expotential
 ACF.MVScale = 0.5  --Propellant to MV convertion expotential
 ACF.PDensity = 1.6	--Gun propellant density (Real powders go from 0.7 to 1.6, i'm using higher densities to simulate case bottlenecking)
 
+ACF.RefillDistance = 200 --Distance in which ammo crate starts refilling.
+ACF.RefillSpeed = 700 -- (ACF.RefillSpeed / RoundVolume) / Distance 
+
 ACF.Year = 1945
 
 CreateConVar('sbox_max_acf_gun', 12)
@@ -48,6 +51,8 @@ AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
 if (SERVER) then
+	util.AddNetworkString( "ACF_KilledByACF" )
+	util.AddNetworkString( "ACF_RefillEffect" )
 
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
@@ -267,7 +272,6 @@ ONE HUGE HACK to get good killicons.
 */
 
 if SERVER then
-	util.AddNetworkString( "ACF_KilledByACF" )
 	
 	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
 		if victim.KilledByAmmo then

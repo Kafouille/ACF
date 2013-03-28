@@ -36,7 +36,6 @@ end
 
 --Ammocrate stuff
 function ACF_RefillNetworkData( Crate, BulletData )
-	PrintTable(BulletData)
 
 	Crate:SetNetworkedString("AmmoType","Refill")
 	Crate:SetNetworkedString("AmmoID",BulletData["Id"])

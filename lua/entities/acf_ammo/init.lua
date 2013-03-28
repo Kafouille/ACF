@@ -19,11 +19,12 @@ function ENT:Initialize()
 	self.Sequence = 0
 	
 	self.WireDebugName = "Ammo Crate"
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Ignite"} ) --, "Fuse Length"
+	self.Inputs = Wire_CreateInputs( self.Entity, { "Active" } ) --, "Fuse Length"
 	self.Outputs = Wire_CreateOutputs( self.Entity, { "Munitions" , "On Fire" } )
 		
 	self.NextThink = CurTime() +  1
 	
+	ACF.AmmoCrates = ACF.AmmoCrates or {}
 end
 
 function ENT:ACF_Activate( Recalc )
@@ -118,6 +119,8 @@ function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, 
 	Owner:AddCount( "_acf_ammo", Ammo )
 	Owner:AddCleanup( "acfmenu", Ammo )
 	
+	table.insert(ACF.AmmoCrates, Ammo)
+	
 	return Ammo
 end
 list.Set( "ACFCvars", "acf_ammo" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
@@ -199,28 +202,6 @@ function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was f
 	return math.floor( (self.BulletData["ProjMass"] + self.BulletData["PropMass"]) * self.Capacity * 2 )
 end
 
-function ENT:GetUser( inp )
-	if inp:GetClass() == "gmod_wire_adv_pod" then
-		local User = inp.Pod:GetDriver()
-	elseif inp:GetClass() == "gmod_wire_pod" then
-		local User = inp.Pod:GetDriver()
-	elseif inp:GetClass() == "gmod_wire_expression2" then
-		if inp.Inputs["Fire"] then
-			return self:GetUser(inp.Inputs["Fire"].Src) 
-		elseif inp.Inputs["Shoot"] then
-			return self:GetUser(inp.Inputs["Shoot"].Src)
-		elseif inp.Inputs["Ignite"] then
-			return self:GetUser(inp.Inputs["Ignite"].Src)
-		elseif inp.Inputs["Explode"] then
-			return self:GetUser(inp.Inputs["Explode"].Src) 
-		else
-			return inp.Owner or inp:GetOwner()
-		end
-	else
-		return inp.Owner or inp:GetOwner()
-	end
-	
-end
 
 function ENT:TriggerInput( iname , value )
 
@@ -232,15 +213,6 @@ function ENT:TriggerInput( iname , value )
 			self.Load = false
 		end
 	elseif (iname == "Fuse Length" and value > 0 and (self.BulletData["RoundType"] == "HE" or self.BulletData["RoundType"] == "APHE")) then
-		self.BulletData["FuseLength"] = math.Clamp(value,0,10)
-	elseif (iname == "Ignite" and value > 0) then
-		self.Exploding = true
-		self.Inflictor = self:GetUser( self.Inputs["Ignite"].Src )
-		if self.Ammo > 1 then
-			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
-		else
-			ACF_HEKill( self.Entity , VectorRand() )
-		end
 	end
 
 end
@@ -299,11 +271,46 @@ function ENT:Think()
 			end
 			self.Entity:NextThink( CurTime() + 0.01 + self.BulletData["RoundVolume"]^0.5/100 )
 		end
+	elseif self.RoundType == "Refill" then
+		if self.Load then
+			for _,Ammo in pairs( ACF.AmmoCrates ) do
+				if Ammo.RoundType ~= "Refill" then
+					local dist = self.Entity:GetPos():Distance(Ammo:GetPos())
+					if dist < ACF.RefillDistance then
+					
+						if Ammo.Capacity > Ammo.Ammo then
+							self.SupplyingTo = self.SupplyingTo or {}
+								
+								local Supply = math.ceil(ACF.RefillSpeed/Ammo.BulletData["RoundVolume"])
+								--Msg(ACF.RefillSpeed.."/"..Ammo.BulletData["RoundVolume"].."="..Supply.."\n")
+								local Transfert = math.min(Supply , Ammo.Capacity - Ammo.Ammo)
+								Msg("Reicever Ok " ..Transfert.. "\n")
+								Ammo.Ammo = Ammo.Ammo + Transfert
+								self.Ammo = self.Ammo - Transfert
+								
+								Ammo.Supplied = true
+								Ammo.Entity:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
+								self:RefillEffect( Ammo, Transfert )
+						end
+					end
+				end
+			end
+		end
 	end
 	
 	Wire_TriggerOutput(self.Entity, "Munitions", self.Ammo)
 	return true
 
+end
+
+function ENT:RefillEffect( Target, Amount )
+/*
+	net.Start("ACF_RefillEffect")
+		net.WriteFloat(Amount)
+		net.WriteFloat( self.Entity:EntIndex() )
+		net.WriteFloat( Target:EntIndex() )
+	net.Broadcast()
+*/
 end
 
 function ENT:ConvertData()
@@ -314,6 +321,7 @@ function ENT:NetworkData()
 	--You overwrite this with your own function, defined in the ammo definition file
 end
 
+/*
 function ENT:Touch( Supplier )
 	
 	if ( Supplier:GetClass() == "acf_ammo" ) then
@@ -343,12 +351,18 @@ function ENT:Touch( Supplier )
 	end
 	
 end
+*/
 
 function ENT:OnRemove()
 	for Key,Value in pairs(self.Master) do
 		if self.Master[Key] and self.Master[Key]:IsValid() then
 			self.Master[Key]:Unlink( self.Entity )
 			self.Ammo = 0
+		end
+	end
+	for k,v in pairs(ACF.AmmoCrates) do
+		if v == self then
+			table.remove(ACF.AmmoCrates,k)
 		end
 	end
 	Wire_Remove(self.Entity)
