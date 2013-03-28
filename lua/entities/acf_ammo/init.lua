@@ -56,8 +56,11 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 
 	local HitRes = ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )	--Calling the standard damage prop function
 	
+	
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	if HitRes.Kill then
+		local CanDo = hook.Call("ACF_AmmoExplode", _, self.Entity, self.BulletData )
+		if CanDo == false then return HitRes end
 		self.Exploding = true
 		if( Inflictor and Inflictor:IsValid() and Inflictor:IsPlayer() ) then
 			self.Inflictor = Inflictor

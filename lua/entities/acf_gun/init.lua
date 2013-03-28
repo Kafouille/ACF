@@ -216,6 +216,8 @@ function ENT:TriggerInput( iname , value )
 	if (iname == "Unload" and value > 0) then
 		timer.Simple( 0, self.UnloadAmmo() )
 	elseif ( iname == "Fire" and value > 0 ) then
+		local CanDo = hook.Call("ACF_FireShell", _, self.Entity, self.BulletData )
+		if CanDo == false then return end
 		if self.Entity.NextFire < CurTime() then
 			self.User = self:GetUser(self.Inputs["Fire"].Src)
 			if not IsValid(self.User) then self.User = self.Owner end
