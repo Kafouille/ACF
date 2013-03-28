@@ -181,20 +181,33 @@ end
 
 function ENT:GetUser( inp )
 	if inp:GetClass() == "gmod_wire_adv_pod" then
-		local User = inp.Pod:GetDriver()
+		if inp.Pod then
+			return inp.Pod:GetDriver()
+		end
 	elseif inp:GetClass() == "gmod_wire_pod" then
-		local User = inp.Pod:GetDriver()
+		if inp.Pod then
+			return inp.Pod:GetDriver()
+		end
+	elseif inp:GetClass() == "gmod_wire_keyboard" then
+		if inp.ply then
+			return inp.ply 
+		end
+	elseif inp:GetClass() == "gmod_wire_joystick" then
+		if inp.Pod then 
+			return inp.Pod:GetDriver()
+		end
+	elseif inp:GetClass() == "gmod_wire_joystick_multi" then
+		if inp.Pod then 
+			return inp.Pod:GetDriver()
+		end
 	elseif inp:GetClass() == "gmod_wire_expression2" then
 		if inp.Inputs["Fire"] then
 			return self:GetUser(inp.Inputs["Fire"].Src) 
 		elseif inp.Inputs["Shoot"] then
 			return self:GetUser(inp.Inputs["Shoot"].Src) 
-		else
-			return inp.Owner or inp:GetOwner()
 		end
-	else
-		return inp.Owner or inp:GetOwner()
 	end
+	return inp.Owner or inp:GetOwner()
 	
 end
 

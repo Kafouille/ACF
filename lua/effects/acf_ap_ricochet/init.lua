@@ -26,6 +26,8 @@
 		BulletEffect.Damage = 0	 
 	LocalPlayer():FireBullets(BulletEffect) 
 	
+	sound.Play( "/acf_other/ricochets/0000032"..math.random(0,2)..".wav", self.Origin, math.Clamp(self.Mass*200,65,500), math.Clamp(self.Velocity*0.01,25,255), 1 )
+	
 	util.Decal("ExplosiveGunshot", self.Origin + self.DirVec*10, self.Origin - self.DirVec*10)
 	
  end   
