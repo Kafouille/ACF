@@ -76,6 +76,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	local Ratio = (HitRes.Damage/self.BulletData["RoundVolume"])^0.2
 	--print(Ratio)
 	if ( Ratio * self.Capacity/self.Ammo ) > math.Rand(0,1) then  
+		self.Inflictor = Inflictor
 		self.Damaged = CurTime() + (5 - Ratio*3)
 		Wire_TriggerOutput(self.Entity, "On Fire", 1)
 	end
@@ -214,6 +215,15 @@ function ENT:TriggerInput( iname , value )
 			self:FirstLoad()
 		else
 			self.Load = false
+			
+			if self.SupplyingTo then
+				for k,v in pairs( self.SupplyingTo ) do
+					local Ammo = ents.GetByIndex(v)
+					table.remove(self.SupplyingTo, k)
+					self:StopRefillEffect( Ammo )
+				end
+				self.SupplyingTo = nil
+			end
 		end
 	elseif (iname == "Fuse Length" and value > 0 and (self.BulletData["RoundType"] == "HE" or self.BulletData["RoundType"] == "APHE")) then
 	end
@@ -263,7 +273,7 @@ function ENT:Think()
 				
 				self.BulletData["Pos"] = MuzzlePos
 				self.BulletData["Flight"] = (MuzzleVec):GetNormalized() * Speed * 39.37 + self:GetVelocity()
-				self.BulletData["Owner"] = self.Owner
+				self.BulletData["Owner"] = self.Inflictor or self.Owner
 				self.BulletData["Gun"] = self.Entity
 				self.BulletData["Crate"] = self.Entity:EntIndex()
 				self.CreateShell = ACF.RoundTypes[self.BulletData["Type"]]["create"]
@@ -274,7 +284,7 @@ function ENT:Think()
 			end
 			self.Entity:NextThink( CurTime() + 0.01 + self.BulletData["RoundVolume"]^0.5/100 )
 		end
-	elseif self.RoundType == "Refill" then
+	elseif self.RoundType == "Refill" and self.Ammo > 0 then
 		if self.Load then
 			for _,Ammo in pairs( ACF.AmmoCrates ) do
 				if Ammo.RoundType ~= "Refill" then
@@ -283,19 +293,38 @@ function ENT:Think()
 					
 						if Ammo.Capacity > Ammo.Ammo then
 							self.SupplyingTo = self.SupplyingTo or {}
+							if not table.HasValue( self.SupplyingTo, Ammo:EntIndex() ) then
+								table.insert(self.SupplyingTo, Ammo:EntIndex())
+								self:RefillEffect( Ammo )
+							end
 								
-								local Supply = math.ceil(ACF.RefillSpeed/Ammo.BulletData["RoundVolume"])
-								--Msg(ACF.RefillSpeed.."/"..Ammo.BulletData["RoundVolume"].."="..Supply.."\n")
+								local Supply = math.ceil((50000/((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000))/dist)
+								Msg(tostring(50000).."/"..((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000).."/"..dist.."="..Supply.."\n")
 								local Transfert = math.min(Supply , Ammo.Capacity - Ammo.Ammo)
-								Msg("Reicever Ok " ..Transfert.. "\n")
 								Ammo.Ammo = Ammo.Ammo + Transfert
 								self.Ammo = self.Ammo - Transfert
 								
 								Ammo.Supplied = true
 								Ammo.Entity:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
-								self:RefillEffect( Ammo, Transfert )
+								
 						end
 					end
+				end
+			end
+		end
+	end
+	
+	if self.SupplyingTo then
+		for k,v in pairs( self.SupplyingTo ) do
+			local Ammo = ents.GetByIndex(v)
+			if not IsValid( Ammo ) then 
+				table.remove(self.SupplyingTo, k)
+				self:StopRefillEffect( Ammo )
+			else
+				local dist = self.Entity:GetPos():Distance(Ammo:GetPos())
+				if dist > ACF.RefillDistance or Ammo.Capacity <= Ammo.Ammo then
+					table.remove(self.SupplyingTo, k)
+					self:StopRefillEffect( Ammo )
 				end
 			end
 		end
@@ -306,14 +335,19 @@ function ENT:Think()
 
 end
 
-function ENT:RefillEffect( Target, Amount )
-/*
-	net.Start("ACF_RefillEffect")
-		net.WriteFloat(Amount)
-		net.WriteFloat( self.Entity:EntIndex() )
-		net.WriteFloat( Target:EntIndex() )
-	net.Broadcast()
-*/
+function ENT:RefillEffect( Target )
+	umsg.Start("ACF_RefillEffect")
+		umsg.Float( self.Entity:EntIndex() )
+		umsg.Float( Target:EntIndex() )
+		umsg.String( Target.RoundType )
+	umsg.End()
+end
+
+function ENT:StopRefillEffect( Target )
+	umsg.Start("ACF_StopRefillEffect")
+		umsg.Float( self.Entity:EntIndex() )
+		umsg.Float( Target:EntIndex() )
+	umsg.End()
 end
 
 function ENT:ConvertData()

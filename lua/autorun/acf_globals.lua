@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 250 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 252 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -35,8 +35,8 @@ ACF.PScale = 1	--Gun Propellant power expotential
 ACF.MVScale = 0.5  --Propellant to MV convertion expotential
 ACF.PDensity = 1.6	--Gun propellant density (Real powders go from 0.7 to 1.6, i'm using higher densities to simulate case bottlenecking)
 
-ACF.RefillDistance = 200 --Distance in which ammo crate starts refilling.
-ACF.RefillSpeed = 700 -- (ACF.RefillSpeed / RoundVolume) / Distance 
+ACF.RefillDistance = 300 --Distance in which ammo crate starts refilling.
+ACF.RefillSpeed = 700 -- (ACF.RefillSpeed / RoundMass) / Distance 
 
 ACF.Year = 1945
 
@@ -53,7 +53,6 @@ AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
 if (SERVER) then
 	util.AddNetworkString( "ACF_KilledByACF" )
-	util.AddNetworkString( "ACF_RefillEffect" )
 
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")

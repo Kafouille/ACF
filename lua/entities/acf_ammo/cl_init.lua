@@ -14,14 +14,19 @@ end
 
 function ENT:DrawRefillAmmo()
 	for k,v in pairs( self.RefillAmmoEffect ) do
-		local Time = SysTime() - v.StTime
-		local Pos = (v.EntTo:GetPos() - v.EntFrom:GetPos()) * (Time/5) + v.EntFrom:GetPos()
-		local Dir = (v.EntTo:GetPos() - v.EntFrom:GetPos()):GetAngle()
-		for i=0,v.Amount do
-			cam.Start3D2D(Pos, Dir, 1)
-				surface.SetDrawColor( Color( 0, 0, 0 ) )
-				surface.DrawRect( -5, -5, 10, 10 )
-			cam.End3D2D()
+		local St, En = v.EntFrom:LocalToWorld(v.EntFrom:OBBCenter()), v.EntTo:LocalToWorld(v.EntTo:OBBCenter())
+		local Vec = En - St
+		local Distance = Vec:Length()
+		local Ang = Vec:Angle()
+		local Amount = math.Clamp((Distance/50),2,100)
+		local Time = (SysTime() - v.StTime)
+		for I = 1, Amount do
+			local MdlTbl = {
+				model = v.Model,
+				pos = Vec * ((((I+Time)%Amount))/Amount) + St,
+				angle = Ang
+			}
+			render.Model( MdlTbl )
 		end
 	end
 end
@@ -55,10 +60,26 @@ function ENT:Think()
 	end
 end
 
-net.Receive("ACF_RefillEffect", function()
-	local Amount, EntFrom, EntTo = net.ReadFloat(), ents.GetByIndex( net.ReadFloat() ), ents.GetByIndex( net.ReadFloat() )
+usermessage.Hook("ACF_RefillEffect", function( msg )
+	local EntFrom, EntTo, Index = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() ), msg:ReadString()
 	if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end
-	ENT.RefillAmmoEffect = ENT.RefillAmmoEffect or {}
-	table.insert( ENT.RefillAmmoEffect, {Amount = Amount,EntFrom = EntFrom, EntTo = EntTo,StTime = SysTime()} )
-	
+	local List = list.Get( "ACFRoundTypes")
+	local Mdl = List[Index].model or "models/munitions/round_100mm_shot.mdl"
+
+	EntFrom.RefillAmmoEffect = EntFrom.RefillAmmoEffect or {}
+	table.insert( EntFrom.RefillAmmoEffect, {EntFrom = EntFrom, EntTo = EntTo, Model = Mdl, StTime = SysTime()} )
+
+end)
+usermessage.Hook("ACF_StopRefillEffect", function( msg )
+	local EntFrom, EntTo = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() )
+	if not IsValid( EntFrom ) or not IsValid( EntTo )or not EntFrom.RefillAmmoEffect then return end
+	for k,v in pairs( EntFrom.RefillAmmoEffect ) do
+		if v.EntTo == EntTo then
+			if #EntFrom.RefillAmmoEffect<=1 then 
+				EntFrom.RefillAmmoEffect = nil
+				return
+			end
+			table.remove(EntFrom.RefillAmmoEffect, k)
+		end
+	end
 end)

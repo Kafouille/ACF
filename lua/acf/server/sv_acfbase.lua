@@ -141,11 +141,11 @@ function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone,
 	local Driver = Entity:GetDriver()
 	if Driver:IsValid() then
 		if Ammo == true then
-			Entity.KilledByAmmo = true
+			Driver.KilledByAmmo = true
 		end
-		Entity:TakeDamage( Damage * dmul * var, Inflictor, Gun )
+		Driver:TakeDamage( Damage * dmul * var, Inflictor, Gun )
 		if Ammo == true then
-			Entity.KilledByAmmo = false
+			Driver.KilledByAmmo = false
 		end
 		
 	end
