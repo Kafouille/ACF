@@ -16,6 +16,7 @@ ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
 ACF.Spalling = 0
+ACF.GunfireEnabled = true
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -117,12 +118,11 @@ ACF.RoundTypes = list.Get("ACFRoundTypes")
 
 ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds classes from clientside with just an integer
 
-timer.Simple(5,function()
-	game.AddParticles("particles/acf_muzzleflashes.pcf")
-	game.AddParticles("particles/explosion1.pcf")
-	game.AddParticles("particles/rocket_motor.pcf")
+game.AddParticles("particles/acf_muzzleflashes.pcf")
+game.AddParticles("particles/explosion1.pcf")
+game.AddParticles("particles/rocket_motor.pcf")
 
-
+timer.Simple( 0, function()
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
 		PrecacheParticleSystem(Table["muzzleflash"])
 	end
@@ -159,6 +159,7 @@ CreateConVar("acf_healthmod", 1)
 CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
 CreateConVar("acf_spalling", 0)
+CreateConVar("acf_gunfire", 1)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
@@ -177,6 +178,13 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "on"
 		end
 		print ("ACF Spalling is now " .. text)
+	elseif( CVar == "acf_gunfire" ) then
+		ACF.GunfireEnabled = tobool( New )
+		local text = "disabled"
+		if ACF.GunfireEnabled then 
+			text = "enabled" 
+		end
+		print ("ACF Gunfire has been " .. text)
 	end	
 end
 
@@ -266,6 +274,7 @@ cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
+cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
 
 /*
 ONE HUGE HACK to get good killicons.
