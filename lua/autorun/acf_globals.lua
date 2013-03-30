@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 253 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 257 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -15,7 +15,7 @@ ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soi
 ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
-ACF.Spalling = 0
+ACF.Spalling = 1
 ACF.GunfireEnabled = true
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
