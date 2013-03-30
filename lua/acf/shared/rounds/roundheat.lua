@@ -263,6 +263,7 @@ end
 function ACF_HEATEndEffect( Effect, Bullet )	--Bullet stops here, do what you  have to do clientside
 	
 	local Impact = EffectData()
+		Impact:SetEntity( Bullet.Crate )
 		Impact:SetOrigin( Bullet.SimPos )
 		Impact:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Impact:SetScale( Bullet.SimFlight:Length() )
@@ -276,6 +277,7 @@ function ACF_HEATPierceEffect( Effect, Bullet )	--Bullet penetrated something, d
 	if Bullet.Detonated then
 	
 		local Spall = EffectData()
+			Spall:SetEntity( Bullet.Crate )
 			Spall:SetOrigin( Bullet.SimPos )
 			Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 			Spall:SetScale( Bullet.SimFlight:Length() )
@@ -295,6 +297,7 @@ end
 function ACF_HEATRicochetEffect( Effect, Bullet )	--Bullet ricocheted off something, do what you have to clientside
 
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Gun )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )

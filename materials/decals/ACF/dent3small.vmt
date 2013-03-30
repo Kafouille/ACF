@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+  "$basetexture" "decals\ACF\dent3"
+  "$decal" 1
+  "$decalscale" 0.01
+  "$translucent" 1
+}

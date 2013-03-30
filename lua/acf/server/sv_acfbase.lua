@@ -1,3 +1,30 @@
+function ACF_UpdateVisualHealth(Entity)
+	if Entity.ACF.PrHealth == Entity.ACF.Health then return end
+	if not ACF_HealthUpdateList then
+		ACF_HealthUpdateList = {}
+		timer.Create("ACF_HealthUpdateList", 1, 0, function()
+			for k,v in pairs(ACF_HealthUpdateList) do
+				if IsValid( v ) then
+					net.Start("ACF_RenderDamage")
+						net.WriteFloat(k)
+						net.WriteFloat(v.ACF.Health)
+						net.WriteFloat(v.ACF.MaxHealth)
+					net.Broadcast()
+				end
+				if ACF_HealthUpdateList then
+					if #ACF_HealthUpdateList <= 1 then
+						ACF_HealthUpdateList = nil
+						timer.Destroy("ACF_HealthUpdateList")
+					else
+						table.remove(ACF_HealthUpdateList, k)
+					end
+				end
+			end
+		end)
+	end
+	ACF_HealthUpdateList[Entity:EntIndex()] = Entity		
+end
+
 function ACF_Activate ( Entity , Recalc )
 
 	--Density of steel = 7.8g cm3 so 7.8kg for a 1mx1m plate 1m thick
@@ -23,7 +50,7 @@ function ACF_Activate ( Entity , Recalc )
 	Entity.ACF.Type = nil
 	Entity.ACF.Mass = Entity:GetPhysicsObject():GetMass()
 	Entity.ACF.Density = (Entity:GetPhysicsObject():GetMass()*1000)/Volume
-
+	
 	if Entity:IsPlayer() || Entity:IsNPC() then
 		Entity.ACF.Type = "Squishy"
 	elseif Entity:IsVehicle() then
@@ -31,7 +58,6 @@ function ACF_Activate ( Entity , Recalc )
 	else
 		Entity.ACF.Type = "Prop"
 	end
-	
 end
 
 function ACF_Check ( Entity )
@@ -54,7 +80,7 @@ function ACF_Check ( Entity )
 	
 end
 
-function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, Ammo ) 
+function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun ) 
 	
 	local Activated = ACF_Check( Entity )
 	local CanDo = hook.Call("ACF_BulletDamage", _, Activated, Entity, Energy, FrAera, Angle, Inflictor, Bone, Gun, Ammo )
@@ -70,11 +96,11 @@ function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, 
 		
 	elseif Activated == "Vehicle" then
 	
-		return ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, Ammo )
+		return ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun )
 		
 	elseif Activated == "Squishy" then
 	
-		return ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, Ammo )
+		return ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun )
 		
 	end
 	
@@ -128,25 +154,30 @@ function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 	else
 		Entity.ACF.Health = Entity.ACF.Health - HitRes.Damage
 		Entity.ACF.Armour = Entity.ACF.MaxArmour * (0.5 + Entity.ACF.Health/Entity.ACF.MaxHealth/2) --Simulating the plate weakening after a hit
+		
+		if Entity.ACF.PrHealth then
+			ACF_UpdateVisualHealth(Entity)
+		end
+		Entity.ACF.PrHealth = Entity.ACF.Health
 	end
 		
 	return HitRes
 	
 end
 
-function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, Ammo )
+function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun )
 
 	local HitRes = ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	
 	local Driver = Entity:GetDriver()
 	if Driver:IsValid() then
-		if Ammo == true then
-			Driver.KilledByAmmo = true
-		end
+		--if Ammo == true then
+		--	Driver.KilledByAmmo = true
+		--end
 		Driver:TakeDamage( HitRes.Damage*40 , Inflictor, Gun )
-		if Ammo == true then
-			Driver.KilledByAmmo = false
-		end
+		--if Ammo == true then
+		--	Driver.KilledByAmmo = false
+		--end
 		
 	end
 
@@ -161,7 +192,7 @@ function ACF_VehicleDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone,
 	return HitRes
 end
 
-function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun, Ammo )
+function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun)
 	
 	local Size = Entity:BoundingRadius()
 	local Mass = Entity:GetPhysicsObject():GetMass()
@@ -249,13 +280,13 @@ function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone,
 		var = 0
 	end
 	
-	if Ammo == true then
-		Entity.KilledByAmmo = true
-	end
+	--if Ammo == true then
+	--	Entity.KilledByAmmo = true
+	--end
 	Entity:TakeDamage( Damage * dmul * var, Inflictor, Gun )
-	if Ammo == true then
-		Entity.KilledByAmmo = false
-	end
+	--if Ammo == true then
+	--	Entity.KilledByAmmo = false
+	--end
 	
 	HitRes.Kill = false
 	--print(Damage)

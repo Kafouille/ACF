@@ -144,6 +144,7 @@ end
 function ACF_APEndEffect( Effect, Bullet )	--Bullet stops here, do what you  have to do clientside
 	
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Crate )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )
@@ -155,6 +156,7 @@ end
 function ACF_APPierceEffect( Effect, Bullet )	--Bullet penetrated something, do what you have to clientside
 
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Crate )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )
@@ -166,6 +168,7 @@ end
 function ACF_APRicochetEffect( Effect, Bullet )	--Bullet ricocheted off something, do what you have to clientside
 
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Crate )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )

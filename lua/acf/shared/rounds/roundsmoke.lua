@@ -188,6 +188,7 @@ end
 function ACF_SMRicochetEffect( Effect, Bullet )	--Bullet ricocheted off something, do what you have to clientside
 
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Gun )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )

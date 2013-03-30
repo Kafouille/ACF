@@ -187,6 +187,7 @@ end
 function ACF_HERicochetEffect( Effect, Bullet )	--Bullet ricocheted off something, do what you have to clientside
 
 	local Spall = EffectData()
+		Spall:SetEntity( Bullet.Crate )
 		Spall:SetOrigin( Bullet.SimPos )
 		Spall:SetNormal( (Bullet.SimFlight):GetNormalized() )
 		Spall:SetScale( Bullet.SimFlight:Length() )

@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 257 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 259 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -50,9 +50,11 @@ AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
+AddCSLuaFile( "acf/client/cl_acfrender.lua" )
 
 if (SERVER) then
 	util.AddNetworkString( "ACF_KilledByACF" )
+	util.AddNetworkString( "ACF_RenderDamage" )
 
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
@@ -76,11 +78,66 @@ if (SERVER) then
 	resource.AddFile( "materials/HUD/killicons/acf_MO.vmt" )
 	resource.AddFile( "materials/HUD/killicons/acf_RAC.vtf" )
 	resource.AddFile( "materials/HUD/killicons/acf_RAC.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_SA.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_SA.vmt" )
+	resource.AddFile( "materials/HUD/killicons/acf_ammo.vtf" )
+	resource.AddFile( "materials/HUD/killicons/acf_ammo.vmt" )
+	
+	
+	resource.AddFile( "materials/decals/dent.vtf" )
+	resource.AddFile( "materials/decals/dent1big.vmt" )
+	resource.AddFile( "materials/decals/dent1medium.vmt" )
+	resource.AddFile( "materials/decals/dent1small.vmt" )
+	resource.AddFile( "materials/decals/dent2.vtf" )
+	resource.AddFile( "materials/decals/dent2big.vmt" )
+	resource.AddFile( "materials/decals/dent2medium.vmt" )
+	resource.AddFile( "materials/decals/dent2small.vmt" )
+	resource.AddFile( "materials/decals/dent3.vtf" )
+	resource.AddFile( "materials/decals/dent3big.vmt" )
+	resource.AddFile( "materials/decals/dent3medium.vmt" )
+	resource.AddFile( "materials/decals/dent3small.vmt" )
+	resource.AddFile( "materials/decals/dent4.vtf" )
+	resource.AddFile( "materials/decals/dent4big.vmt" )
+	resource.AddFile( "materials/decals/dent4medium.vmt" )
+	resource.AddFile( "materials/decals/dent4small.vmt" )
+	resource.AddFile( "materials/decals/dent5.vtf" )
+	resource.AddFile( "materials/decals/dent5big.vmt" )
+	resource.AddFile( "materials/decals/dent5medium.vmt" )
+	resource.AddFile( "materials/decals/dent5small.vmt" )
+	resource.AddFile( "materials/decals/hole1.vtf" )
+	resource.AddFile( "materials/decals/hole1big.vmt" )
+	resource.AddFile( "materials/decals/hole1medium.vmt" )
+	resource.AddFile( "materials/decals/hole1small.vmt" )
+	resource.AddFile( "materials/decals/hole2.vtf" )
+	resource.AddFile( "materials/decals/hole2big.vmt" )
+	resource.AddFile( "materials/decals/hole2medium.vmt" )
+	resource.AddFile( "materials/decals/hole2small.vmt" )
+	resource.AddFile( "materials/decals/hole3.vtf" )
+	resource.AddFile( "materials/decals/hole3big.vmt" )
+	resource.AddFile( "materials/decals/hole3medium.vmt" )
+	resource.AddFile( "materials/decals/hole3small.vmt" )
+	resource.AddFile( "materials/decals/hole4.vtf" )
+	resource.AddFile( "materials/decals/hole4big.vmt" )
+	resource.AddFile( "materials/decals/hole4medium.vmt" )
+	resource.AddFile( "materials/decals/hole4small.vmt" )
+	resource.AddFile( "materials/decals/hole5.vtf" )
+	resource.AddFile( "materials/decals/hole5big.vmt" )
+	resource.AddFile( "materials/decals/hole5medium.vmt" )
+	resource.AddFile( "materials/decals/hole5small.vmt" )
+	
+	
+	resource.AddFile( "materials/damaged/damaged1.vmt" )
+	resource.AddFile( "materials/damaged/damaged1.vtf" )
+	resource.AddFile( "materials/damaged/damaged2.vmt" )
+	resource.AddFile( "materials/damaged/damaged2.vtf" )
+	resource.AddFile( "materials/damaged/damaged3.vmt" )
+	resource.AddFile( "materials/damaged/damaged3.vtf" )
 
 	
 elseif (CLIENT) then
 
 	include("acf/client/cl_acfballistics.lua")
+	include("acf/client/cl_acfrender.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
@@ -92,6 +149,8 @@ elseif (CLIENT) then
 	killicon.Add( "acf_MG", "HUD/killicons/acf_MG", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_MO", "HUD/killicons/acf_MO", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_RAC", "HUD/killicons/acf_RAC", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_SA", "HUD/killicons/acf_SA", Color( 200, 200, 48, 255 ) )
+	killicon.Add( "acf_ammo", "HUD/killicons/acf_ammo", Color( 200, 200, 48, 255 ) )
 	
 end
 
@@ -120,6 +179,38 @@ ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds class
 game.AddParticles("particles/acf_muzzleflashes.pcf")
 game.AddParticles("particles/explosion1.pcf")
 game.AddParticles("particles/rocket_motor.pcf")
+
+game.AddDecal("ACF_penetration1_small", "decals/ACF/hole1small")
+game.AddDecal("ACF_penetration2_small", "decals/ACF/hole2small")
+game.AddDecal("ACF_penetration3_small", "decals/ACF/hole3small")
+game.AddDecal("ACF_penetration4_small", "decals/ACF/hole4small")
+game.AddDecal("ACF_penetration5_small", "decals/ACF/hole5small")
+game.AddDecal("ACF_penetration1_medium", "decals/ACF/hole1medium")
+game.AddDecal("ACF_penetration2_medium", "decals/ACF/hole2medium")
+game.AddDecal("ACF_penetration3_medium", "decals/ACF/hole3medium")
+game.AddDecal("ACF_penetration4_medium", "decals/ACF/hole4medium")
+game.AddDecal("ACF_penetration5_medium", "decals/ACF/hole5medium")
+game.AddDecal("ACF_penetration1_big", "decals/ACF/hole1big")
+game.AddDecal("ACF_penetration2_big", "decals/ACF/hole2big")
+game.AddDecal("ACF_penetration3_big", "decals/ACF/hole3big")
+game.AddDecal("ACF_penetration4_big", "decals/ACF/hole4big")
+game.AddDecal("ACF_penetration5_big", "decals/ACF/hole5big")
+
+game.AddDecal("ACF_impact1_small", "decals/ACF/dent1small")
+game.AddDecal("ACF_impact2_small", "decals/ACF/dent2small")
+game.AddDecal("ACF_impact3_small", "decals/ACF/dent3small")
+game.AddDecal("ACF_impact4_small", "decals/ACF/dent4small")
+game.AddDecal("ACF_impact5_small", "decals/ACF/dent5small")
+game.AddDecal("ACF_impact1_medium", "decals/ACF/dent1medium")
+game.AddDecal("ACF_impact2_medium", "decals/ACF/dent2medium")
+game.AddDecal("ACF_impact3_medium", "decals/ACF/dent3medium")
+game.AddDecal("ACF_impact4_medium", "decals/ACF/dent4medium")
+game.AddDecal("ACF_impact5_medium", "decals/ACF/dent5medium")
+game.AddDecal("ACF_impact1_big", "decals/ACF/dent1big")
+game.AddDecal("ACF_impact2_big", "decals/ACF/dent2big")
+game.AddDecal("ACF_impact3_big", "decals/ACF/dent3big")
+game.AddDecal("ACF_impact4_big", "decals/ACF/dent4big")
+game.AddDecal("ACF_impact5_big", "decals/ACF/dent5big")
 
 timer.Simple( 0, function()
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
@@ -282,11 +373,7 @@ ONE HUGE HACK to get good killicons.
 if SERVER then
 	
 	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
-		if victim.KilledByAmmo then
-			net.Start("ACF_KilledByACF")
-				net.WriteString( victim:Nick()..";ammo;"..attacker:Nick() )
-			net.Broadcast()
-		elseif inflictor:GetClass() == "acf_gun" then
+		if inflictor:GetClass() == "acf_gun" then
 			net.Start("ACF_KilledByACF")
 				net.WriteString( victim:Nick()..";"..inflictor.Class..";"..attacker:Nick() )
 			net.Broadcast()

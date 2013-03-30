@@ -87,15 +87,6 @@ function ACF_DoBulletsFlight( Index, Bullet )
 		end
 	end
 	
-	/*
-	if ACF.safezone then
-		if Bullet.NextPos:WithinAABox( ACF.safezone[1], ACF.safezone[2] ) then
-			ACF_RemoveBullet( Index )			
-			return
-		end
-	end
-	*/
-	
 	if Bullet.SkyLvL then
 		if (CurTime() - Bullet.LifeTime) > 500 then			 -- We don't want to calculate bullets that will never come back to map.
 			ACF_RemoveBullet( Index )

@@ -6,6 +6,7 @@
  ---------------------------------------------------------*/ 
  function EFFECT:Init( data ) 
 	
+	self.Caliber = data:GetEntity():GetNetworkedInt( "Caliber" ) or 10
 	self.Origin = data:GetOrigin()
 	self.DirVec = data:GetNormal() 
 	self.Velocity = data:GetScale() --Mass of the projectile in kg
@@ -26,7 +27,15 @@
 		BulletEffect.Damage = 0	 
 	LocalPlayer():FireBullets(BulletEffect) 
 	
-	util.Decal("ExplosiveGunshot", self.Origin + self.DirVec*10, self.Origin - self.DirVec*10)
+	local DentType = ""
+	if self.Caliber <= 3 then
+		DentType = "ACF_impact"..tostring(math.random(1,5)).."_small"
+	elseif self.Caliber <= 10.5 then
+		DentType = "ACF_impact"..tostring(math.random(1,5)).."_medium"
+	elseif self.Caliber > 10.5 then
+		DentType = "ACF_impact"..tostring(math.random(1,5)).."_big"
+	end
+	util.Decal(DentType, self.Origin + self.DirVec*10, self.Origin - self.DirVec*10)
 	
  end   
    

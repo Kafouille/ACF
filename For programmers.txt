@@ -3,3 +3,4 @@ ACF_BulletsFlight(Index, BulletData) -- if returned false then it skips checking
 ACF_BulletDamage( Type of Entity, Entity, Energy, FrAera, Angle, Inflictor, Bone, Gun, Is from exploding ammo ) -- if returned false then no damage is done to entity
 ACF_FireShell( Gun, BulletData ) - if returned false then gun wont fire
 ACF_AmmoExplode( Ammo, BulletData ) - if returned false then ammo wont explode
+ACF_CanRefill( Refill Crate, Ammo Crate) - if returned false then ammo wont be refilled

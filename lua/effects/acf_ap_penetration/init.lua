@@ -1,4 +1,5 @@
-
+local ACFEnts = list.Get("ACFEnts")
+local GunTable = ACFEnts["Guns"]
    
  /*--------------------------------------------------------- 
     Initializes the effect. The data is a table of data  
@@ -6,6 +7,7 @@
  ---------------------------------------------------------*/ 
  function EFFECT:Init( data ) 
 	
+	self.Caliber = data:GetEntity():GetNetworkedInt( "Caliber" ) or 10
 	self.Origin = data:GetOrigin()
 	self.DirVec = data:GetNormal() 
 	self.Velocity = data:GetScale() --Mass of the projectile in kg
@@ -54,8 +56,16 @@
  end   
 
 function EFFECT:Metal()
- 
- 	util.Decal("Impact.Metal", self.Origin - self.DirVec*10, self.Origin + self.DirVec*10)
+	local ImpactType = ""
+	if self.Caliber <= 3 then
+		ImpactType = "ACF_penetration"..tostring(math.random(1,5)).."_small"
+	elseif self.Caliber <= 10.5 then
+		ImpactType = "ACF_penetration"..tostring(math.random(1,5)).."_medium"
+	elseif self.Caliber > 10.5 then
+		ImpactType = "ACF_penetration"..tostring(math.random(1,5)).."_big"
+	end
+	
+ 	util.Decal(ImpactType, self.Origin - self.DirVec*10, self.Origin + self.DirVec*10)
 	
 	for i=0, 4*self.Scale do
 	

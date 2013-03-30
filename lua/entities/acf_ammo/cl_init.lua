@@ -2,32 +2,41 @@ include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
 
-function ENT:Draw()
-	self:DoNormalDraw()
-    Wire_Render(self.Entity)
+/*-------------------------------------
+Shamefully stolen from lua rollercoaster. I'M SO SORRY. I HAD TO.
+-------------------------------------*/
+
+local function Bezier( a, b, c, d, t )
+	local ab,bc,cd,abbc,bccd 
 	
-	if self.RefillAmmoEffect then
-		self:DrawRefillAmmo()
-	end
+	ab = LerpVector(t, a, b)
+	bc = LerpVector(t, b, c)
+	cd = LerpVector(t, c, d)
+	abbc = LerpVector(t, ab, bc)
+	bccd = LerpVector(t, bc, cd)
+	dest = LerpVector(t, abbc, bccd)
 	
+	return dest
 end
 
-function ENT:DrawRefillAmmo()
-	for k,v in pairs( self.RefillAmmoEffect ) do
-		local St, En = v.EntFrom:LocalToWorld(v.EntFrom:OBBCenter()), v.EntTo:LocalToWorld(v.EntTo:OBBCenter())
-		local Vec = En - St
-		local Distance = Vec:Length()
-		local Ang = Vec:Angle()
-		local Amount = math.Clamp((Distance/50),2,100)
-		local Time = (SysTime() - v.StTime)
-		for I = 1, Amount do
-			local MdlTbl = {
-				model = v.Model,
-				pos = Vec * ((((I+Time)%Amount))/Amount) + St,
-				angle = Ang
-			}
-			render.Model( MdlTbl )
-		end
+
+local function BezPoint(perc, Table)
+	perc = perc or self.Perc
+	
+	local vec = Vector(0, 0, 0)
+	
+	vec = Bezier(Table[1], Table[2], Table[3], Table[4], perc)
+	
+    return vec
+end
+
+-----------------------------------
+
+function ENT:Draw()
+	self:DoNormalDraw()
+    Wire_Render(self.Entity)	
+	if self.RefillAmmoEffect then
+		ACF_DrawRefillAmmo( self.RefillAmmoEffect )
 	end
 end
 
@@ -53,6 +62,29 @@ function ENT:AmmoString()
 	return ""
 end
 
+
+function ACF_DrawRefillAmmo( Table )
+	for k,v in pairs( Table ) do
+		local St, En = v.EntFrom:LocalToWorld(v.EntFrom:OBBCenter()), v.EntTo:LocalToWorld(v.EntTo:OBBCenter())
+		local Distance = (En - St):Length()
+		local Amount = math.Clamp((Distance/50),2,100)
+		local Time = (SysTime() - v.StTime)
+		local En2, St2 = En + Vector(0,0,100), St + ((En-St):GetNormalized() * 10)
+		local vectab = { St, St2, En2, En}
+		local center = (St+En)/2
+		for I = 1, Amount do
+			local point = BezPoint(((((I+Time)%Amount))/Amount), vectab)
+			local ang = (point - center):Angle()
+			local MdlTbl = {
+				model = v.Model,
+				pos = point,
+				angle = ang
+			}
+			render.Model( MdlTbl )
+		end
+	end
+end
+
 function ENT:Think()
 	if (CurTime() >= (self.NextRBUpdate or 0)) then
 	    self.NextRBUpdate = CurTime() + math.random(30,100)/10 --update renderbounds every 3 to 10 seconds
@@ -65,7 +97,6 @@ usermessage.Hook("ACF_RefillEffect", function( msg )
 	if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end
 	local List = list.Get( "ACFRoundTypes")
 	local Mdl = List[Index].model or "models/munitions/round_100mm_shot.mdl"
-
 	EntFrom.RefillAmmoEffect = EntFrom.RefillAmmoEffect or {}
 	table.insert( EntFrom.RefillAmmoEffect, {EntFrom = EntFrom, EntTo = EntTo, Model = Mdl, StTime = SysTime()} )
 

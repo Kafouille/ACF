@@ -297,16 +297,15 @@ function ENT:Think()
 								table.insert(self.SupplyingTo, Ammo:EntIndex())
 								self:RefillEffect( Ammo )
 							end
+									
+							local Supply = math.ceil((50000/((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000))/dist)
+							--Msg(tostring(50000).."/"..((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000).."/"..dist.."="..Supply.."\n")
+							local Transfert = math.min(Supply , Ammo.Capacity - Ammo.Ammo)
+							Ammo.Ammo = Ammo.Ammo + Transfert
+							self.Ammo = self.Ammo - Transfert
 								
-								local Supply = math.ceil((50000/((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000))/dist)
-								Msg(tostring(50000).."/"..((Ammo.BulletData["ProjMass"]+Ammo.BulletData["PropMass"])*1000).."/"..dist.."="..Supply.."\n")
-								local Transfert = math.min(Supply , Ammo.Capacity - Ammo.Ammo)
-								Ammo.Ammo = Ammo.Ammo + Transfert
-								self.Ammo = self.Ammo - Transfert
-								
-								Ammo.Supplied = true
-								Ammo.Entity:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
-								
+							Ammo.Supplied = true
+							Ammo.Entity:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
 						end
 					end
 				end

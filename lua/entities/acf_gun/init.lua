@@ -69,6 +69,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	-- self.CurrentShot, self.MagSize, self.MagReload
 	
 	Gun:SetNWString( "Class" , Gun.Class )
+	Gun:SetNWString( "ID" , Gun.Id )
 	Gun.Muzzleflash = Classes["GunClass"][Gun.Class]["muzzleflash"]
 	Gun.RoFmod = Classes["GunClass"][Gun.Class]["rofmod"]
 	Gun.Sound = Classes["GunClass"][Gun.Class]["sound"]
