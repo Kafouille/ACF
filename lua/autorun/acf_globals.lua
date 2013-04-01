@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 259 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 260 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -327,6 +327,7 @@ concommand.Add("acf_replacesound", function(ply, _, args)
 	
 	if not sound then return end
 	
+	print("sounds"..sound.."*")
 	if not file.Find("sounds"..sound, "GAME") then
 		print("sounds/"..sound.."*")
 		print("There is no such sound!")
@@ -355,6 +356,17 @@ function ACF_ChatVersionPrint(ply)
 			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available!\")"
 			) 
 		end)
+		local Table = {}
+		for k,v in pairs( ents.GetAll() ) do
+			if v.ACF and v.ACF.PrHealth then
+				table.insert(Table,{ID = v:EntIndex(), Health = v.ACF.Health, v.ACF.MaxHealth})
+			end
+		end
+		if Table ~= {} then
+			net.Start("ACF_RenderDamage")
+				net.WriteTable(Table)
+			net.Send(ply)
+		end
 	end	
 end
 

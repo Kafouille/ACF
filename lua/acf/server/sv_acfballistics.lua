@@ -71,7 +71,7 @@ function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 end
 
 function ACF_DoBulletsFlight( Index, Bullet )
-	local CanDo = hook.Call("ACF_BulletsFlight", _, Index, Bullet )
+	local CanDo = hook.Run("ACF_BulletsFlight", Index, Bullet )
 	if CanDo == false then return end
 	if Bullet.FuseLength then
 		local Time = SysTime() - Bullet.IniTime
