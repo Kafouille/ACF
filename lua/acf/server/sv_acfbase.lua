@@ -11,21 +11,32 @@ end
 
 ACF_CleanupAdd = cleanup.Add
 function cleanup.Add( ply, type, ent )  // Instead of calculating volume and aera during fight, lets calculate it after we spawn prop.
-	if IsValid(ent) then
+	if not ACF.MeshCalcEnabled then return ACF_CleanupAdd( ply, type, ent ) end
+	if IsValid(ent) and ent:GetModel() then
 		local Aera, Volume = 0, 0 
 		if ent:GetPhysicsObject():IsValid() and ent:GetPhysicsObject():GetMesh() then
 			if not ACF_MeshDatabase or not ACF_MeshDatabase[ent:GetModel()] then
 				ACF_MeshDatabase = ACF_MeshDatabase or {}
 				local Mesh = ent:GetPhysicsObject():GetMesh()
+				umsg.Start("Atest", ply)
+					umsg.Float( ent:EntIndex() )
+					umsg.Vector(Mesh[1].pos)
+					umsg.Vector(Mesh[2].pos)
+					umsg.Vector(Mesh[3].pos)
+				umsg.End()
 				for I=1,#Mesh,3 do																				// New system of calculating Aera and Volume for props
 					local pos1, pos2, pos3 = Mesh[I].pos, Mesh[I+1].pos, Mesh[I+2].pos
 					Aera = Aera + ((pos1-pos2):Length()+(pos2-pos3):Length()+(pos3-pos1):Length())/2
 					Volume = Volume + math.abs(SignedVolumeOfTriangle(pos1, pos2, pos3))
-
 				end
 				Aera = Aera  * 6.45
+				print("Aera new: "..Aera)
 				Volume = Volume * 16.38
 				ACF_MeshDatabase[ent:GetModel()] = {Aera, Volume}
+				
+				local Size = ent.OBBMaxs(ent) - ent.OBBMins(ent)
+				local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 
+				print("Aera old: ".. Aera)
 			else
 				local Table = ACF_MeshDatabase[ent:GetModel()]
 				Aera, Volume = Table[1], Table[2]

@@ -31,6 +31,8 @@ function ENT:ACF_Activate( Recalc )
 	
 	local EmptyMass = math.max(self.EmptyMass, self:GetPhysicsObject():GetMass() - self:AmmoMass())
 	local Size = self.OBBMaxs(self) - self.OBBMins(self)
+	self.ACF = self.ACF or {} 
+	
 	if not self.ACF.Aera then
 		self.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 		--Converting from square in to square cm, fuck imperial
 	end
@@ -44,7 +46,7 @@ function ENT:ACF_Activate( Recalc )
 	if Recalc and self.ACF.Health and self.ACF.MaxHealth then
 		Percent = self.ACF.Health/self.ACF.MaxHealth
 	end
-	self.ACF = self.ACF or {} 
+	
 	self.ACF.Health = Health * Percent
 	self.ACF.MaxHealth = Health
 	self.ACF.Armour = Armour * (0.5 + Percent/2)

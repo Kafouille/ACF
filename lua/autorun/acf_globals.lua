@@ -250,6 +250,7 @@ CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
 CreateConVar("acf_spalling", 0)
 CreateConVar("acf_gunfire", 1)
+CreateConVar("acf_meshcalcs", 0)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
@@ -275,7 +276,14 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "enabled" 
 		end
 		print ("ACF Gunfire has been " .. text)
-	end	
+	elseif( CVar == "acf_meshcalcs" ) then
+		ACF.MeshCalcEnabled = tobool( New )
+		local text = "disabled"
+		if ACF.MeshCalcEnabled then 
+			text = "enabled" 
+		end
+		print ("ACF meshcalcs has been " .. text)
+	end
 end
 
 
@@ -300,54 +308,48 @@ function ACF_UpdateChecking( )
 end
 ACF_UpdateChecking( )
 
-if SERVER then
-	duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
-		if !IsValid( Entity ) then return end
-		local sound = data[1]
-		timer.Simple(1, function()
-			if Entity:GetClass() == "acf_engine" then
-				Entity.SoundPath = sound
-			elseif Entity:GetClass() == "acf_gun" then
-				Entity.Sound = sound
-			end
-		end)
-		
-		duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
+
+duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
+	if !IsValid( Entity ) then return end
+	local sound = data[1]
+	timer.Simple(1, function()
+		if Entity:GetClass() == "acf_engine" then
+			Entity.SoundPath = sound
+		elseif Entity:GetClass() == "acf_gun" then
+			Entity.Sound = sound
+		end
 	end)
-end
+		
+	duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
+end)
+
 
 concommand.Add("acf_replacesound", function(ply, _, args)
-	if CLIENT then return end
-	local sound
-	if type(args) == "table" then 
-		sound = args[1]
-	else
-		sound = args
-	end
-	
+	local sound = args[1]
 	if not sound then return end
-	
-	print("sounds"..sound.."*")
-	if not file.Find("sounds"..sound, "GAME") then
-		print("sounds/"..sound.."*")
-		print("There is no such sound!")
+		
+	local Exists = file.Find("sounds/"..sound, "GAME")
+	local ExtTbl = {".mp3",".wav"}
+	if not table.HasValue(ExtTbl, string.Right(sound,4)) or not Exists or Exists == {} then
+		ply:PrintMessage(HUD_PRINTCONSOLE,"There is no such sound!")
 		return
 	end
-	
+		
 	local tr = ply:GetEyeTrace()
 	if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
-		print("You need to look at engine or gun to change it's sound")
+		ply:PrintMessage(HUD_PRINTCONSOLE,"You need to look at engine or gun to change it's sound")
 		return
 	end
 	local ent = tr.Entity
 	if ent:GetClass() == "acf_engine" then
 		ent.SoundPath = sound
 	elseif ent:GetClass() == "acf_gun" then
-		ent.Sound = sound
+	ent.Sound = sound
 		ent:SetNWString( "Sound", sound )
 	end
 	duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
 end)
+
 
 function ACF_ChatVersionPrint(ply)
 	if not ACF.Version or ACF.Version < ACF.CurrentVersion then
@@ -377,6 +379,7 @@ cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
+cvars.AddChangeCallback("acf_meshcalcs", ACF_CVarChangeCallback)
 
 /*
 ONE HUGE HACK to get good killicons.
