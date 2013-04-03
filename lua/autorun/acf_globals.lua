@@ -17,6 +17,7 @@ ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
 ACF.Spalling = 1
 ACF.GunfireEnabled = true
+ACF.MeshCalcEnabled = false
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
