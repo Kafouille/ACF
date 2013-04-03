@@ -388,6 +388,11 @@ ONE HUGE HACK to get good killicons.
 if SERVER then
 	
 	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
+		if inflictor:GetClass() == "acf_ammo" then
+			net.Start("ACF_KilledByACF")
+				net.WriteString( victim:Nick()..";ammo;"..attacker:Nick() )
+			net.Broadcast()
+		end
 		if inflictor:GetClass() == "acf_gun" then
 			net.Start("ACF_KilledByACF")
 				net.WriteString( victim:Nick()..";"..inflictor.Class..";"..attacker:Nick() )
@@ -418,7 +423,7 @@ if CLIENT then
 					if ( !IsValid( victim ) ) then return end
 					local inflictor    = msg:ReadString()
 					local attacker     = msg:ReadString()
-					if inflictor != "acf_gun" then
+					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
 						ACF_PlayerKilled(msg)
 					end
 				end
@@ -440,7 +445,7 @@ if CLIENT then
 
 					if ( !IsValid( attacker ) ) then return end
 					if ( !IsValid( victim ) ) then return end
-					if inflictor != "acf_gun" then
+					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
 						ACF_PlayerKilledByPlayer(msg)
 					end
 				end

@@ -101,7 +101,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 			local Blast = {}
 				Blast.Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05)
 				Blast.Penetration = PowerFraction^ACF.HEBlastPen*Tar.ACF.MaxHealth
-			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor ,0 , _, Ammo )--Vel is just the speed of sound in air
+			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor ,0 , Ammo )--Vel is just the speed of sound in air
 			PowerSpent = PowerSpent + PowerFraction*BlastRes.Loss/2--Removing the energy spent killing props
 			
 			local FragHit = Fragments * AeraFraction
@@ -111,7 +111,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 				if math.Rand(0,1) > FragHit then FragHit = 1 else FragHit = 0 end
 			end
 			
-			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, _, Ammo )
+			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo )
 			
 			if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
 				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
@@ -385,7 +385,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 		
 	end	
 	
-	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin, true )
+	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin, Origin.Entity )
 	
 	local Flash = EffectData()
 		Flash:SetOrigin( Pos )
