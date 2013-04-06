@@ -1,54 +1,3 @@
-local function SignedVolumeOfTriangle(pos1, pos2, pos3)
-	local v321 = pos3.x*pos2.y*pos1.z
-    local v231 = pos2.x*pos3.y*pos1.z
-    local v312 = pos3.x*pos1.y*pos2.z
-    local v132 = pos1.x*pos3.y*pos2.z
-    local v213 = pos2.x*pos1.y*pos3.z
-    local v123 = pos1.x*pos2.y*pos3.z
-    return 0.166*(-v321 + v231 + v312 - v132 - v213 + v123)
-end
-
-if not ACF.MeshCalcEnabled then
-	ACF_CleanupAdd = cleanup.Add
-	function cleanup.Add( ply, type, ent )  // Instead of calculating volume and aera during fight, lets calculate it after we spawn prop.
-		if IsValid(ent) and ent:GetModel() then
-			local Aera, Volume = 0, 0 
-			if ent:GetPhysicsObject():IsValid() and ent:GetPhysicsObject():GetMesh() then
-				if not ACF_MeshDatabase or not ACF_MeshDatabase[ent:GetModel()] then
-					ACF_MeshDatabase = ACF_MeshDatabase or {}
-					local Mesh = ent:GetPhysicsObject():GetMesh()
-					umsg.Start("Atest", ply)
-						umsg.Float( ent:EntIndex() )
-						umsg.Vector(Mesh[1].pos)
-						umsg.Vector(Mesh[2].pos)
-						umsg.Vector(Mesh[3].pos)
-					umsg.End()
-					for I=1,#Mesh,3 do																				// New system of calculating Aera and Volume for props
-						local pos1, pos2, pos3 = Mesh[I].pos, Mesh[I+1].pos, Mesh[I+2].pos
-						Aera = Aera + ((pos1-pos2):Length()+(pos2-pos3):Length()+(pos3-pos1):Length())/2
-						Volume = Volume + math.abs(SignedVolumeOfTriangle(pos1, pos2, pos3))
-					end
-					Aera = Aera  * 6.45
-					--print("Aera new: "..Aera)
-					Volume = Volume * 16.38
-					ACF_MeshDatabase[ent:GetModel()] = {Aera, Volume}
-					
-					local Size = ent.OBBMaxs(ent) - ent.OBBMins(ent)
-					local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 
-					--print("Aera old: ".. Aera)
-				else
-					local Table = ACF_MeshDatabase[ent:GetModel()]
-					Aera, Volume = Table[1], Table[2]
-				end
-			end
-			ent.ACF = ent.ACF or {}
-			ent.ACF.Aera = Aera
-			ent.ACF.Volume = Volume
-		end
-		return ACF_CleanupAdd( ply, type, ent )
-	end
-end
-
 local UpdateIndex = 0
 function ACF_UpdateVisualHealth(Entity)
 	if Entity.ACF.PrHealth == Entity.ACF.Health then return end
@@ -79,16 +28,31 @@ function ACF_Activate ( Entity , Recalc )
 	end
 	Entity.ACF = Entity.ACF or {} 
 	
-	local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
-	if not Entity.ACF.Aera then
-		Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 		--Converting from square in to square cm, fuck imperial
-	end
-	if not Entity.ACF.Volume then
-		Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
+	local PhysObj = Entity:GetPhysicsObject()
+	if PhysObj:IsValid() and PhysObj:GetSurfaceArea() and PhysObj:GetVolume() then
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 6.45) * 0.52505066107
+		end
+		if not Entity.ACF.Volume then
+			Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
+		end
+	else
+		local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 
+		end
+		if not Entity.ACF.Volume then
+			Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
+		end
 	end
 	
 	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Entity.ACF.Aera / 0.78 		--So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
 	local Health = Entity.ACF.Aera/ACF.Threshold										--Setting the threshold of the prop aera gone
+	
+	Entity.ACF.Ductility = Entity.ACF.Ductility or 0
+	
+		Armour = math.Clamp(Armour + Armour * Entity.ACF.Ductility,0.1,90000000000)
+		Health = math.Clamp(Health - Health * Entity.ACF.Ductility,0.1,90000000000)
 	
 	local Percent = 1 
 	
@@ -101,8 +65,8 @@ function ACF_Activate ( Entity , Recalc )
 	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
 	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
 	Entity.ACF.Type = nil
-	Entity.ACF.Mass = Entity:GetPhysicsObject():GetMass()
-	Entity.ACF.Density = (Entity:GetPhysicsObject():GetMass()*1000)/Entity.ACF.Volume
+	Entity.ACF.Mass = PhysObj:GetMass()
+	--Entity.ACF.Density = (PhysObj:GetMass()*1000)/Entity.ACF.Volume
 	
 	if Entity:IsPlayer() || Entity:IsNPC() then
 		Entity.ACF.Type = "Squishy"

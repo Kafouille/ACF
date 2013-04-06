@@ -44,6 +44,7 @@ ACF.Year = 1945
 CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
+CreateConVar('acf_meshvalue', 1)
 
 AddCSLuaFile( "acf_globals.lua" )
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
@@ -83,49 +84,7 @@ if (SERVER) then
 	resource.AddFile( "materials/HUD/killicons/acf_SA.vmt" )
 	resource.AddFile( "materials/HUD/killicons/acf_ammo.vtf" )
 	resource.AddFile( "materials/HUD/killicons/acf_ammo.vmt" )
-	
-	
-	resource.AddFile( "materials/decals/dent.vtf" )
-	resource.AddFile( "materials/decals/dent1big.vmt" )
-	resource.AddFile( "materials/decals/dent1medium.vmt" )
-	resource.AddFile( "materials/decals/dent1small.vmt" )
-	resource.AddFile( "materials/decals/dent2.vtf" )
-	resource.AddFile( "materials/decals/dent2big.vmt" )
-	resource.AddFile( "materials/decals/dent2medium.vmt" )
-	resource.AddFile( "materials/decals/dent2small.vmt" )
-	resource.AddFile( "materials/decals/dent3.vtf" )
-	resource.AddFile( "materials/decals/dent3big.vmt" )
-	resource.AddFile( "materials/decals/dent3medium.vmt" )
-	resource.AddFile( "materials/decals/dent3small.vmt" )
-	resource.AddFile( "materials/decals/dent4.vtf" )
-	resource.AddFile( "materials/decals/dent4big.vmt" )
-	resource.AddFile( "materials/decals/dent4medium.vmt" )
-	resource.AddFile( "materials/decals/dent4small.vmt" )
-	resource.AddFile( "materials/decals/dent5.vtf" )
-	resource.AddFile( "materials/decals/dent5big.vmt" )
-	resource.AddFile( "materials/decals/dent5medium.vmt" )
-	resource.AddFile( "materials/decals/dent5small.vmt" )
-	resource.AddFile( "materials/decals/hole1.vtf" )
-	resource.AddFile( "materials/decals/hole1big.vmt" )
-	resource.AddFile( "materials/decals/hole1medium.vmt" )
-	resource.AddFile( "materials/decals/hole1small.vmt" )
-	resource.AddFile( "materials/decals/hole2.vtf" )
-	resource.AddFile( "materials/decals/hole2big.vmt" )
-	resource.AddFile( "materials/decals/hole2medium.vmt" )
-	resource.AddFile( "materials/decals/hole2small.vmt" )
-	resource.AddFile( "materials/decals/hole3.vtf" )
-	resource.AddFile( "materials/decals/hole3big.vmt" )
-	resource.AddFile( "materials/decals/hole3medium.vmt" )
-	resource.AddFile( "materials/decals/hole3small.vmt" )
-	resource.AddFile( "materials/decals/hole4.vtf" )
-	resource.AddFile( "materials/decals/hole4big.vmt" )
-	resource.AddFile( "materials/decals/hole4medium.vmt" )
-	resource.AddFile( "materials/decals/hole4small.vmt" )
-	resource.AddFile( "materials/decals/hole5.vtf" )
-	resource.AddFile( "materials/decals/hole5big.vmt" )
-	resource.AddFile( "materials/decals/hole5medium.vmt" )
-	resource.AddFile( "materials/decals/hole5small.vmt" )
-	
+
 	
 	resource.AddFile( "materials/damaged/damaged1.vmt" )
 	resource.AddFile( "materials/damaged/damaged1.vtf" )
@@ -181,37 +140,7 @@ game.AddParticles("particles/acf_muzzleflashes.pcf")
 game.AddParticles("particles/explosion1.pcf")
 game.AddParticles("particles/rocket_motor.pcf")
 
-game.AddDecal("ACF_penetration1_small", "decals/ACF/hole1small")
-game.AddDecal("ACF_penetration2_small", "decals/ACF/hole2small")
-game.AddDecal("ACF_penetration3_small", "decals/ACF/hole3small")
-game.AddDecal("ACF_penetration4_small", "decals/ACF/hole4small")
-game.AddDecal("ACF_penetration5_small", "decals/ACF/hole5small")
-game.AddDecal("ACF_penetration1_medium", "decals/ACF/hole1medium")
-game.AddDecal("ACF_penetration2_medium", "decals/ACF/hole2medium")
-game.AddDecal("ACF_penetration3_medium", "decals/ACF/hole3medium")
-game.AddDecal("ACF_penetration4_medium", "decals/ACF/hole4medium")
-game.AddDecal("ACF_penetration5_medium", "decals/ACF/hole5medium")
-game.AddDecal("ACF_penetration1_big", "decals/ACF/hole1big")
-game.AddDecal("ACF_penetration2_big", "decals/ACF/hole2big")
-game.AddDecal("ACF_penetration3_big", "decals/ACF/hole3big")
-game.AddDecal("ACF_penetration4_big", "decals/ACF/hole4big")
-game.AddDecal("ACF_penetration5_big", "decals/ACF/hole5big")
-
-game.AddDecal("ACF_impact1_small", "decals/ACF/dent1small")
-game.AddDecal("ACF_impact2_small", "decals/ACF/dent2small")
-game.AddDecal("ACF_impact3_small", "decals/ACF/dent3small")
-game.AddDecal("ACF_impact4_small", "decals/ACF/dent4small")
-game.AddDecal("ACF_impact5_small", "decals/ACF/dent5small")
-game.AddDecal("ACF_impact1_medium", "decals/ACF/dent1medium")
-game.AddDecal("ACF_impact2_medium", "decals/ACF/dent2medium")
-game.AddDecal("ACF_impact3_medium", "decals/ACF/dent3medium")
-game.AddDecal("ACF_impact4_medium", "decals/ACF/dent4medium")
-game.AddDecal("ACF_impact5_medium", "decals/ACF/dent5medium")
-game.AddDecal("ACF_impact1_big", "decals/ACF/dent1big")
-game.AddDecal("ACF_impact2_big", "decals/ACF/dent2big")
-game.AddDecal("ACF_impact3_big", "decals/ACF/dent3big")
-game.AddDecal("ACF_impact4_big", "decals/ACF/dent4big")
-game.AddDecal("ACF_impact5_big", "decals/ACF/dent5big")
+game.AddDecal("GunShot1", "decals/METAL/shot5")
 
 timer.Simple( 0, function()
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
@@ -251,7 +180,6 @@ CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
 CreateConVar("acf_spalling", 0)
 CreateConVar("acf_gunfire", 1)
-CreateConVar("acf_meshcalcs", 0)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
@@ -277,13 +205,6 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "enabled" 
 		end
 		print ("ACF Gunfire has been " .. text)
-	elseif( CVar == "acf_meshcalcs" ) then
-		ACF.MeshCalcEnabled = tobool( New )
-		local text = "disabled"
-		if ACF.MeshCalcEnabled then 
-			text = "enabled" 
-		end
-		print ("ACF meshcalcs has been " .. text)
 	end
 end
 
@@ -309,47 +230,50 @@ function ACF_UpdateChecking( )
 end
 ACF_UpdateChecking( )
 
+if SERVER or game.SinglePlayer() then
 
-duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
-	if !IsValid( Entity ) then return end
-	local sound = data[1]
-	timer.Simple(1, function()
-		if Entity:GetClass() == "acf_engine" then
-			Entity.SoundPath = sound
-		elseif Entity:GetClass() == "acf_gun" then
-			Entity.Sound = sound
-		end
+	duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
+		if !IsValid( Entity ) then return end
+		local sound = data[1]
+		timer.Simple(1, function()
+			if Entity:GetClass() == "acf_engine" then
+				Entity.SoundPath = sound
+			elseif Entity:GetClass() == "acf_gun" then
+				Entity.Sound = sound
+			end
+		end)
+			
+		duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
 	end)
-		
-	duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
-end)
 
 
-concommand.Add("acf_replacesound", function(ply, _, args)
-	local sound = args[1]
-	if not sound then return end
-		
-	local Exists = file.Find("sounds/"..sound, "GAME")
-	local ExtTbl = {".mp3",".wav"}
-	if not table.HasValue(ExtTbl, string.Right(sound,4)) or not Exists or Exists == {} then
-		ply:PrintMessage(HUD_PRINTCONSOLE,"There is no such sound!")
-		return
-	end
-		
-	local tr = ply:GetEyeTrace()
-	if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
-		ply:PrintMessage(HUD_PRINTCONSOLE,"You need to look at engine or gun to change it's sound")
-		return
-	end
-	local ent = tr.Entity
-	if ent:GetClass() == "acf_engine" then
-		ent.SoundPath = sound
-	elseif ent:GetClass() == "acf_gun" then
-	ent.Sound = sound
-		ent:SetNWString( "Sound", sound )
-	end
-	duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
-end)
+	concommand.Add("acf_replacesound", function(ply, _, args)
+		local sound = args[1]
+		if not sound then return end
+			
+		local Exists = file.Find("sounds/"..sound, "GAME")
+		local ExtTbl = {".mp3",".wav"}
+		if not table.HasValue(ExtTbl, string.Right(sound,4)) or not Exists or Exists == {} then
+			ply:PrintMessage(HUD_PRINTCONSOLE,"There is no such sound!")
+			return
+		end
+			
+		local tr = ply:GetEyeTrace()
+		if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
+			ply:PrintMessage(HUD_PRINTCONSOLE,"You need to look at engine or gun to change it's sound")
+			return
+		end
+		local ent = tr.Entity
+		if ent:GetClass() == "acf_engine" then
+			ent.SoundPath = sound
+		elseif ent:GetClass() == "acf_gun" then
+		ent.Sound = sound
+			ent:SetNWString( "Sound", sound )
+		end
+		duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
+	end)
+
+end
 
 
 function ACF_ChatVersionPrint(ply)
@@ -380,7 +304,6 @@ cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
-cvars.AddChangeCallback("acf_meshcalcs", ACF_CVarChangeCallback)
 
 /*
 ONE HUGE HACK to get good killicons.
