@@ -61,37 +61,6 @@ if (SERVER) then
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
-	
-	resource.AddFile( "materials/HUD/killicons/acf_AC.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_AC.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_AL.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_AL.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_C.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_C.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_GL.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_GL.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_HMG.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_HMG.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_HW.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_HW.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_MG.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_MG.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_MO.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_MO.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_RAC.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_RAC.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_SA.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_SA.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_ammo.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_ammo.vmt" )
-
-	
-	resource.AddFile( "materials/damaged/damaged1.vmt" )
-	resource.AddFile( "materials/damaged/damaged1.vtf" )
-	resource.AddFile( "materials/damaged/damaged2.vmt" )
-	resource.AddFile( "materials/damaged/damaged2.vtf" )
-	resource.AddFile( "materials/damaged/damaged3.vmt" )
-	resource.AddFile( "materials/damaged/damaged3.vtf" )
 
 	
 elseif (CLIENT) then
