@@ -25,7 +25,7 @@ local DefTable = {}
 
 list.Set( "ACFRoundTypes", "SM", DefTable )  --Set the round properties
 list.Set( "ACFIdRounds", DefTable.netid , "SM" ) --Index must equal the ID entry in the table above, Data must equal the index of the table above
-ACF.AmmoBlacklist["SM"] = { "MO", "MG" , "HW", "C" , "GL" ,  "HMG" , "AL" , "AC" , "RAC" , }
+ACF.AmmoBlacklist["SM"] = { "MO", "MG" , "HW", "C" , "GL" ,  "HMG" , "AL" , "AC" , "RAC" , "SA" }
 
 function ACF_SMConvert( Crate, PlayerData )		--Function to convert the player's slider data into the complete round data
 	
