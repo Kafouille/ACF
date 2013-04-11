@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 260 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 276 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -46,7 +46,7 @@ CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 CreateConVar('acf_meshvalue', 1)
 
-AddCSLuaFile( "acf_globals.lua" )
+AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
@@ -198,52 +198,6 @@ function ACF_UpdateChecking( )
 	end, function() end)
 end
 ACF_UpdateChecking( )
-
-if SERVER or game.SinglePlayer() then
-
-	duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
-		if !IsValid( Entity ) then return end
-		local sound = data[1]
-		timer.Simple(1, function()
-			if Entity:GetClass() == "acf_engine" then
-				Entity.SoundPath = sound
-			elseif Entity:GetClass() == "acf_gun" then
-				Entity.Sound = sound
-			end
-		end)
-			
-		duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
-	end)
-
-
-	concommand.Add("acf_replacesound", function(ply, _, args)
-		local sound = args[1]
-		if not sound then return end
-			
-		local Exists = file.Find("sounds/"..sound, "GAME")
-		local ExtTbl = {".mp3",".wav"}
-		if not table.HasValue(ExtTbl, string.Right(sound,4)) or not Exists or Exists == {} then
-			ply:PrintMessage(HUD_PRINTCONSOLE,"There is no such sound!")
-			return
-		end
-			
-		local tr = ply:GetEyeTrace()
-		if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
-			ply:PrintMessage(HUD_PRINTCONSOLE,"You need to look at engine or gun to change it's sound")
-			return
-		end
-		local ent = tr.Entity
-		if ent:GetClass() == "acf_engine" then
-			ent.SoundPath = sound
-		elseif ent:GetClass() == "acf_gun" then
-		ent.Sound = sound
-			ent:SetNWString( "Sound", sound )
-		end
-		duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
-	end)
-
-end
-
 
 function ACF_ChatVersionPrint(ply)
 	if not ACF.Version or ACF.Version < ACF.CurrentVersion then

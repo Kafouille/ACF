@@ -29,30 +29,30 @@ function ACF_Activate ( Entity , Recalc )
 	Entity.ACF = Entity.ACF or {} 
 	
 	local PhysObj = Entity:GetPhysicsObject()
-	if PhysObj:IsValid() and PhysObj:GetSurfaceArea() and PhysObj:GetVolume() then
+	local Count
+	if PhysObj:GetMesh() then Count = #PhysObj:GetMesh() end
+	if PhysObj:IsValid() and Count and Count>100 then
+
 		if not Entity.ACF.Aera then
 			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 6.45) * 0.52505066107
 		end
-		if not Entity.ACF.Volume then
-			Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
-		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
+		--end
 	else
 		local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
 		if not Entity.ACF.Aera then
 			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 
 		end
-		if not Entity.ACF.Volume then
-			Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
-		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
+		--end
 	end
 	
-	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Entity.ACF.Aera / 0.78 		--So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
-	local Health = Entity.ACF.Aera/ACF.Threshold										--Setting the threshold of the prop aera gone
-	
 	Entity.ACF.Ductility = Entity.ACF.Ductility or 0
-	
-		Armour = math.Clamp(Armour + Armour * Entity.ACF.Ductility,0.1,90000000000)
-		Health = math.Clamp(Health - Health * Entity.ACF.Ductility,0.1,90000000000)
+	local Area = (Entity.ACF.Aera+Entity.ACF.Aera*math.Clamp(Entity.ACF.Ductility,-0.8,0.8))
+	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Area / 0.78 		--So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
+	local Health = Area/ACF.Threshold												--Setting the threshold of the prop aera gone
 	
 	local Percent = 1 
 	

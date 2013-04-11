@@ -3,7 +3,7 @@ Weight STool 1.21
 	by Spoco
 */
 
-TOOL.Category		= "Construction"
+TOOL.Category		= "Armored Combat Framework"
 TOOL.Name			= "#Tool.acfarmorprop.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
@@ -22,8 +22,8 @@ if CLIENT then
 	language.Add( "Tool_acfarmorprop_weight", "Weight:" )
 	language.Add( "Tool_acfarmorprop_thick" , "Armour Thickness")
 	language.Add( "Tool_acfarmorprop_thick_desc" , "Set a thickness and the weight will be scaled" )
-	language.Add( "Tool_acfarmorprop_ductility", "Ductility:" )
-	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets ductility of prop. Higher than zero will make prop more resistant to penetration but it will lower its health. Lower than zero will make prop less resistant to penetration but it will endure longer fire" )
+	language.Add( "Tool_acfarmorprop_ductility", "Durability:" )
+	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets durability of prop. Higher than zero will make prop more resistant to penetration but it will lower its health. Lower than zero will make prop less resistant to penetration but it will endure longer fire" )
 	language.Add( "Tool_acfarmorprop_zeromass", "Mass must be above 0!" )
 end
 
@@ -47,21 +47,21 @@ end
 duplicator.RegisterEntityModifier( "acfsettings", ApplySettings )
 
 local function Recalc(Ply, What)
-	local Millimeter, Ductility, Area
+	local Thick, Ductility, Area, Mass
 	if SERVER or CLIENT then
-		Millimeter = Ply:GetInfo("acfarmorprop_thick")
-		Ductility = Ply:GetInfo("acfarmorprop_ductility")/100
+		Thick = Ply:GetInfo("acfarmorprop_thick")
+		Ductility = math.Clamp(Ply:GetInfo("acfarmorprop_ductility")/100,-0.8,0.8)
 		Area = Ply:GetInfo("acfarmorprop_area") or 1
 	end
 
-	local Mass = (Millimeter + Millimeter * Ductility) * 0.78 * Area / 1000
+	Mass = (39*Area*Ductility+39*Area)*Thick/50000
 	if What == "ductility" then
 		if Mass > 50000 then
 			Mass = 50000
-			Ductility = (Mass/(0.78*1000*Area) - Millimeter)/Millimeter
+			Ductility = -(39*Area*Thick-50000*Mass)/(39*Area*Thick)
 		elseif Mass < 0.1 then
 			Mass = 0.1
-			Ductility = (Mass/(0.78*1000*Area) - Millimeter)/Millimeter
+			Ductility = -(39*Area*Thick-50000*Mass)/(39*Area*Thick)
 		end
 		Ply:ConCommand("acfarmorprop_ductility "..(Ductility*100));
 	end
@@ -69,22 +69,18 @@ local function Recalc(Ply, What)
 	if What == "thick" then
 		if Mass > 50000 then
 			Mass = 50000
-			Millimeter = Mass*1000 / Area / 0.78
-			Millimeter = math.Clamp(Millimeter + Millimeter * Ductility,0.1,90000000000)
+			Thick = Mass*1000/(Area+Area*Ductility)/0.78
 		elseif Mass < 0.1 then
 			Mass = 0.1
-			Millimeter = Mass*1000 / Area / 0.78
-			Millimeter = math.Clamp(Millimeter + Millimeter * Ductility,0.1,90000000000)
+			Thick = Mass*1000/(Area+Area*Ductility)/0.78
 		end
-		Ply:ConCommand("acfarmorprop_thick "..Millimeter);
+		Ply:ConCommand("acfarmorprop_thick "..Thick);
 	end
 	Ply:ConCommand("acfarmorprop_mass "..Mass);
 	
 	if CLIENT then
-		local MArmour = Mass*1000 / Area / 0.78
-		local MHealth = Area/ACF.Threshold
-		MArmour = math.Clamp(MArmour + MArmour * Ductility,0.1,90000000000)
-		MHealth = math.Clamp(MHealth - MHealth * Ductility,0.1,90000000000)
+		local MArmour = Mass*1000/(Area+Area*Ductility)/0.78
+		local MHealth = (Area+Area*Ductility)/ACF.Threshold
 		
 		Ply:ConCommand("acfarmorprop_mhealth "..MHealth)
 		Ply:ConCommand("acfarmorprop_marmor "..MArmour)
@@ -189,7 +185,6 @@ end
 if CLIENT then
 	function TOOL.BuildCPanel( cp )
 		cp:AddControl( "Header", { Text = "#Tool.acfarmorprop.name", Description	= "#Tool.acfarmorprop.desc" }  )
-		cp:AddControl( "Header", { Text = "This tool is WIP", Description	= "If you find any bugs or you have problems with it, please inform Frankess about it" }  )
 
 		local params = { Label = "#Presets", MenuButton = 1, Folder = "weight", Options = {}, CVars = {} }
 		
@@ -197,24 +192,38 @@ if CLIENT then
 		table.insert( params.CVars, "acfarmorprop_mass" )
 		
 		cp:AddControl("ComboBox", params )
-		cp:AddControl("Header", {Text = "Actual Weight" , Description = "Weight: "..math.floor(GetConVarNumber("acfarmorprop_mass")*10)/10  } )
-		cp:AddControl("Header", {Text = "Actual MaxHealth" , Description = "Max Health: "..math.floor(GetConVarNumber("acfarmorprop_mhealth")*10)/10  } )
-		cp:AddControl("Header", {Text = "Actual MaxArmor" , Description = "Max Armor: "..math.floor(GetConVarNumber("acfarmorprop_marmor")*10)/10  } )
+		cp.mass = cp:AddControl("Header", {Text = "Actual Weight" , Description = "Weight: "..math.floor(GetConVarNumber("acfarmorprop_mass")*10)/10  } )
+		cp.mhealth = cp:AddControl("Header", {Text = "Actual MaxHealth" , Description = "Max Health: "..math.floor(GetConVarNumber("acfarmorprop_mhealth")*10)/10  } )
+		cp.marmor = cp:AddControl("Header", {Text = "Actual MaxArmor" , Description = "Max Armor: "..math.floor(GetConVarNumber("acfarmorprop_marmor")*10)/10  } )
 
-		cp:AddControl("Slider", { Label = "#Tool_acfarmorprop_thick", Type = "Numeric", Min = "1", Max = "5000", Command = "acfarmorprop_thick" } )
-		cp:AddControl("Header", {Text = "Armour Thickness Setting" , Description = "#Tool_acfarmorprop_thick_desc" } )
+		cp.thick = cp:AddControl("Slider", { Label = "#Tool_acfarmorprop_thick", Type = "Numeric", Min = "1", Max = "5000", Command = "acfarmorprop_thick" } )
+		cp:AddControl("Header", {Text = "Armour Thickness Setting" , Description = "#Tool_acfarmorprop_thick_desc" } )		
 		
-		
-		cp:AddControl("Slider", { Label = "#Tool_acfarmorprop_ductility", Type = "Numeric", Min = "-99", Max = "99", Command = "acfarmorprop_ductility" } )
+		cp.ductility = cp:AddControl("Slider", { Label = "#Tool_acfarmorprop_ductility", Type = "Numeric", Min = "-99", Max = "99", Command = "acfarmorprop_ductility" } )
 		cp:AddControl("Header", {Text = "Ductility Setting" , Description = "#Tool_acfarmorprop_ductility_desc" } )
 	end
 
-	local BuildCPanel = TOOL.BuildCPanel
+	--local BuildCPanel = TOOL.BuildCPanel
 	concommand.Add( "acfarmorprop_reloadui", function()
-		local CPanel = controlpanel.Get( "acfarmorprop" )
-		CPanel:Clear()
-			
-		BuildCPanel( CPanel )
+		local cp = controlpanel.Get( "acfarmorprop" )
+		if cp.mass then 
+			cp.mass:SetText("Weight: "..math.floor(GetConVarNumber("acfarmorprop_mass")*10)/10)
+		end
+		if cp.mhealth then 
+			cp.mhealth:SetText("Max Health: "..math.floor(GetConVarNumber("acfarmorprop_mhealth")*10)/10)
+		end
+		if cp.marmor then 
+			cp.marmor:SetText("Max Armor: "..math.floor(GetConVarNumber("acfarmorprop_marmor")*10)/10)
+		end
+		if cp.thick then 
+			local ConVar = GetConVar("acfarmorprop_thick"):GetFloat()
+			cp.thick:SetValue( ConVar )
+		end
+		if cp.ductility then 
+			local ConVar = GetConVar("acfarmorprop_ductility"):GetFloat()
+			cp.ductility:SetValue( ConVar )
+		end
+		--BuildCPanel( CPanel )
 	end)
 
 	cvars.AddChangeCallback("acfarmorprop_ductility", function() 
