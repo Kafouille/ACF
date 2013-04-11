@@ -869,14 +869,14 @@ local Autocannon = {}
 GunClass["AC"] = Autocannon
 
 local Semiautomatic = {}
-	Semiautomatic.spread = 0.8
+	Semiautomatic.spread = 0.5
 	Semiautomatic.name = "Semiautomatic Cannon"
-	Semiautomatic.muzzleflash = "120mm_muzzleflash_noscale"
+	Semiautomatic.muzzleflash = "30mm_muzzleflash_noscale"
 	Semiautomatic.rofmod = 0.8
-	Semiautomatic.sound = "acf_extra/tankfx/guns/coh/37mm_m6.wav"
+	Semiautomatic.sound = "acf_extra/tankfx/gnomefather/25mm1.wav"
 	Semiautomatic.soundDistance = " "
 	Semiautomatic.soundNormal = " "
-	
+		
 GunClass["SA"] = Semiautomatic
 
 local HeavyMachinegun = {}

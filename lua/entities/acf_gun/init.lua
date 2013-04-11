@@ -471,7 +471,7 @@ function ENT:LoadAmmo( AddTime, Reload )
 end
 
 function ENT:UnloadAmmo()
-
+	if not self.BulletData or not self.BulletData["Crate"] then return end -- Explanation: http://www.youtube.com/watch?v=dwjrui9oCVQ
 	local Crate = Entity( self.BulletData["Crate"] )
 	if Crate and Crate:IsValid() and self.BulletData["Type"] == Crate.BulletData["Type"] then
 		Crate.Ammo = Crate.Ammo+1
