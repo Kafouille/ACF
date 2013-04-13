@@ -133,6 +133,7 @@ function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, 
 	
 	table.insert(ACF.AmmoCrates, Ammo)
 	
+	
 	return Ammo
 end
 list.Set( "ACFCvars", "acf_ammo" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
@@ -197,7 +198,7 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 		PlayerData["Data10"] = self.RoundData10
 	self.ConvertData = ACF.RoundTypes[self.RoundType]["convert"]
 	self.BulletData = self:ConvertData( PlayerData )
-		
+	
 	local Size = (self:OBBMaxs() - self:OBBMins())
 	local Efficiency = 0.11 * ACF.AmmoMod			--This is the part of space that's actually useful, the rest is wasted on interround gaps, loading systems ..
 	self.Volume = math.floor(Size.x * Size.y * Size.z)*Efficiency
@@ -207,7 +208,6 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	
 	self.NetworkData = ACF.RoundTypes[self.RoundType]["network"]
 	self:NetworkData( self.BulletData )
-
 end
 
 function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was full

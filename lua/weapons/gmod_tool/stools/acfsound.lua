@@ -8,6 +8,7 @@ TOOL.Name			= "#Tool.acfsound.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
 
+TOOL.ClientConVar["pitch"] = "1"
 if CLIENT then
 	language.Add( "Tool.acfsound.name", "ACF Sound Replacer" )
 	language.Add( "Tool.acfsound.desc", "Change sound of guns/engines." )
@@ -20,6 +21,7 @@ local function ReplaceSound( ply , Entity , data)
 	timer.Simple(1, function()
 		if Entity:GetClass() == "acf_engine" then
 			Entity.SoundPath = sound
+			Entity.SoundPitch = ply:GetInfo("acfsound_pitch")
 		elseif Entity:GetClass() == "acf_gun" then
 			Entity.Sound = sound
 			Entity:SetNWString( "Sound", sound )
@@ -58,6 +60,7 @@ function TOOL:RightClick( trace )
 	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
 	if trace.Entity:GetClass() == "acf_engine" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
+		self:GetOwner():ConCommand("acfsound_pitch "..trace.Entity.SoundPitch);
 	elseif trace.Entity:GetClass() == "acf_gun" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.Sound);
 	end
@@ -69,6 +72,7 @@ function TOOL:Reload( trace )
 	if trace.Entity:GetClass() == "acf_engine" then
 		local Id = trace.Entity.Id
 		local List = list.Get("ACFEnts")
+		self:GetOwner():ConCommand("acfsound_pitch 1");
 		ReplaceSound( self:GetOwner(), trace.Entity, {List["Mobility"][Id]["sound"]} )
 	elseif trace.Entity:GetClass() == "acf_gun" then
 		local Class = trace.Entity.Class
@@ -134,4 +138,24 @@ function TOOL.BuildCPanel(panel)
 		SoundPreStop:SetWide(SoundPreWide / 2)
 		SoundPreStop:SetPos(SoundPreWide / 2, 0)
 	end
+	
+	panel:AddControl("Slider", {
+        Label = "Pitch:",
+        Command = "acfsound_pitch",
+        Type = "Float",
+        Min = "0.1",
+        Max = "2",
+    }):SetTooltip("Works only for engines.")
+	/*
+	local SoundPitch = vgui.Create("DNumSlider")
+	SoundPitch:SetMin( 0.1 )
+	SoundPitch:SetMax( 2 )
+    SoundPitch:SetDecimals( 0.1 )
+	SoundPitch:SetWide(wide)
+	SoundPitch:SetText("Pitch:")
+	SoundPitch:SetToolTip("Works only for engines")
+	SoundPitch:SetConVar( "acfsound_pitch" )
+	SoundPitch:SetValue( 1 )
+	panel:AddItem(SoundPitch)
+	*/
 end

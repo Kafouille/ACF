@@ -28,8 +28,8 @@ function ACF_Activate ( Entity , Recalc )
 	end
 	Entity.ACF = Entity.ACF or {} 
 	
-	local PhysObj = Entity:GetPhysicsObject()
 	local Count
+	local PhysObj = Entity:GetPhysicsObject()
 	if PhysObj:GetMesh() then Count = #PhysObj:GetMesh() end
 	if PhysObj:IsValid() and Count and Count>100 then
 
@@ -83,13 +83,13 @@ function ACF_Check ( Entity )
 	if ( IsValid(Entity) ) then
 		if ( Entity:GetPhysicsObject():IsValid() and !Entity:IsWorld() and !Entity:IsWeapon() ) then
 			local Class = Entity:GetClass()
-			--print(Class)
 			if ( Class != "gmod_ghost" and Class != "debris" and Class != "prop_ragdoll" and not string.find( Class , "func_" )  ) then
 				if !Entity.ACF then 
 					ACF_Activate( Entity )
 				elseif Entity.ACF.Mass != Entity:GetPhysicsObject():GetMass() then
 					ACF_Activate( Entity , true )
 				end
+				--print("ACF_Check "..Entity.ACF.Type)
 				return Entity.ACF.Type	
 			end	
 		end
@@ -155,7 +155,7 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	end
 	
 	HitRes.Damage = var * dmul * (Penetration/Armour)^2 * FrAera	-- This is the volume of the hole caused by our projectile 
-	--print(HitRes.Damage)
+	--print("ACF_CalcDamage Damage "..HitRes.Damage)
 	HitRes.Overkill = (MaxPenetration - Penetration)
 	HitRes.Loss = Penetration/MaxPenetration
 	
@@ -178,7 +178,7 @@ function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 		end
 		Entity.ACF.PrHealth = Entity.ACF.Health
 	end
-		
+	
 	return HitRes
 	
 end

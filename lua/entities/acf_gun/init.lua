@@ -180,6 +180,8 @@ function ENT:Unlink( Target )
 	
 end
 
+local WireTable = { "gmod_wire_adv_pod", "gmod_wire_pod", "gmod_wire_keyboard", "gmod_wire_joystick", "gmod_wire_joystick_multi" }
+
 function ENT:GetUser( inp )
 	if inp:GetClass() == "gmod_wire_adv_pod" then
 		if inp.Pod then
@@ -206,6 +208,12 @@ function ENT:GetUser( inp )
 			return self:GetUser(inp.Inputs["Fire"].Src) 
 		elseif inp.Inputs["Shoot"] then
 			return self:GetUser(inp.Inputs["Shoot"].Src) 
+		elseif inp.Inputs then
+			for _,v in pairs(inp.Inputs) do
+				if table.HasValue(WireTable, v.Src:GetClass()) then
+					return self:GetUser(v.Src) 
+				end
+			end
 		end
 	end
 	return inp.Owner or inp:GetOwner()
@@ -538,7 +546,7 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		if AmmoLink.entities and table.Count(AmmoLink.entities) > 0 then
 			for _,AmmoID in pairs(AmmoLink.entities) do
 				local Ammo = CreatedEntities[ AmmoID ]
-				if Ammo and Ammo:IsValid() then
+				if Ammo and Ammo:IsValid() and Ammo:GetClass() == "acf_ammo" then
 					self:Link( Ammo )
 				end
 			end
