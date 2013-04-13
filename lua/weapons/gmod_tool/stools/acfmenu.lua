@@ -1,4 +1,4 @@
-TOOL.Category		= "Construction"
+TOOL.Category		= "Armored Combat Framework"
 TOOL.Name			= "#Tool.acfmenu.listname"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""

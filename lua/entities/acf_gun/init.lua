@@ -180,6 +180,8 @@ function ENT:Unlink( Target )
 	
 end
 
+local WireTable = { "gmod_wire_adv_pod", "gmod_wire_pod", "gmod_wire_keyboard", "gmod_wire_joystick", "gmod_wire_joystick_multi" }
+
 function ENT:GetUser( inp )
 	if inp:GetClass() == "gmod_wire_adv_pod" then
 		if inp.Pod then
@@ -206,6 +208,12 @@ function ENT:GetUser( inp )
 			return self:GetUser(inp.Inputs["Fire"].Src) 
 		elseif inp.Inputs["Shoot"] then
 			return self:GetUser(inp.Inputs["Shoot"].Src) 
+		elseif inp.Inputs then
+			for _,v in pairs(inp.Inputs) do
+				if table.HasValue(WireTable, v.Src:GetClass()) then
+					return self:GetUser(v.Src) 
+				end
+			end
 		end
 	end
 	return inp.Owner or inp:GetOwner()
@@ -217,8 +225,6 @@ function ENT:TriggerInput( iname , value )
 	if (iname == "Unload" and value > 0) then
 		timer.Simple( 0, self.UnloadAmmo() )
 	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
-		local CanDo = hook.Call("ACF_FireShell", _, self.Entity, self.BulletData )
-		if CanDo == false then return end
 		if self.Entity.NextFire < CurTime() then
 			self.User = self:GetUser(self.Inputs["Fire"].Src)
 			if not IsValid(self.User) then self.User = self.Owner end
@@ -337,6 +343,9 @@ function ENT:ReloadMag()
 end
 
 function ENT:FireShell()
+	
+	local CanDo = hook.Run("ACF_FireShell", self.Entity, self.BulletData )
+	if CanDo == false then return end
 	if(self.IsUnderWeight == nil) then
 		self.IsUnderWeight = true
 		if(ISBNK) then
@@ -470,7 +479,7 @@ function ENT:LoadAmmo( AddTime, Reload )
 end
 
 function ENT:UnloadAmmo()
-
+	if not self.BulletData or not self.BulletData["Crate"] then return end -- Explanation: http://www.youtube.com/watch?v=dwjrui9oCVQ
 	local Crate = Entity( self.BulletData["Crate"] )
 	if Crate and Crate:IsValid() and self.BulletData["Type"] == Crate.BulletData["Type"] then
 		Crate.Ammo = Crate.Ammo+1
@@ -537,7 +546,7 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		if AmmoLink.entities and table.Count(AmmoLink.entities) > 0 then
 			for _,AmmoID in pairs(AmmoLink.entities) do
 				local Ammo = CreatedEntities[ AmmoID ]
-				if Ammo and Ammo:IsValid() then
+				if Ammo and Ammo:IsValid() and Ammo:GetClass() == "acf_ammo" then
 					self:Link( Ammo )
 				end
 			end

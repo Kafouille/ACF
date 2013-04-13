@@ -1,7 +1,0 @@
-"LightmappedGeneric"
-{
-  "$basetexture" "decals\ACF\hole5"
-  "$decal" 1
-  "$decalscale" 0.01
-  "$translucent" 1
-}

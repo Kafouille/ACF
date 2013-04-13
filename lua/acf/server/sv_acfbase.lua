@@ -1,28 +1,22 @@
+local UpdateIndex = 0
 function ACF_UpdateVisualHealth(Entity)
 	if Entity.ACF.PrHealth == Entity.ACF.Health then return end
 	if not ACF_HealthUpdateList then
 		ACF_HealthUpdateList = {}
-		timer.Create("ACF_HealthUpdateList", 1, 0, function()
+		timer.Create("ACF_HealthUpdateList", 1, 1, function() // We should send things slowly to not overload traffic.
+			local Table = {}
 			for k,v in pairs(ACF_HealthUpdateList) do
 				if IsValid( v ) then
-					net.Start("ACF_RenderDamage")
-						net.WriteFloat(k)
-						net.WriteFloat(v.ACF.Health)
-						net.WriteFloat(v.ACF.MaxHealth)
-					net.Broadcast()
-				end
-				if ACF_HealthUpdateList then
-					if #ACF_HealthUpdateList <= 1 then
-						ACF_HealthUpdateList = nil
-						timer.Destroy("ACF_HealthUpdateList")
-					else
-						table.remove(ACF_HealthUpdateList, k)
-					end
+					table.insert(Table,{ID = v:EntIndex(), Health = v.ACF.Health, MaxHealth = v.ACF.MaxHealth})
 				end
 			end
+			net.Start("ACF_RenderDamage")
+				net.WriteTable(Table)
+			net.Broadcast()
+			ACF_HealthUpdateList = nil
 		end)
 	end
-	ACF_HealthUpdateList[Entity:EntIndex()] = Entity		
+	table.insert(ACF_HealthUpdateList, Entity)
 end
 
 function ACF_Activate ( Entity , Recalc )
@@ -32,24 +26,47 @@ function ACF_Activate ( Entity , Recalc )
 		Entity:ACF_Activate( Recalc )
 		return
 	end
-	local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
-	local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 --Converting from square in to square cm, fuck imperial
-	local Volume = Size.x * Size.y * Size.z * 16.38
-	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Aera / 0.78 --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
-	local Health = Aera/ACF.Threshold							--Setting the threshold of the prop aera gone 
+	Entity.ACF = Entity.ACF or {} 
+	
+	local Count
+	local PhysObj = Entity:GetPhysicsObject()
+	if PhysObj:GetMesh() then Count = #PhysObj:GetMesh() end
+	if PhysObj:IsValid() and Count and Count>100 then
+
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 6.45) * 0.52505066107
+		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
+		--end
+	else
+		local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 
+		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
+		--end
+	end
+	
+	Entity.ACF.Ductility = Entity.ACF.Ductility or 0
+	local Area = (Entity.ACF.Aera+Entity.ACF.Aera*math.Clamp(Entity.ACF.Ductility,-0.8,0.8))
+	local Armour = Entity:GetPhysicsObject():GetMass()*1000 / Area / 0.78 		--So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
+	local Health = Area/ACF.Threshold												--Setting the threshold of the prop aera gone
+	
 	local Percent = 1 
 	
-	if Recalc then
+	if Recalc and Entity.ACF.Health and Entity.ACF.MaxHealth then
 		Percent = Entity.ACF.Health/Entity.ACF.MaxHealth
 	end
-	Entity.ACF = {} 
+	
 	Entity.ACF.Health = Health * Percent
 	Entity.ACF.MaxHealth = Health
 	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
 	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
 	Entity.ACF.Type = nil
-	Entity.ACF.Mass = Entity:GetPhysicsObject():GetMass()
-	Entity.ACF.Density = (Entity:GetPhysicsObject():GetMass()*1000)/Volume
+	Entity.ACF.Mass = PhysObj:GetMass()
+	--Entity.ACF.Density = (PhysObj:GetMass()*1000)/Entity.ACF.Volume
 	
 	if Entity:IsPlayer() || Entity:IsNPC() then
 		Entity.ACF.Type = "Squishy"
@@ -58,6 +75,7 @@ function ACF_Activate ( Entity , Recalc )
 	else
 		Entity.ACF.Type = "Prop"
 	end
+	--print(Entity.ACF.Health)
 end
 
 function ACF_Check ( Entity )
@@ -65,13 +83,13 @@ function ACF_Check ( Entity )
 	if ( IsValid(Entity) ) then
 		if ( Entity:GetPhysicsObject():IsValid() and !Entity:IsWorld() and !Entity:IsWeapon() ) then
 			local Class = Entity:GetClass()
-			--print(Class)
 			if ( Class != "gmod_ghost" and Class != "debris" and Class != "prop_ragdoll" and not string.find( Class , "func_" )  ) then
 				if !Entity.ACF then 
 					ACF_Activate( Entity )
 				elseif Entity.ACF.Mass != Entity:GetPhysicsObject():GetMass() then
 					ACF_Activate( Entity , true )
 				end
+				--print("ACF_Check "..Entity.ACF.Type)
 				return Entity.ACF.Type	
 			end	
 		end
@@ -83,7 +101,7 @@ end
 function ACF_Damage ( Entity , Energy , FrAera , Angle , Inflictor , Bone, Gun ) 
 	
 	local Activated = ACF_Check( Entity )
-	local CanDo = hook.Call("ACF_BulletDamage", _, Activated, Entity, Energy, FrAera, Angle, Inflictor, Bone, Gun, Ammo )
+	local CanDo = hook.Run("ACF_BulletDamage", Activated, Entity, Energy, FrAera, Angle, Inflictor, Bone, Gun )
 	if CanDo == false then
 		return { Damage = 0, Overkill = 0, Loss = 0, Kill = false }		
 	end
@@ -137,7 +155,7 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	end
 	
 	HitRes.Damage = var * dmul * (Penetration/Armour)^2 * FrAera	-- This is the volume of the hole caused by our projectile 
-	--print(HitRes.Damage)
+	--print("ACF_CalcDamage Damage "..HitRes.Damage)
 	HitRes.Overkill = (MaxPenetration - Penetration)
 	HitRes.Loss = Penetration/MaxPenetration
 	
@@ -160,7 +178,7 @@ function ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone )
 		end
 		Entity.ACF.PrHealth = Entity.ACF.Health
 	end
-		
+	
 	return HitRes
 	
 end

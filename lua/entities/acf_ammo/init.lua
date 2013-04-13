@@ -30,24 +30,32 @@ end
 function ENT:ACF_Activate( Recalc )
 	
 	local EmptyMass = math.max(self.EmptyMass, self:GetPhysicsObject():GetMass() - self:AmmoMass())
-	local Size = self.OBBMaxs(self) - self.OBBMins(self)
-	local Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45 --Converting from square in to square cm, fuck imperial
-	local Volume = Size.x * Size.y * Size.z * 16.38
-	local Armour = EmptyMass*1000 / Aera / 0.78 --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
-	local Health = Volume/ACF.Threshold							--Setting the threshold of the prop aera gone 
+
+	self.ACF = self.ACF or {} 
+	
+	local PhysObj = self.Entity:GetPhysicsObject()
+	if not self.ACF.Aera then
+		self.ACF.Aera = PhysObj:GetSurfaceArea() * 6.45
+	end
+	if not self.ACF.Volume then
+		self.ACF.Volume = PhysObj:GetVolume() * 16.38
+	end
+	
+	local Armour = EmptyMass*1000 / self.ACF.Aera / 0.78 --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
+	local Health = self.ACF.Volume/ACF.Threshold							--Setting the threshold of the prop aera gone 
 	local Percent = 1 
 	
-	if Recalc then
+	if Recalc and self.ACF.Health and self.ACF.MaxHealth then
 		Percent = self.ACF.Health/self.ACF.MaxHealth
 	end
-	self.ACF = {} 
+	
 	self.ACF.Health = Health * Percent
 	self.ACF.MaxHealth = Health
 	self.ACF.Armour = Armour * (0.5 + Percent/2)
 	self.ACF.MaxArmour = Armour
 	self.ACF.Type = nil
 	self.ACF.Mass = self.Mass
-	self.ACF.Density = (self:GetPhysicsObject():GetMass()*1000)/Volume
+	self.ACF.Density = (self:GetPhysicsObject():GetMass()*1000) / self.ACF.Volume
 	self.ACF.Type = "Prop"
 	
 end
@@ -59,7 +67,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	if HitRes.Kill then
-		local CanDo = hook.Call("ACF_AmmoExplode", _, self.Entity, self.BulletData )
+		local CanDo = hook.Run("ACF_AmmoExplode", self.Entity, self.BulletData )
 		if CanDo == false then return HitRes end
 		self.Exploding = true
 		if( Inflictor and Inflictor:IsValid() and Inflictor:IsPlayer() ) then
@@ -125,6 +133,7 @@ function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, 
 	
 	table.insert(ACF.AmmoCrates, Ammo)
 	
+	
 	return Ammo
 end
 list.Set( "ACFCvars", "acf_ammo" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
@@ -189,7 +198,7 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 		PlayerData["Data10"] = self.RoundData10
 	self.ConvertData = ACF.RoundTypes[self.RoundType]["convert"]
 	self.BulletData = self:ConvertData( PlayerData )
-		
+	
 	local Size = (self:OBBMaxs() - self:OBBMins())
 	local Efficiency = 0.11 * ACF.AmmoMod			--This is the part of space that's actually useful, the rest is wasted on interround gaps, loading systems ..
 	self.Volume = math.floor(Size.x * Size.y * Size.z)*Efficiency
@@ -199,7 +208,6 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	
 	self.NetworkData = ACF.RoundTypes[self.RoundType]["network"]
 	self:NetworkData( self.BulletData )
-
 end
 
 function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was full
@@ -215,15 +223,6 @@ function ENT:TriggerInput( iname , value )
 			self:FirstLoad()
 		else
 			self.Load = false
-			
-			if self.SupplyingTo then
-				for k,v in pairs( self.SupplyingTo ) do
-					local Ammo = ents.GetByIndex(v)
-					table.remove(self.SupplyingTo, k)
-					self:StopRefillEffect( Ammo )
-				end
-				self.SupplyingTo = nil
-			end
 		end
 	elseif (iname == "Fuse Length" and value > 0 and (self.BulletData["RoundType"] == "HE" or self.BulletData["RoundType"] == "APHE")) then
 	end
@@ -284,7 +283,7 @@ function ENT:Think()
 			end
 			self.Entity:NextThink( CurTime() + 0.01 + self.BulletData["RoundVolume"]^0.5/100 )
 		end
-	elseif self.RoundType == "Refill" and self.Ammo > 0 then
+	elseif self.RoundType == "Refill" and self.Ammo > 0 then // Completely new, fresh, genius, beautiful, flawless refill system.
 		if self.Load then
 			for _,Ammo in pairs( ACF.AmmoCrates ) do
 				if Ammo.RoundType ~= "Refill" then
@@ -321,7 +320,7 @@ function ENT:Think()
 				self:StopRefillEffect( Ammo )
 			else
 				local dist = self.Entity:GetPos():Distance(Ammo:GetPos())
-				if dist > ACF.RefillDistance or Ammo.Capacity <= Ammo.Ammo then
+				if dist > ACF.RefillDistance or Ammo.Capacity <= Ammo.Ammo or self.Damaged or not self.Load then // If ammo crate is out of refill max distance or is full or our refill crate is damaged or just in-active then stop refiliing it.
 					table.remove(self.SupplyingTo, k)
 					self:StopRefillEffect( Ammo )
 				end
@@ -358,7 +357,7 @@ function ENT:NetworkData()
 end
 
 /*
-function ENT:Touch( Supplier )
+function ENT:Touch( Supplier ) // OLD REFILL SYSTEM
 	
 	if ( Supplier:GetClass() == "acf_ammo" ) then
 

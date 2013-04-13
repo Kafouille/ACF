@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 274 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 278 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
@@ -17,6 +17,7 @@ ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
 ACF.Spalling = 1
 ACF.GunfireEnabled = true
+ACF.MeshCalcEnabled = false
 
 ACF.HEPower = 6000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
@@ -43,8 +44,9 @@ ACF.Year = 1945
 CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
+CreateConVar('acf_meshvalue', 1)
 
-AddCSLuaFile( "acf_globals.lua" )
+AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 
@@ -59,79 +61,6 @@ if (SERVER) then
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
-	
-	resource.AddFile( "materials/HUD/killicons/acf_AC.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_AC.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_AL.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_AL.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_C.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_C.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_GL.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_GL.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_HMG.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_HMG.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_HW.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_HW.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_MG.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_MG.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_MO.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_MO.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_RAC.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_RAC.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_SA.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_SA.vmt" )
-	resource.AddFile( "materials/HUD/killicons/acf_ammo.vtf" )
-	resource.AddFile( "materials/HUD/killicons/acf_ammo.vmt" )
-	
-	
-	resource.AddFile( "materials/decals/dent.vtf" )
-	resource.AddFile( "materials/decals/dent1big.vmt" )
-	resource.AddFile( "materials/decals/dent1medium.vmt" )
-	resource.AddFile( "materials/decals/dent1small.vmt" )
-	resource.AddFile( "materials/decals/dent2.vtf" )
-	resource.AddFile( "materials/decals/dent2big.vmt" )
-	resource.AddFile( "materials/decals/dent2medium.vmt" )
-	resource.AddFile( "materials/decals/dent2small.vmt" )
-	resource.AddFile( "materials/decals/dent3.vtf" )
-	resource.AddFile( "materials/decals/dent3big.vmt" )
-	resource.AddFile( "materials/decals/dent3medium.vmt" )
-	resource.AddFile( "materials/decals/dent3small.vmt" )
-	resource.AddFile( "materials/decals/dent4.vtf" )
-	resource.AddFile( "materials/decals/dent4big.vmt" )
-	resource.AddFile( "materials/decals/dent4medium.vmt" )
-	resource.AddFile( "materials/decals/dent4small.vmt" )
-	resource.AddFile( "materials/decals/dent5.vtf" )
-	resource.AddFile( "materials/decals/dent5big.vmt" )
-	resource.AddFile( "materials/decals/dent5medium.vmt" )
-	resource.AddFile( "materials/decals/dent5small.vmt" )
-	resource.AddFile( "materials/decals/hole1.vtf" )
-	resource.AddFile( "materials/decals/hole1big.vmt" )
-	resource.AddFile( "materials/decals/hole1medium.vmt" )
-	resource.AddFile( "materials/decals/hole1small.vmt" )
-	resource.AddFile( "materials/decals/hole2.vtf" )
-	resource.AddFile( "materials/decals/hole2big.vmt" )
-	resource.AddFile( "materials/decals/hole2medium.vmt" )
-	resource.AddFile( "materials/decals/hole2small.vmt" )
-	resource.AddFile( "materials/decals/hole3.vtf" )
-	resource.AddFile( "materials/decals/hole3big.vmt" )
-	resource.AddFile( "materials/decals/hole3medium.vmt" )
-	resource.AddFile( "materials/decals/hole3small.vmt" )
-	resource.AddFile( "materials/decals/hole4.vtf" )
-	resource.AddFile( "materials/decals/hole4big.vmt" )
-	resource.AddFile( "materials/decals/hole4medium.vmt" )
-	resource.AddFile( "materials/decals/hole4small.vmt" )
-	resource.AddFile( "materials/decals/hole5.vtf" )
-	resource.AddFile( "materials/decals/hole5big.vmt" )
-	resource.AddFile( "materials/decals/hole5medium.vmt" )
-	resource.AddFile( "materials/decals/hole5small.vmt" )
-	
-	
-	resource.AddFile( "materials/damaged/damaged1.vmt" )
-	resource.AddFile( "materials/damaged/damaged1.vtf" )
-	resource.AddFile( "materials/damaged/damaged2.vmt" )
-	resource.AddFile( "materials/damaged/damaged2.vtf" )
-	resource.AddFile( "materials/damaged/damaged3.vmt" )
-	resource.AddFile( "materials/damaged/damaged3.vtf" )
 
 	
 elseif (CLIENT) then
@@ -180,37 +109,7 @@ game.AddParticles("particles/acf_muzzleflashes.pcf")
 game.AddParticles("particles/explosion1.pcf")
 game.AddParticles("particles/rocket_motor.pcf")
 
-game.AddDecal("ACF_penetration1_small", "decals/ACF/hole1small")
-game.AddDecal("ACF_penetration2_small", "decals/ACF/hole2small")
-game.AddDecal("ACF_penetration3_small", "decals/ACF/hole3small")
-game.AddDecal("ACF_penetration4_small", "decals/ACF/hole4small")
-game.AddDecal("ACF_penetration5_small", "decals/ACF/hole5small")
-game.AddDecal("ACF_penetration1_medium", "decals/ACF/hole1medium")
-game.AddDecal("ACF_penetration2_medium", "decals/ACF/hole2medium")
-game.AddDecal("ACF_penetration3_medium", "decals/ACF/hole3medium")
-game.AddDecal("ACF_penetration4_medium", "decals/ACF/hole4medium")
-game.AddDecal("ACF_penetration5_medium", "decals/ACF/hole5medium")
-game.AddDecal("ACF_penetration1_big", "decals/ACF/hole1big")
-game.AddDecal("ACF_penetration2_big", "decals/ACF/hole2big")
-game.AddDecal("ACF_penetration3_big", "decals/ACF/hole3big")
-game.AddDecal("ACF_penetration4_big", "decals/ACF/hole4big")
-game.AddDecal("ACF_penetration5_big", "decals/ACF/hole5big")
-
-game.AddDecal("ACF_impact1_small", "decals/ACF/dent1small")
-game.AddDecal("ACF_impact2_small", "decals/ACF/dent2small")
-game.AddDecal("ACF_impact3_small", "decals/ACF/dent3small")
-game.AddDecal("ACF_impact4_small", "decals/ACF/dent4small")
-game.AddDecal("ACF_impact5_small", "decals/ACF/dent5small")
-game.AddDecal("ACF_impact1_medium", "decals/ACF/dent1medium")
-game.AddDecal("ACF_impact2_medium", "decals/ACF/dent2medium")
-game.AddDecal("ACF_impact3_medium", "decals/ACF/dent3medium")
-game.AddDecal("ACF_impact4_medium", "decals/ACF/dent4medium")
-game.AddDecal("ACF_impact5_medium", "decals/ACF/dent5medium")
-game.AddDecal("ACF_impact1_big", "decals/ACF/dent1big")
-game.AddDecal("ACF_impact2_big", "decals/ACF/dent2big")
-game.AddDecal("ACF_impact3_big", "decals/ACF/dent3big")
-game.AddDecal("ACF_impact4_big", "decals/ACF/dent4big")
-game.AddDecal("ACF_impact5_big", "decals/ACF/dent5big")
+game.AddDecal("GunShot1", "decals/METAL/shot5")
 
 timer.Simple( 0, function()
 	for Class,Table in pairs(ACF.Classes["GunClass"]) do
@@ -275,7 +174,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "enabled" 
 		end
 		print ("ACF Gunfire has been " .. text)
-	end	
+	end
 end
 
 
@@ -300,54 +199,6 @@ function ACF_UpdateChecking( )
 end
 ACF_UpdateChecking( )
 
-if SERVER then
-	duplicator.RegisterEntityModifier( "acf_diffsound", function( ply , Entity , data)
-		if !IsValid( Entity ) then return end
-		local sound = data[1]
-		timer.Simple(1, function()
-			if Entity:GetClass() == "acf_engine" then
-				Entity.SoundPath = sound
-			elseif Entity:GetClass() == "acf_gun" then
-				Entity.Sound = sound
-			end
-		end)
-		
-		duplicator.StoreEntityModifier( Entity, "acf_diffsound", {sound} )
-	end)
-end
-
-concommand.Add("acf_replacesound", function(ply, _, args)
-	if CLIENT then return end
-	local sound
-	if type(args) == "table" then 
-		sound = args[1]
-	else
-		sound = args
-	end
-	
-	if not sound then return end
-	
-	if not file.Find("sounds"..sound, "GAME") then
-		print("sounds/"..sound.."*")
-		print("There is no such sound!")
-		return
-	end
-	
-	local tr = ply:GetEyeTrace()
-	if not tr.Entity or (tr.Entity:GetClass() ~= "acf_gun" and tr.Entity:GetClass() ~= "acf_engine") then
-		print("You need to look at engine or gun to change it's sound")
-		return
-	end
-	local ent = tr.Entity
-	if ent:GetClass() == "acf_engine" then
-		ent.SoundPath = sound
-	elseif ent:GetClass() == "acf_gun" then
-		ent.Sound = sound
-		ent:SetNWString( "Sound", sound )
-	end
-	duplicator.StoreEntityModifier( ent , "acf_diffsound", {sound} )
-end)
-
 function ACF_ChatVersionPrint(ply)
 	if not ACF.Version or ACF.Version < ACF.CurrentVersion then
 	timer.Simple( 2,function()
@@ -355,6 +206,17 @@ function ACF_ChatVersionPrint(ply)
 			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available!\")"
 			) 
 		end)
+		local Table = {}
+		for k,v in pairs( ents.GetAll() ) do
+			if v.ACF and v.ACF.PrHealth then
+				table.insert(Table,{ID = v:EntIndex(), Health = v.ACF.Health, v.ACF.MaxHealth})
+			end
+		end
+		if Table ~= {} then
+			net.Start("ACF_RenderDamage")
+				net.WriteTable(Table)
+			net.Send(ply)
+		end
 	end	
 end
 
@@ -373,6 +235,11 @@ ONE HUGE HACK to get good killicons.
 if SERVER then
 	
 	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
+		if inflictor:GetClass() == "acf_ammo" then
+			net.Start("ACF_KilledByACF")
+				net.WriteString( victim:Nick()..";ammo;"..attacker:Nick() )
+			net.Broadcast()
+		end
 		if inflictor:GetClass() == "acf_gun" then
 			net.Start("ACF_KilledByACF")
 				net.WriteString( victim:Nick()..";"..inflictor.Class..";"..attacker:Nick() )
@@ -403,7 +270,7 @@ if CLIENT then
 					if ( !IsValid( victim ) ) then return end
 					local inflictor    = msg:ReadString()
 					local attacker     = msg:ReadString()
-					if inflictor != "acf_gun" then
+					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
 						ACF_PlayerKilled(msg)
 					end
 				end
@@ -425,7 +292,7 @@ if CLIENT then
 
 					if ( !IsValid( attacker ) ) then return end
 					if ( !IsValid( victim ) ) then return end
-					if inflictor != "acf_gun" then
+					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
 						ACF_PlayerKilledByPlayer(msg)
 					end
 				end

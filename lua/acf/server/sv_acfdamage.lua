@@ -1,6 +1,5 @@
 -- This file is meant for the advanced damage functions used by the Armored Combat Framework
 function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, Ammo )	--HitPos = Detonation center, FillerMass = mass of TNT being detonated in KG, FragMass = Mass of the round casing for fragmentation purposes, Inflictor owner of said TNT
-
 	local Power = FillerMass * ACF.HEPower					--Power in KiloJoules of the filler mass of  TNT 
 	local Radius = (FillerMass)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
 	local MaxSphere = (4 * 3.1415 * (Radius*2.54 )^2) 		--Surface Aera of the sphere at maximum radius
@@ -8,10 +7,11 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 	util.ScreenShake( Hitpos, Amp, Amp, Amp/15, Radius*10 )  
 	--local Targets = ents.FindInSphere( Hitpos, Radius )
 	local Targets = ents.GetAll()
+	
 	for k,v in pairs (Targets) do
 		local epos = v:GetPos()
 		if Hitpos:Distance(epos) > Radius then
-		Targets[k] = nil
+			Targets[k] = nil
 		end
 	end
 	
@@ -31,15 +31,14 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 		local TotalAera = 0
 		for i,Tar in pairs(Targets) do
 			Iterations = i
-			--Msg("Target : " ..Tar:GetClass().. "\n")
-			if ( Tar.Entity != nil and Power > 0 and not Tar.Entity.Exploding ) then
-				local Type = ACF_Check(Tar.Entity)
+			if ( Tar != nil and Power > 0 and not Tar.Exploding ) then
+				local Type = ACF_Check(Tar)
 				if ( Type ) then
 					local Hitat = nil
 					if Type == "Squishy" then 										--A little hack so it doesn't check occlusion at the feet of players
-						local Eyes = Tar.Entity:LookupAttachment("eyes")
+						local Eyes = Tar:LookupAttachment("eyes")
 						if Eyes then
-							Hitat = Tar.Entity:GetAttachment( Eyes )
+							Hitat = Tar:GetAttachment( Eyes )
 							if Hitat then
 								--Msg("Hitting Eyes\n")
 								Hitat = Hitat.Pos
@@ -56,10 +55,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 						Occlusion.endpos = Hitat + (Hitat-Hitpos):GetNormalized()*100
 						Occlusion.filter = OccFilter
 						Occlusion.mask = MASK_SOLID
-					local Occ = util.TraceLine( Occlusion )					
+					local Occ = util.TraceLine( Occlusion )	
 					
 					if ( !Occ.Hit and Hitpos != Hitat ) then
-						local Hitat = Tar.Entity:GetPos()
+						local Hitat = Tar:GetPos()
 						local Occlusion = {}
 							Occlusion.start = Hitpos
 							Occlusion.endpos = Hitat + (Hitat-Hitpos):GetNormalized()*100
@@ -68,40 +67,45 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 						Occ = util.TraceLine( Occlusion )	
 					end
 					
-					if ( Occ.Hit and Occ.Entity:EntIndex() != Tar.Entity:EntIndex() ) then 
-						--print(Occ.Entity)
+					if ( Occ.Hit and Occ.Entity:EntIndex() != Tar:EntIndex() ) then
+					
+						--print("Hit "..Occ.Entity:GetModel())
 					elseif ( !Occ.Hit and Hitpos != Hitat ) then
-						--print("No Hit")
-						--print(Tar.Entity)
+						--print("No Hit "..Occ.Entity:GetModel())
 						--print((Hitpos - Hitat):Length())
 					else
 						Targets[i] = nil								--Remove the thing we just hit from the table so we don't hit it again in the next round
 						local Table = {}
-							Table.Ent = Tar.Entity
-							Table.Dist = Hitpos:Distance(Tar.Entity:GetPos())
-							Table.Vec = (Tar.Entity:GetPos() - Hitpos):GetNormal()
+							Table.Ent = Tar
+							Table.Dist = Hitpos:Distance(Tar:GetPos())
+							Table.Vec = (Tar:GetPos() - Hitpos):GetNormal()
 							local Sphere = math.max(4 * 3.1415 * (Table.Dist*2.54 )^2,1) --Surface Aera of the sphere at the range of that prop
 							Table.Aera = math.min((Tar.ACF.MaxHealth*ACF.Threshold)/Sphere,0.5)*MaxSphere --Project the aera of the prop to the aera of the shadow it projects at the explosion max radius
 						table.insert(Damage, Table)						--Add it to the Damage table so we know to damage it once we tallied everything
 						TotalAera = TotalAera + Table.Aera
 					end
 				else
+					--print("INVALID: "..Tar:GetClass())
 					Targets[i] = nil											--Target was invalid, so let's ignore it
-					table.insert( OccFilter , Tar.Entity )
+					table.insert( OccFilter , Tar )
 				end	
 			end
 		end
+		--Msg("ACF_HE Damage:\n")
+		--PrintTable(Damage)
 		
 		for i,Table in pairs(Damage) do
 			
 			local Tar = Table.Ent
 			local AeraFraction = Table.Aera/TotalAera
 			local PowerFraction = Power * AeraFraction										--How much of the total power goes to that prop
+			--print("ACF_HE Target: "..Tar:GetModel() or "unknown")
+			--print("ACF_HE Power: "..PowerFraction or "nill")
 			
 			local Blast = {}
 				Blast.Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05)
 				Blast.Penetration = PowerFraction^ACF.HEBlastPen*Tar.ACF.MaxHealth
-			local BlastRes = ACF_Damage ( Tar.Entity , Blast , Tar.ACF.MaxHealth , 0 , Inflictor ,0 , _, Ammo )--Vel is just the speed of sound in air
+			local BlastRes = ACF_Damage ( Tar , Blast , Tar.ACF.MaxHealth , 0 , Inflictor ,0 , Ammo )--Vel is just the speed of sound in air
 			PowerSpent = PowerSpent + PowerFraction*BlastRes.Loss/2--Removing the energy spent killing props
 			
 			local FragHit = Fragments * AeraFraction
@@ -111,14 +115,14 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 				if math.Rand(0,1) > FragHit then FragHit = 1 else FragHit = 0 end
 			end
 			
-			local FragRes = ACF_Damage ( Tar.Entity , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, _, Ammo )
+			local FragRes = ACF_Damage ( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo )
 			
 			if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
-				local Debris = ACF_HEKill( Tar.Entity , Table.Vec , PowerFraction )
+				local Debris = ACF_HEKill( Tar , Table.Vec , PowerFraction )
 				table.insert( OccFilter , Debris )						--Add the debris created to the ignore so we don't hit it in other rounds
 				LoopKill = true
 			else
-				local phys = Tar.Entity:GetPhysicsObject() 
+				local phys = Tar:GetPhysicsObject() 
 				if (phys:IsValid()) then 
 					phys:ApplyForceOffset( Table.Vec * PowerFraction * 100 ,  Hitpos )	--Assuming about a tenth of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 10)
 				end
@@ -132,7 +136,8 @@ end
 
 function ACF_Spall( HitPos , HitVec , HitMask , KE , Caliber , Armour , Inflictor )
 	
-	if(!ACF.Spalling) then
+	--if(!ACF.Spalling) then
+	if true then -- Folks say it's black magic and it kills their firstborns. So I had to disable it with more powerful magic.
 		return
 	end
 	local TotalWeight = 3.1416*(Caliber/2)^2 * Armour * 0.00079
@@ -257,7 +262,8 @@ function ACF_KEShove(Target, Pos, Vec, KE )
 end
 
 function ACF_HEKill( Entity , HitVector , Energy )
-
+	--print("ACF_HEKill ent: ".. Entity:GetModel() or "unknown")
+	--print("ACF_HEKill Energy "..Energy or "nill")
 	local obj = Entity:GetPhysicsObject()
 	local grav = true
 	local mass = nil
@@ -385,7 +391,7 @@ function ACF_AmmoExplosion( Origin , Pos )
 		
 	end	
 	
-	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin, true )
+	ACF_HE( Pos , Vector(0,0,1) , HEWeight , HEWeight*0.5 , Inflictor , Origin, Origin.Entity )
 	
 	local Flash = EffectData()
 		Flash:SetOrigin( Pos )
