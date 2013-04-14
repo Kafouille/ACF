@@ -69,10 +69,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 					
 					if ( Occ.Hit and Occ.Entity:EntIndex() != Tar:EntIndex() ) then
 					
-						print("Hit "..Occ.Entity:GetModel())
+						--print("Hit "..Occ.Entity:GetModel())
 					elseif ( !Occ.Hit and Hitpos != Hitat ) then
-						print("No Hit "..Occ.Entity:GetModel())
-						print((Hitpos - Hitat):Length())
+						--print("No Hit "..Occ.Entity:GetModel())
+						--print((Hitpos - Hitat):Length())
 					else
 						Targets[i] = nil								--Remove the thing we just hit from the table so we don't hit it again in the next round
 						local Table = {}

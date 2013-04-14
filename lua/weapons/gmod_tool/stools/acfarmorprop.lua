@@ -263,7 +263,7 @@ if CLIENT then
 		local mass2 = math.floor((GetConVarNumber("acfarmorprop_mass") or 0)*10)/10
 		local armour2 = math.floor((GetConVarNumber("acfarmorprop_marmor") or 0)*10)/10
 		local health2 = math.floor((GetConVarNumber("acfarmorprop_mhealth") or 0)*10)/10
-		local text = "Current:\nWeight: "..mass.."\nArmour: "..armour.."\nHealth: "..health.."\nAfter:\nWeight: "..mass2.."\nArmor: "..armour2.."\nHealth: "..health2
+		local text = "Current:\nWeight: "..mass.."\nArmour: "..armour.."\nHealth: "..health.."\nAfter:\nWeight: "..mass2.."\nArmour: "..armour2.."\nHealth: "..health2
 	
 		local pos = (trace.Entity:LocalToWorld(trace.Entity:OBBCenter())):ToScreen()
 		
