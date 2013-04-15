@@ -2,11 +2,11 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 295 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 285 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 print("[[ ACF Loaded ]]")
 
-ACF.Threshold = 150	--Health Divisor
+ACF.Threshold = 300	--Health Divisor
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
 ACF.PenAreaMod = 0.85
 ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
@@ -15,7 +15,7 @@ ACF.GroundtoRHA = 0.05		--How much mm of steel is a mm of ground worth (Real soi
 ACF.KEtoSpall = 1
 ACF.AmmoMod = 1			-- Ammo modifier. 1 is 1x the amount of ammo
 ACF.ArmorMod = 1
-ACF.Spalling = 1
+ACF.Spalling = 0
 ACF.GunfireEnabled = true
 ACF.MeshCalcEnabled = false
 
