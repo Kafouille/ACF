@@ -1,9 +1,5 @@
-/*
-Weight STool 1.21
-	by Spoco
-*/
 
-TOOL.Category		= "Armored Combat Framework"
+TOOL.Category		= "Construction"
 TOOL.Name			= "#Tool.acfsound.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""

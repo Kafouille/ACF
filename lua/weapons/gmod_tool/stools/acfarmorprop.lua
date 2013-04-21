@@ -1,9 +1,5 @@
-/*
-Weight STool 1.21
-	by Spoco
-*/
 
-TOOL.Category		= "Armored Combat Framework"
+TOOL.Category		= "Construction"
 TOOL.Name			= "#Tool.acfarmorprop.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
@@ -22,12 +18,10 @@ if CLIENT then
 	language.Add( "Tool_acfarmorprop_weight", "Weight:" )
 	language.Add( "Tool_acfarmorprop_thick" , "Armour Thickness")
 	language.Add( "Tool_acfarmorprop_thick_desc" , "Set a thickness and the weight will be scaled" )
-	language.Add( "Tool_acfarmorprop_ductility", "Durability:" )
-	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets durability of prop. Higher than zero will make prop more resistant to penetration but it will lower its health. Lower than zero will make prop less resistant to penetration but it will endure longer fire" )
+	language.Add( "Tool_acfarmorprop_ductility", "Ductility:" )
+	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets ductility of prop. Higher than zero will make prop more resistant to penetration but it will lower its health. Lower than zero will make prop less resistant to penetration but it will endure longer fire" )
 	language.Add( "Tool_acfarmorprop_zeromass", "Mass must be above 0!" )
 end
-
-if SERVER and not Weights then Weights = {} end
 
 local function ApplySettings( Player, Entity, Data )
 	if not SERVER then return end
@@ -50,11 +44,10 @@ duplicator.RegisterEntityModifier( "mass", ApplySettings )
 
 local function Recalc(Ply, What)
 	local Thick, Ductility, Area, Mass
-	if SERVER or CLIENT then
-		Thick = Ply:GetInfo("acfarmorprop_thick")
-		Ductility = math.Clamp(Ply:GetInfo("acfarmorprop_ductility")/100,-0.8,0.8)
-		Area = Ply:GetInfo("acfarmorprop_area") or 1
-	end
+
+	Thick = Ply:GetInfo("acfarmorprop_thick")
+	Ductility = math.Clamp(Ply:GetInfo("acfarmorprop_ductility")/100,-0.8,0.8)
+	Area = Ply:GetInfo("acfarmorprop_area") or 1
 
 	Mass = (39*Area*Ductility+39*Area)*Thick/50000
 	if What == "ductility" then
@@ -80,14 +73,12 @@ local function Recalc(Ply, What)
 	end
 	Ply:ConCommand("acfarmorprop_mass "..Mass);
 	
-	if CLIENT then
-		local MArmour = Mass*1000/(Area+Area*Ductility)/0.78
-		local MHealth = (Area+Area*Ductility)/ACF.Threshold
-		
-		Ply:ConCommand("acfarmorprop_mhealth "..MHealth)
-		Ply:ConCommand("acfarmorprop_marmor "..MArmour)
-		Ply:ConCommand("acfarmorprop_reloadui")
-	end
+	local MArmour = Mass*1000/(Area+Area*Ductility)/0.78
+	local MHealth = (Area+Area*Ductility)/ACF.Threshold
+	
+	Ply:ConCommand("acfarmorprop_mhealth "..MHealth)
+	Ply:ConCommand("acfarmorprop_marmor "..MArmour)
+	Ply:ConCommand("acfarmorprop_reloadui")
 end
 
 local function IsReallyValid(trace)
@@ -234,7 +225,7 @@ if CLIENT then
 		--BuildCPanel( CPanel )
 	end)
 
-	cvars.AddChangeCallback("acfarmorprop_ductility", function() 
+	/*cvars.AddChangeCallback("acfarmorprop_ductility", function() 
 		if timer.Exists("RecalcTimer") then timer.Remove("RecalcTimer") end
 		timer.Create("RecalcTimer", 1, 1, function()
 			Recalc(LocalPlayer(), "ductility")
@@ -245,11 +236,11 @@ if CLIENT then
 		timer.Create("RecalcTimer", 1, 1, function()
 			Recalc(LocalPlayer(), "thick")
 		end)
-	end)
+	end)*/
 	
 	local TipColor = Color( 250, 250, 200, 255 )
 
-	surface.CreateFont( "GModWorldtip", {font="coolvetica", size=24, weight=500, antialias=true, additive=false} )
+	-- surface.CreateFont( "GModWorldtip", {font="coolvetica", size=24, weight=500, antialias=true, additive=false} )
 	surface.CreateFont("Torchfont", {size=40, weight=1000, antialias=true, additive=false, font="arial"})
 	
 	local function DrawWeightTip()
@@ -360,9 +351,3 @@ if CLIENT then
 		cam.End2D()
 	end
 end
-
-
-
-
-
-
