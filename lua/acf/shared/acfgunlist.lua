@@ -263,7 +263,7 @@ local SA25mm = {}
 	SA25mm.model = "models/autocannon/semiautocannon_25mm.mdl"
 	SA25mm.caliber = 2.5
 	SA25mm.gunclass = "SA"
-	SA25mm.weight = 700
+	SA25mm.weight = 200
 	SA25mm.year = 1935
 		SA25mm.round = {}
 		SA25mm.round.id = "25mmSA"
@@ -287,7 +287,7 @@ local SA37mm = {}
 	SA37mm.model = "models/autocannon/semiautocannon_37mm.mdl"
 	SA37mm.caliber = 3.7
 	SA37mm.gunclass = "SA"
-	SA37mm.weight = 1000
+	SA37mm.weight = 500
 	SA37mm.year = 1940
 		SA37mm.round = {}
 		SA37mm.round.id = "37mmSA"
@@ -311,7 +311,7 @@ local SA45mm = {}
 	SA45mm.model = "models/autocannon/semiautocannon_45mm.mdl"
 	SA45mm.caliber = 4.5
 	SA45mm.gunclass = "SA"
-	SA45mm.weight = 1600
+	SA45mm.weight = 900
 	SA45mm.year = 1965
 		SA45mm.round = {}
 		SA45mm.round.id = "45mmSA"
@@ -335,7 +335,7 @@ local SA57mm = {}
 	SA57mm.model = "models/autocannon/semiautocannon_57mm.mdl"
 	SA57mm.caliber = 5.7
 	SA57mm.gunclass = "SA"
-	SA57mm.weight = 2100
+	SA57mm.weight = 1600
 	SA57mm.year = 1965
 		SA57mm.round = {}
 		SA57mm.round.id = "57mmSA"
@@ -415,8 +415,8 @@ local AL100mm = {}
 	--
 		AL100mm.round = {}
 		AL100mm.round.id = "100mmAL"
-		AL100mm.round.maxlength = 80
-		AL100mm.round.propweight = 7
+		AL100mm.round.maxlength = 93
+		AL100mm.round.propweight = 9.5
 	if ( CLIENT ) then
 		AL100mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		AL100mm.guiupdate = function() return end
@@ -441,8 +441,8 @@ local AL120mm = {}
 	--
 		AL120mm.round = {}
 		AL120mm.round.id = "120mmAL"
-		AL120mm.round.maxlength = 102
-		AL120mm.round.propweight = 13
+		AL120mm.round.maxlength = 110
+		AL120mm.round.propweight = 18
 	if ( CLIENT ) then
 		AL120mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		AL120mm.guiupdate = function() return end
@@ -467,8 +467,8 @@ local AL140mm = {}
 	--
 		AL140mm.round = {}
 		AL140mm.round.id = "140mmAL"
-		AL140mm.round.maxlength = 122
-		AL140mm.round.propweight = 23
+		AL140mm.round.maxlength = 127
+		AL140mm.round.propweight = 28
 	if ( CLIENT ) then
 		AL140mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		AL140mm.guiupdate = function() return end
@@ -493,8 +493,8 @@ local AL75mm = {}
 	--
 		AL75mm.round = {}
 		AL75mm.round.id = "75mmAL"
-		AL75mm.round.maxlength = 70
-		AL75mm.round.propweight = 4
+		AL75mm.round.maxlength = 78
+		AL75mm.round.propweight = 3.8
 	if ( CLIENT ) then
 		AL75mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		AL75mm.guiupdate = function() return end
@@ -518,8 +518,8 @@ local Gun50mm = {}
 	Gun50mm.sound = "weapons/ACF_Gun/ac_fire4.wav"
 		Gun50mm.round = {}
 		Gun50mm.round.id = "50mmC"
-		Gun50mm.round.maxlength = 55
-		Gun50mm.round.propweight = 1.3
+		Gun50mm.round.maxlength = 63
+		Gun50mm.round.propweight = 2.1
 	if ( CLIENT ) then
 		Gun50mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		Gun50mm.guiupdate = function() return end
@@ -539,8 +539,8 @@ local Gun75mm = {}
 	Gun75mm.year = 1942
 		Gun75mm.round = {}
 		Gun75mm.round.id = "75mmC"
-		Gun75mm.round.maxlength = 70
-		Gun75mm.round.propweight = 4
+		Gun75mm.round.maxlength = 78
+		Gun75mm.round.propweight = 3.8
 	if ( CLIENT ) then
 		Gun75mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		Gun75mm.guiupdate = function() return end
@@ -560,8 +560,8 @@ local Gun100mm = {}
 	Gun100mm.year = 1944
 		Gun100mm.round = {}
 		Gun100mm.round.id = "100mmC"
-		Gun100mm.round.maxlength = 80
-		Gun100mm.round.propweight = 7
+		Gun100mm.round.maxlength = 93
+		Gun100mm.round.propweight = 9.5
 	if ( CLIENT ) then
 		Gun100mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		Gun100mm.guiupdate = function() return end
@@ -581,8 +581,8 @@ local Gun120mm = {}
 	Gun120mm.year = 1955
 		Gun120mm.round = {}
 		Gun120mm.round.id = "120mmC"
-		Gun120mm.round.maxlength = 102
-		Gun120mm.round.propweight = 13
+		Gun120mm.round.maxlength = 110
+		Gun120mm.round.propweight = 18
 	if ( CLIENT ) then
 		Gun120mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		Gun120mm.guiupdate = function() return end
@@ -602,8 +602,8 @@ local Gun140mm = {}
 	Gun140mm.year = 1990
 		Gun140mm.round = {}
 		Gun140mm.round.id = "140mmC"
-		Gun140mm.round.maxlength = 122
-		Gun140mm.round.propweight = 23
+		Gun140mm.round.maxlength = 127
+		Gun140mm.round.propweight = 28
 	if ( CLIENT ) then
 		Gun140mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		Gun140mm.guiupdate = function() return end
