@@ -67,7 +67,7 @@ function ACF_HEATConvert( Crate, PlayerData )		--Function to convert the player'
 	GUIData["MaxFillerVol"] = math.max(MaxVol -  AirVol - ConeVol,GUIData["MinFillerVol"])
 	GUIData["FillerVol"] = math.Clamp(PlayerData["Data5"]*1,GUIData["MinFillerVol"],GUIData["MaxFillerVol"])
 	
-	Data["FillerMass"] = GUIData["FillerVol"] * ACF.HEDensity/1000
+	Data["FillerMass"] = GUIData["FillerVol"] * ACF.HEDensity/1450
 	Data["ProjMass"] = math.max(GUIData["ProjVolume"]-GUIData["FillerVol"]- AirVol-ConeVol,0)*7.9/1000 + Data["FillerMass"] + ConeVol*7.9/1000
 	Data["MuzzleVel"] = ACF_MuzzleVelocity( Data["PropMass"], Data["ProjMass"], Data["Caliber"] )
 	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["ProjMass"], Data["LimitVel"] )
