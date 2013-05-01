@@ -117,11 +117,6 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.In = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "input" )).Pos)
 	Gearbox.OutL = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftL" )).Pos)
 	Gearbox.OutR = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftR" )).Pos)
-		
-	undo.Create("ACF Gearbox")
-		undo.AddEntity( Gearbox )
-		undo.SetPlayer( Owner )
-	undo.Finish()
 	
 	Owner:AddCount("_acf_Gearbox", Gearbox)
 	Owner:AddCleanup( "acfmenu", Gearbox )

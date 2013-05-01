@@ -82,12 +82,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:SetNetworkedBeamInt("MinRPM",Engine.PeakMinRPM)
 	Engine:SetNetworkedBeamInt("MaxRPM",Engine.PeakMaxRPM)
 	Engine:SetNetworkedBeamInt("LimitRPM",Engine.LimitRPM)
-
-	undo.Create("ACF Engine")
-		undo.AddEntity( Engine )
-		undo.SetPlayer( Owner )
-	undo.Finish()
-
+	
 	Owner:AddCount("_acf_engine", Engine)
 	Owner:AddCleanup( "acfmenu", Engine )
 

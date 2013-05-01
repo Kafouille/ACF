@@ -126,11 +126,6 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 		phys:SetMass( Gun.Mass ) 
 	end 
 	
-	undo.Create("ACF Gun")
-		undo.AddEntity( Gun )
-		undo.SetPlayer( Owner )
-	undo.Finish()
-	
 	Owner:AddCount("_acf_gun", Gun)
 	Owner:AddCleanup( "acfmenu", Gun )
 	

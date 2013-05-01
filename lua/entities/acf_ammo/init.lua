@@ -121,12 +121,7 @@ function MakeACF_Ammo(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, 
 	local phys = Ammo:GetPhysicsObject()  	
 	if (phys:IsValid()) then 
 		phys:SetMass( Ammo.Mass ) 
-	end 
-	
-	undo.Create("ACF Ammo")
-		undo.AddEntity( Ammo )
-		undo.SetPlayer( Owner )
-	undo.Finish()
+	end
 	
 	Owner:AddCount( "_acf_ammo", Ammo )
 	Owner:AddCleanup( "acfmenu", Ammo )
