@@ -119,6 +119,7 @@ function SWEP:PrimaryAttack()
 			util.Effect( "thruster_ring", effect, true, true ) --("The 2 booleans control clientside override, by default it doesn't display it since it'll lag a bit behind inputs in MP, same for sounds" Kaf)
 			ent:EmitSound( "items/medshot4.wav", true, true )--and play a sound.
 		else
+			if CPPI and not ent:CPPICanTool( self.Owner, "torch" ) then return false end
 			local Valid = ACF_Check ( ent )
 			if ( Valid and ent.ACF.Health < ent.ACF.MaxHealth ) then
 				ent.ACF.Health = math.min(ent.ACF.Health + (30/ent.ACF.MaxArmour),ent.ACF.MaxHealth)
@@ -164,6 +165,7 @@ self.Weapon:SetNextPrimaryFire( CurTime() + 0.05 )
 			if(ent:IsPlayer()) then
 				HitRes = ACF_Damage ( ent , {Kinetic = 0.05,Momentum = 0,Penetration = 0.05} , 2 , 0 , self.Owner )--We can use the damage function instead of direct access here since no numbers are negative.
 			else
+				if CPPI and not ent:CPPICanTool( self.Owner, "torch" ) then return false end
 				HitRes = ACF_Damage ( ent , {Kinetic = 5,Momentum = 0,Penetration = 5} , 2 , 0 , self.Owner )--We can use the damage function instead of direct access here since no numbers are negative.
 			end
 			if HitRes.Kill then
