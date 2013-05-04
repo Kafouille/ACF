@@ -2,9 +2,8 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 321 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 322 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
--- print("[[ ACF Loaded ]]")
 
 ACF.Threshold = 300	--Health Divisor
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration

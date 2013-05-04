@@ -312,3 +312,33 @@ function ACF_SquishyDamage( Entity , Energy , FrAera , Angle , Inflictor , Bone,
 		
 	return HitRes
 end
+
+----------------------------------------------------------
+-- Returns a table of all physically connected entities
+-- ignoring ents attached by only nocollides
+----------------------------------------------------------
+function ACF_GetAllPhysicalConstraints( ent, ResultTable )
+
+	local ResultTable = ResultTable or {}
+	
+	if not IsValid( ent ) then return end
+	if ResultTable[ ent ] then return end
+	
+	ResultTable[ ent ] = ent
+	
+	local ConTable = constraint.GetTable( ent )
+	
+	for k, con in ipairs( ConTable ) do
+		
+		-- skip shit that is attached by a nocollide
+		if con.Type == "NoCollide" then continue end
+		
+		for EntNum, Ent in pairs( con.Entity ) do
+			ACF_GetAllPhysicalConstraints( Ent.Entity, ResultTable )
+		end
+	
+	end
+
+	return ResultTable
+	
+end

@@ -201,58 +201,45 @@ function ENT:Think()
 end
 
 function ENT:ACFInit()
-
-	local Constrained = constraint.GetAllConstrainedEntities(self)
+	
 	self.Mass = 0
 	self.PhysMass = 0
-
-	for _,Ent in pairs(Constrained) do
-
-		if IsValid(Ent) then
-			local Phys = Ent:GetPhysicsObject()
-
-			if Phys and Phys:IsValid() then
-				self.Mass = self.Mass + Phys:GetMass()
-				local Parent = Ent:GetParent()
-
-				if IsValid(Parent) then
-
-					local Constraints = {}
-					table.Add(Constraints,constraint.FindConstraints(Ent, "Weld"))
-					table.Add(Constraints,constraint.FindConstraints(Ent, "Axis"))
-					table.Add(Constraints,constraint.FindConstraints(Ent, "Ballsocket"))
-					table.Add(Constraints,constraint.FindConstraints(Ent, "AdvBallsocket"))
-
-					if Constraints then
-
-						for Key,Const in pairs(Constraints) do
-
-							if Const.Ent1 == Parent or Const.Ent2 == Parent then
-								self.PhysMass = self.PhysMass + Phys:GetMass()
-							end
-
-						end
-
-					end
-
-				else
-					self.PhysMass = self.PhysMass + Phys:GetMass()
-				end
-
-			end
-
+	
+	-- get the shit that is physically attached to the vehicle
+	local PhysEnts = ACF_GetAllPhysicalConstraints( self )
+	
+	-- add any parented but not constrained props you sneaky bastards
+	local AllEnts = table.Copy( PhysEnts )
+	for k, v in pairs( PhysEnts ) do
+		
+		-- gotta make sure the parenting addon is installed...
+		if v.GetChildren then table.Merge( AllEnts, v:GetChildren() ) end
+	
+	end
+	
+	for k, v in pairs( AllEnts ) do
+		
+		if not IsValid( v ) then continue end
+		
+		local phys = v:GetPhysicsObject()
+		if not IsValid( phys ) then continue end
+		
+		self.Mass = self.Mass + phys:GetMass()
+		
+		if PhysEnts[ v ] then
+			self.PhysMass = self.PhysMass + phys:GetMass()
 		end
-
+		
 	end
 
-	self.MassRatio = self.PhysMass/self.Mass
+	self.MassRatio = self.PhysMass / self.Mass
 
-	Wire_TriggerOutput(self, "Mass", math.floor(self.Mass))
-	Wire_TriggerOutput(self, "Physical Mass", math.floor(self.PhysMass))
+	Wire_TriggerOutput( self, "Mass", math.floor( self.Mass ) )
+	Wire_TriggerOutput( self, "Physical Mass", math.floor( self.PhysMass ) )
 
 	self.LastThink = CurTime()
 	self.Torque = self.PeakTorque
-	self.FlyRPM = self.IdleRPM*1.5
+	self.FlyRPM = self.IdleRPM * 1.5
 
 end
 
