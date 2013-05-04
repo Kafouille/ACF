@@ -2,9 +2,9 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 319 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 320 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
-print("[[ ACF Loaded ]]")
+-- print("[[ ACF Loaded ]]")
 
 ACF.Threshold = 300	--Health Divisor
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
@@ -180,8 +180,6 @@ end
 
 function ACF_UpdateChecking( )
 	
-	print("[ACF] Checking for updates....")
-	
 	http.Fetch("https://github.com/nrlulz/ACF",function(contents,size)
 		local rev = tonumber(string.match( contents, "([0-9]+) commits" ))
 		if rev and ACF.Version >= rev then
@@ -191,7 +189,6 @@ function ACF_UpdateChecking( )
 			print("[ACF] No Internet Connection Detected! ACF Update Check Failed")
 		else
 			print("[ACF] A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
-			print("[ACF] Please update!")
 		end
 		ACF.CurrentVersion = rev
 		
@@ -231,7 +228,8 @@ cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
 /*
 ONE HUGE HACK to get good killicons.
 */
-
+-- disabling this for now because it was breaking killicons completely and i don't want to deal with it right now
+/*
 if SERVER then
 	
 	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
@@ -302,3 +300,4 @@ if CLIENT then
 		end)
 	end
 end
+*/
