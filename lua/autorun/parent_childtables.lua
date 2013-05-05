@@ -7,7 +7,7 @@ if CLIENT then return end
 
 local meta = FindMetaTable( "Entity" )
 
-meta.SetParentEngine = meta.SetParent
+if not meta.SetParentEngine then meta.SetParentEngine = meta.SetParent end
 
 function meta:SetParent( parent )
 	
