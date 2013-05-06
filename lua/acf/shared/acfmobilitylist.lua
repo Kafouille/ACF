@@ -174,7 +174,7 @@ local Engine9Wank= {}
 	Engine9Wank.model = "models/engines/wankelsmall.mdl"
 	Engine9Wank.sound = "ACF_engines/wankel_small.wav"
 	Engine9Wank.category = "Rotary"
-	Engine9Wank.weight = 35
+	Engine9Wank.weight = 50
 	Engine9Wank.torque = 78		--in Meter/Kg
 	Engine9Wank.flywheelmass = 0.06
 	
@@ -198,7 +198,7 @@ local Engine13Wank= {}
 	Engine13Wank.model = "models/engines/wankelmed.mdl"
 	Engine13Wank.sound = "ACF_engines/wankel_medium.wav"
 	Engine13Wank.category = "Rotary"
-	Engine13Wank.weight = 70
+	Engine13Wank.weight = 140
 	Engine13Wank.torque = 155		--in Meter/Kg
 	Engine13Wank.flywheelmass = 0.06
 	
@@ -222,7 +222,7 @@ local Engine20Wank= {}
 	Engine20Wank.model = "models/engines/wankellarge.mdl"
 	Engine20Wank.sound = "ACF_engines/wankel_large.wav"
 	Engine20Wank.category = "Rotary"
-	Engine20Wank.weight = 125
+	Engine20Wank.weight = 200
 	Engine20Wank.torque = 235		--in Meter/Kg
 	Engine20Wank.flywheelmass = 0.1
 	
@@ -604,7 +604,7 @@ local Engine160I4 = {}
 	Engine160I4.category = "I4"
 	Engine160I4.weight = 600
 	Engine160I4.torque = 950		--in Meter/Kg
-	Engine160I4.flywheelmass = 1.5
+	Engine160I4.flywheelmass = 4
 	
 	Engine160I4.idlerpm = 500	--in Rotations Per Minute
 	Engine160I4.peakminrpm = 1750
@@ -675,13 +675,13 @@ local Engine150I4 = {}
 	Engine150I4.model = "models/engines/inline4l.mdl"
 	Engine150I4.sound = "ACF_engines/i4_diesellarge.wav"
 	Engine150I4.category = "I4"
-	Engine150I4.weight = 1000
-	Engine150I4.torque = 1800		--in Meter/Kg
+	Engine150I4.weight = 800
+	Engine150I4.torque = 1600		--in Meter/Kg
 	Engine150I4.flywheelmass = 5
 	
-	Engine150I4.idlerpm = 300	--in Rotations Per Minute
+	Engine150I4.idlerpm = 450	--in Rotations Per Minute
 	Engine150I4.peakminrpm = 500
-	Engine150I4.peakmaxrpm = 1500
+	Engine150I4.peakmaxrpm = 1700
 	Engine150I4.limitprm = 2000
 	if ( CLIENT ) then
 		Engine150I4.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -886,9 +886,9 @@ local Engine120V6 = {}
 	Engine120V6.model = "models/engines/v6large.mdl"
 	Engine120V6.sound = "ACF_engines/v6_petrollarge.wav"
 	Engine120V6.category = "V6"
-	Engine120V6.weight = 920
-	Engine120V6.torque = 1300		--in Meter/Kg
-	Engine120V6.flywheelmass = 2.5
+	Engine120V6.weight = 800
+	Engine120V6.torque = 1400		--in Meter/Kg
+	Engine120V6.flywheelmass = 4
 	
 	Engine120V6.idlerpm = 600	--in Rotations Per Minute
 	Engine120V6.peakminrpm = 1750
@@ -1280,8 +1280,8 @@ local Engine180V8 = {}
 	Engine180V8.flywheelmass = 2.8
 	
 	Engine180V8.idlerpm = 600	--in Rotations Per Minute
-	Engine180V8.peakminrpm = 1800
-	Engine180V8.peakmaxrpm = 3000
+	Engine180V8.peakminrpm = 2000
+	Engine180V8.peakmaxrpm = 3300
 	Engine180V8.limitprm = 3800
 	if ( CLIENT ) then
 		Engine180V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
@@ -1354,9 +1354,9 @@ local Engine190V8 = {}
 	Engine190V8.flywheelmass = 4.5
 	
 	Engine190V8.idlerpm = 500	--in Rotations Per Minute
-	Engine190V8.peakminrpm = 550
-	Engine190V8.peakmaxrpm = 1650
-	Engine190V8.limitprm = 2700
+	Engine190V8.peakminrpm = 600
+	Engine190V8.peakmaxrpm = 1800
+	Engine190V8.limitprm = 2500
 	if ( CLIENT ) then
 		Engine190V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine190V8.guiupdate = function() return end
