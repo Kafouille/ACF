@@ -13,8 +13,6 @@ function ENT:Initialize()
 
 	self.LastCheck = 0
 	self.LastThink = 0
-	self.Mass = 0
-	self.PhysMass = 0
 	self.MassRatio = 1
 	self.Legal = true
 	self.CanUpdate = true
@@ -30,10 +28,11 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 
-	local Engine = ents.Create("ACF_Engine")
+	local Engine = ents.Create( "acf_engine" )
+	if not IsValid( Engine ) then return false end
+	
 	local List = list.Get("ACFEnts")
-	local Classes = list.Get("ACFClasses")
-	if not Engine:IsValid() then return false end
+	
 	Engine:SetAngles(Angle)
 	Engine:SetPos(Pos)
 	Engine:Spawn()
@@ -183,6 +182,7 @@ function ENT:Think()
 
 		if self.LastCheck < CurTime() then
 			self:CheckRopes()
+			self:CalcMassRatio()
 			if self:GetPhysicsObject():GetMass() < self.Weight or self:GetParent():IsValid() then
 				self.Legal = false
 			else 
@@ -200,10 +200,10 @@ function ENT:Think()
 
 end
 
-function ENT:ACFInit()
+function ENT:CalcMassRatio()
 	
-	self.Mass = 0
-	self.PhysMass = 0
+	local Mass = 0
+	local PhysMass = 0
 	
 	-- get the shit that is physically attached to the vehicle
 	local PhysEnts = ACF_GetAllPhysicalConstraints( self )
@@ -224,18 +224,24 @@ function ENT:ACFInit()
 		local phys = v:GetPhysicsObject()
 		if not IsValid( phys ) then continue end
 		
-		self.Mass = self.Mass + phys:GetMass()
+		Mass = Mass + phys:GetMass()
 		
 		if PhysEnts[ v ] then
-			self.PhysMass = self.PhysMass + phys:GetMass()
+			PhysMass = PhysMass + phys:GetMass()
 		end
 		
 	end
 
-	self.MassRatio = self.PhysMass / self.Mass
+	self.MassRatio = PhysMass / Mass
+	
+	Wire_TriggerOutput( self, "Mass", math.Round( Mass, 2 ) )
+	Wire_TriggerOutput( self, "Physical Mass", math.Round( PhysMass, 2 ) )
+	
+end
 
-	Wire_TriggerOutput( self, "Mass", math.floor( self.Mass ) )
-	Wire_TriggerOutput( self, "Physical Mass", math.floor( self.PhysMass ) )
+function ENT:ACFInit()
+	
+	self:CalcMassRatio()
 
 	self.LastThink = CurTime()
 	self.Torque = self.PeakTorque
