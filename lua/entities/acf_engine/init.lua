@@ -47,7 +47,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.IdleRPM = List["Mobility"][Id]["idlerpm"]
 	Engine.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
-	Engine.LimitRPM = List["Mobility"][Id]["limitprm"]
+	Engine.LimitRPM = List["Mobility"][Id]["limitrpm"]
 	Engine.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
 	Engine.iselec = List["Mobility"][Id]["iselec"]
 	Engine.elecpower = List["Mobility"][Id]["elecpower"]
@@ -114,7 +114,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.IdleRPM = List["Mobility"][Id]["idlerpm"]
 	self.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	self.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
-	self.LimitRPM = List["Mobility"][Id]["limitprm"]
+	self.LimitRPM = List["Mobility"][Id]["limitrpm"]
 	self.Inertia = List["Mobility"][Id]["flywheelmass"]*(3.1416)^2
 	self.iselec = List["Mobility"][Id]["iselec"] -- is the engine electric?
 	self.elecpower = List["Mobility"][Id]["elecpower"] -- how much power does it output
