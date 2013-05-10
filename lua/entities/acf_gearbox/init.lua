@@ -318,14 +318,13 @@ function ENT:CheckEnts()		--Check if every entity we are linked to still actuall
 end
 
 function ENT:Calc( InputRPM, InputInertia )
+
 	if self.LastActive == CurTime() then
 		return math.min(self.TotalReqTq, self.MaxTorque)
 	end
 	
-	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
+	if self.ChangeFinished < CurTime() then
 		self.InGear = true
-	else
-		return 0
 	end
 	
 	self:CheckEnts()
@@ -346,11 +345,13 @@ function ENT:Calc( InputRPM, InputInertia )
 		
 			self.WheelReqTq[Key] = 0
 			if WheelEnt.IsGeartrain then
-				self.WheelReqTq[Key] = math.abs(WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio)
+				local Inertia = 0
+				if self.GearRatio ~= 0 then Inertia = InputInertia / self.GearRatio end
+				self.WheelReqTq[Key] = math.abs( WheelEnt:Calc( InputRPM * self.GearRatio, Inertia ) * self.GearRatio )
 			else
 				local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
-				if (InputRPM > 0 and RPM < InputRPM) or (InputRPM < 0 and RPM > InputRPM) then
-                    self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
+				if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
+                    self.WheelReqTq[Key] = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
                 end
 			end
 			self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
@@ -368,20 +369,24 @@ function ENT:CalcWheel( Key, WheelEnt, SelfWorld )
 		local WheelPhys = WheelEnt:GetPhysicsObject()
 		local VelDiff = (WheelEnt:LocalToWorld(WheelPhys:GetAngleVelocity())-WheelEnt:GetPos()) - SelfWorld
 		local BaseRPM = VelDiff:Dot(WheelEnt:LocalToWorld(self.WheelAxis[Key])-WheelEnt:GetPos())
-		local GearedRPM = BaseRPM / self.GearRatio / -6 --Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
 		self.WheelVel[Key] = BaseRPM
-	
-		return GearedRPM
+		
+		if self.GearRatio == 0 then return 0 end
+		
+		-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
+		return BaseRPM / self.GearRatio / -6
+		
 	else
+	
 		return 0
+		
 	end
 	
 end
 
 function ENT:Act( Torque, DeltaTime )
 	
-	local ReactTq = 0
-	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		
+	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
 	if Torque != 0 then
@@ -407,7 +412,7 @@ function ENT:Act( Torque, DeltaTime )
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if IsValid( BoxPhys ) and ReactTq != 0 then	
-		local Force = self:GetForward() * ReactTq - self:GetForward() * BrakeMult
+		local Force = self:GetForward() * ReactTq - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp()*-39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp()*39.37 )
 	end
