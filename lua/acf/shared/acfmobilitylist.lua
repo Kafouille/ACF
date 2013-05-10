@@ -40,13 +40,13 @@ function ACF_DefineGearbox( id, data )
 end
 
 -- search for and load a bunch of files or whatever
-local engines = file.Find( "lua/acf/shared/engines/*.lua", "GAME" )
+local engines = file.Find( "acf/shared/engines/*.lua", "LUA" )
 for k, v in pairs( engines ) do
 	AddCSLuaFile( "acf/shared/engines/" .. v )
 	include( "acf/shared/engines/" .. v )
 end
 
-local gearboxes = file.Find( "lua/acf/shared/gearboxes/*.lua", "GAME" )
+local gearboxes = file.Find( "acf/shared/gearboxes/*.lua", "LUA" )
 for k, v in pairs( gearboxes ) do
 	AddCSLuaFile( "acf/shared/gearboxes/" .. v )
 	include( "acf/shared/gearboxes/" .. v )
