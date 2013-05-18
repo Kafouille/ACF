@@ -28,7 +28,7 @@ ACF_DefineEngine( "11.0-R7", {
 	idlerpm = 600,
 	peakminrpm = 2200,
 	peakmaxrpm = 3700,
-	limitrpm = 3700
+	limitrpm = 4000
 } )
 
 ACF_DefineEngine( "24.0-R7", {
@@ -43,5 +43,5 @@ ACF_DefineEngine( "24.0-R7", {
 	idlerpm = 750,
 	peakminrpm = 1900,
 	peakmaxrpm = 3000,
-	limitrpm = 3000
+	limitrpm = 3300
 } )

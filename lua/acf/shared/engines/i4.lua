@@ -30,7 +30,7 @@ ACF_DefineEngine( "3.7-I4", {
 	idlerpm = 900,
 	peakminrpm = 3700,
 	peakmaxrpm = 6000,
-	limitrpm = 6000
+	limitrpm = 6500
 } )
 
 ACF_DefineEngine( "16.0-I4", {

@@ -45,7 +45,7 @@ ACF_DefineEngine( "17.2-I6", {
 	idlerpm = 800,
 	peakminrpm = 2000,
 	peakmaxrpm = 4000,
-	limitrpm = 4000
+	limitrpm = 4250
 } )
 
 -- Diesel

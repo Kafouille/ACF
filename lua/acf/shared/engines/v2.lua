@@ -13,7 +13,7 @@ ACF_DefineEngine( "0.6-V2", {
 	idlerpm = 900,
 	peakminrpm = 4000,
 	peakmaxrpm = 6500,
-	limitrpm = 7500
+	limitrpm = 7000
 } )
 
 ACF_DefineEngine( "1.2-V2", {
@@ -43,5 +43,5 @@ ACF_DefineEngine( "2.4-V2", {
 	idlerpm = 900,
 	peakminrpm = 3300,
 	peakmaxrpm = 5500,
-	limitrpm = 6500
+	limitrpm = 6000
 } )

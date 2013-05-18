@@ -45,7 +45,7 @@ ACF_DefineEngine( "23.0-V12", {
 	idlerpm = 600,
 	peakminrpm = 1500,
 	peakmaxrpm = 3000,
-	limitrpm = 3000
+	limitrpm = 3250
 } )
 
 -- Diesel

@@ -73,5 +73,5 @@ ACF_DefineEngine( "13.0-V12", {
 	idlerpm = 700,
 	peakminrpm = 2500,
 	peakmaxrpm = 4000,
-	limitrpm = 4000
+	limitrpm = 4250
 } )
