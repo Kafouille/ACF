@@ -55,6 +55,11 @@ end
 
 __e2setcost( 1 )
 
+-- Returns 1 if functions returning sensitive info are restricted to owned props
+e2function number acfInfoRestricted()
+	return GetConVar("sbox_acf_e2restrictinfo"):GetInt() or 0
+end
+
 -- Returns the short name of an ACF entity
 e2function string entity:acfNameShort()
 	if isEngine(this) then return this.Id or "" end
@@ -149,24 +154,28 @@ end
 -- Returns the current rpm of an ACF engine
 e2function number entity:acfRPM()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return math.floor(this.FlyRPM or 0)
 end
 
 -- Returns the current torque of an ACF engine
 e2function number entity:acfTorque()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return math.floor(this.Torque or 0)
 end
 
 -- Returns the current power of an ACF engine
 e2function number entity:acfPower()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return math.floor((this.Torque or 0) * (this.FlyRPM or 0) / 9548.8)
 end
 
 -- Returns 1 if the RPM of an ACF engine is inside the powerband
 e2function number entity:acfInPowerband()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	if (this.FlyRPM < this.PeakMinRPM) then return 0 end
 	if (this.FlyRPM > this.PeakMaxRPM) then return 0 end
 	return 1
@@ -175,6 +184,7 @@ end
 -- Returns 1 if the ACF engine is on
 e2function number entity:acfActive()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	if (this.Active) then return 1 end
 	return 0
 end
@@ -182,6 +192,7 @@ end
 -- Returns the throttle of an ACF engine
 e2function number entity:acfThrottle()
 	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return (this.Throttle or 0) * 100
 end
 
@@ -533,14 +544,9 @@ end
 -- [ Armor Functions ] --
 
 
-__e2setcost( 1 )
-
-e2function number acfInfoRestricted()
-	return GetConVar("sbox_acf_e2restrictinfo"):GetInt() or 0
-end
-
 __e2setcost( 10 )
 
+-- Returns the current health of an entity
 e2function number entity:acfPropHealth()
 	if not validPhysics(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
@@ -548,6 +554,7 @@ e2function number entity:acfPropHealth()
 	return math.Round(this.ACF.Health or 0,3)
 end
 
+-- Returns the current armor of an entity
 e2function number entity:acfPropArmor()
 	if not validPhysics(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
@@ -555,6 +562,7 @@ e2function number entity:acfPropArmor()
 	return math.Round(this.ACF.Armour or 0,3)
 end
 
+-- Returns the max health of an entity
 e2function number entity:acfPropHealthMax()
 	if not validPhysics(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
@@ -562,6 +570,7 @@ e2function number entity:acfPropHealthMax()
 	return math.Round(this.ACF.MaxHealth or 0,3)
 end
 
+-- Returns the max armor of an entity
 e2function number entity:acfPropArmorMax()
 	if not validPhysics(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
@@ -569,6 +578,7 @@ e2function number entity:acfPropArmorMax()
 	return math.Round(this.ACF.MaxArmour or 0,3)
 end
 
+-- Returns the ductility of an entity
 e2function number entity:acfPropDuctility()
 	if not validPhysics(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
