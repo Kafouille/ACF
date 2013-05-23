@@ -219,24 +219,28 @@ end
 -- Returns the current gear for an ACF gearbox
 e2function number entity:acfGear()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return this.Gear or 0
 end
 
 -- Returns the number of gears for an ACF gearbox
 e2function number entity:acfNumGears()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return this.Gears or 0
 end
 
 -- Returns the final ratio for an ACF gearbox
 e2function number entity:acfFinalRatio()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return this.GearTable["Final"] or 0
 end
 
 -- Returns the total ratio (current gear * final) for an ACF gearbox
 e2function number entity:acfTotalRatio()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	return this.GearRatio or 0
 end
 
@@ -249,6 +253,7 @@ end
 -- Returns whether an ACF gearbox is dual clutch
 e2function number entity:acfIsDual()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	if (this.Dual) then return 1 end
 	return 0
 end
@@ -262,6 +267,7 @@ end
 -- Returns 1 if an ACF gearbox is in gear
 e2function number entity:acfInGear()
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	if (this.InGear) then return 1 end
 	return 0
 end
@@ -269,6 +275,7 @@ end
 -- Returns the ratio for a specified gear of an ACF gearbox
 e2function number entity:acfGearRatio( number gear )
 	if not isGearbox(this) then return 0 end
+	if restrictInfo(self, this) then return 0 end
 	local g = math.Clamp(math.floor(gear),1,this.Gears)
 	return this.GearTable[g] or 0
 end
