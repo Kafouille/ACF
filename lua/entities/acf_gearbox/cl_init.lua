@@ -79,17 +79,10 @@ function ACFGearboxGUICreate( Table )
 	acfmenupanel:CPanelText("Desc", Table.desc)	--Description (Name, Desc)
 	
 	if (acfmenupanel.GearboxData[Table.id]["GearTable"][-2] or 0) != 0 then
-		for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
-			if ID == 2 then
-				ACF_GearsSlider(ID, Value, Table.id)
-			elseif ID == -2 then
-				ACF_GearsSlider(9, Value, Table.id, "Target Input RPM")
-			elseif ID == -1 then
-				ACF_GearsSlider(10, Value, Table.id, "Final Drive")
-			elseif ID == 0 then
-				RunConsoleCommand( "acfmenu_data"..ID, Value )
-			end
-		end
+		ACF_GearsSlider(2, acfmenupanel.GearboxData[Table.id]["GearTable"][2], Table.id)
+		ACF_GearsSlider(9, acfmenupanel.GearboxData[Table.id]["GearTable"][-2], Table.id, "Target Input RPM")
+		ACF_GearsSlider(10, acfmenupanel.GearboxData[Table.id]["GearTable"][-1], Table.id, "Final Drive")
+		RunConsoleCommand( "acfmenu_data1", 0.01 )
 	else
 		for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
 			if ID > 0 then
