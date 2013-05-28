@@ -11,7 +11,7 @@ function ENT:Initialize()
 	self.Reloading = nil
 	self.NextFire = 0
 	self.LastSend = 0
-	self.Owner = self.Entity
+	self.Owner = self
 	
 	self.IsMaster = true
 	self.AmmoLink = {}
@@ -25,9 +25,9 @@ function ENT:Initialize()
 	
 	self.Inaccuracy 	= 1
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Fire", "Unload", "Reload" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "Ready", "AmmoCount", "Entity", "Shots Left", "Fire Rate", "Muzzle Weight", "Muzzle Velocity" }, { "NORMAL" , "NORMAL" , "ENTITY", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "Fire", "Unload", "Reload" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "Ready", "AmmoCount", "Entity", "Shots Left", "Fire Rate", "Muzzle Weight", "Muzzle Velocity" }, { "NORMAL" , "NORMAL" , "ENTITY", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
+	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Gun"
 
 end  
@@ -136,24 +136,42 @@ duplicator.RegisterEntityClass("acf_gun", MakeACF_Gun, "Pos", "Angle", "Id")
 
 function ENT:Link( Target )
 
-	if ( !Target or Target:GetClass() != "acf_ammo" ) then return ("Only accepts ammo crates") end
-	if ( Target.BulletData["Id"] != self.Entity.Id ) then return ("Wrong ammo type") end
-	if ( Target.BulletData["RoundType"] == "Refill" ) then return ("Refill crates cannot be linked") end
+	-- Don't link if it's not an ammo crate
+	if not IsValid( Target ) or Target:GetClass() ~= "acf_ammo" then
+		return false, "Guns can only be linked to ammo crates!"
+	end
 	
-	table.insert(self.AmmoLink,Target)
-	table.insert(Target.Master,self.Entity)
+	-- Don't link if it's not the right ammo type
+	if Target.BulletData["Id"] ~= self.Id then
+		return false, "Wrong ammo type!"
+	end
 	
-	if ( self.BulletData["Type"] == "Empty" and Target["Load"] ) then
+	-- Don't link if it's a refill crate
+	if Target.BulletData["RoundType"] == "Refill" then
+		return false, "Refill crates cannot be linked!"
+	end
+	
+	-- Don't link if it's already linked
+	for k, v in pairs( self.AmmoLink ) do
+		if v == Target then
+			return false, "That crate is already linked to this gun!"
+		end
+	end
+	
+	table.insert( self.AmmoLink, Target )
+	table.insert( Target.Master, self )
+	
+	if self.BulletData["Type"] == "Empty" and Target["Load"] then
 		self:UnloadAmmo()
 	end
 	
-	self.ReloadTime = ((Target.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod*self.PGRoFmod
-	self.RateOfFire = (60/self.ReloadTime)
-	Wire_TriggerOutput(self.Entity, "Fire Rate", self.RateOfFire)
-	Wire_TriggerOutput(self.Entity, "Muzzle Weight", math.floor(Target.BulletData["ProjMass"]*1000) )
-	Wire_TriggerOutput(self.Entity, "Muzzle Velocity", math.floor(Target.BulletData["MuzzleVel"]*ACF.VelScale) )
+	self.ReloadTime = ( ( Target.BulletData["RoundVolume"] / 500 ) ^ 0.60 ) * self.RoFmod * self.PGRoFmod
+	self.RateOfFire = 60 / self.ReloadTime
+	Wire_TriggerOutput( self, "Fire Rate", self.RateOfFire )
+	Wire_TriggerOutput( self, "Muzzle Weight", math.floor( Target.BulletData["ProjMass"] * 1000 ) )
+	Wire_TriggerOutput( self, "Muzzle Velocity", math.floor( Target.BulletData["MuzzleVel"] * ACF.VelScale ) )
 
-	return false
+	return true, "Link successful!"
 	
 end
 
@@ -168,9 +186,9 @@ function ENT:Unlink( Target )
 	end
 	
 	if Success then
-		return false
+		return true, "Unlink successful!"
 	else
-		return "Didn't find the crate to unlink"
+		return false, "That entity is not linked to this gun!"
 	end
 	
 end
@@ -220,11 +238,11 @@ function ENT:TriggerInput( iname , value )
 	if (iname == "Unload" and value > 0) then
 		timer.Simple( 0, self.UnloadAmmo() )
 	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
-		if self.Entity.NextFire < CurTime() then
+		if self.NextFire < CurTime() then
 			self.User = self:GetUser(self.Inputs["Fire"].Src)
 			if not IsValid(self.User) then self.User = self.Owner end
-			self.Entity:FireShell()
-			self.Entity:Think()
+			self:FireShell()
+			self:Think()
 		end
 		self.Firing = true
 	elseif ( iname == "Fire" and value <= 0 ) then
@@ -259,19 +277,19 @@ function ENT:Think()
 				end
 			end
 		end
-		Wire_TriggerOutput(self.Entity, "AmmoCount", Ammo)
+		Wire_TriggerOutput(self, "AmmoCount", Ammo)
 		if( self.MagSize ) then
-			Wire_TriggerOutput(self.Entity, "Shots Left", self.MagSize - self.CurrentShot)
+			Wire_TriggerOutput(self, "Shots Left", self.MagSize - self.CurrentShot)
 		else
-			Wire_TriggerOutput(self.Entity, "Shots Left", 1)
+			Wire_TriggerOutput(self, "Shots Left", 1)
 		end
 		
-		self.Entity:SetNetworkedBeamString("GunType",self.Entity.Id)
-		self.Entity:SetNetworkedBeamInt("Ammo",Ammo)
-		self.Entity:SetNetworkedBeamString("Type",self.BulletData["Type"])
-		self.Entity:SetNetworkedBeamInt("Mass",self.BulletData["ProjMass"]*100)
-		self.Entity:SetNetworkedBeamInt("Propellant",self.BulletData["PropMass"]*1000)
-		self.Entity:SetNetworkedBeamInt("FireRate",self.RateOfFire)
+		self:SetNetworkedBeamString("GunType",self.Id)
+		self:SetNetworkedBeamInt("Ammo",Ammo)
+		self:SetNetworkedBeamString("Type",self.BulletData["Type"])
+		self:SetNetworkedBeamInt("Mass",self.BulletData["ProjMass"]*100)
+		self:SetNetworkedBeamInt("Propellant",self.BulletData["PropMass"]*1000)
+		self:SetNetworkedBeamInt("FireRate",self.RateOfFire)
 		
 		self.LastSend = Time
 	
@@ -279,7 +297,7 @@ function ENT:Think()
 	
 	if self.NextFire <= Time then
 		self.Ready = true
-		Wire_TriggerOutput(self.Entity, "Ready", 1)
+		Wire_TriggerOutput(self, "Ready", 1)
 		if self.Firing then
 			self:FireShell()	
 		elseif self.Reloading then
@@ -287,18 +305,18 @@ function ENT:Think()
 		end
 	end
 
-	self.Entity:NextThink(Time)
+	self:NextThink(Time)
 	return true
 	
 end
 
 function ENT:CheckWeight()
-	local mass = self.Entity:GetPhysicsObject():GetMass()
+	local mass = self:GetPhysicsObject():GetMass()
 	local maxmass = GetConVarNumber("bnk_maxweight") * 1000 + 999
 	
 	local chk = false
 	
-	local allents = constraint.GetAllConstrainedEntities( self.Entity )
+	local allents = constraint.GetAllConstrainedEntities( self )
 	for _, ent in pairs(allents) do
 		if (ent and ent:IsValid() and not ent:IsPlayer() and not (ent == self)) then
 			local phys = ent:GetPhysicsObject()
@@ -322,16 +340,16 @@ function ENT:ReloadMag()
 			self.IsUnderWeight = self:CheckWeight()
 		end
 	end
-	if ( (self.CurrentShot > 0) and self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
+	if ( (self.CurrentShot > 0) and self.IsUnderWeight and self.Ready and self:GetPhysicsObject():GetMass() >= self.Mass and not self:GetParent():IsValid() ) then
 		if ( ACF.RoundTypes[self.BulletData["Type"]] ) then		--Check if the roundtype loaded actually exists
 			self:LoadAmmo(self.MagReload, false)	
 			self:EmitSound("weapons/357/357_reload4.wav",500,100)
 			self.CurrentShot = 0
-			Wire_TriggerOutput(self.Entity, "Ready", 0)
+			Wire_TriggerOutput(self, "Ready", 0)
 		else
 			self.CurrentShot = 0
 			self.Ready = false
-			Wire_TriggerOutput(self.Entity, "Ready", 0)
+			Wire_TriggerOutput(self, "Ready", 0)
 			self:LoadAmmo(false, true)	
 		end
 	end
@@ -339,7 +357,7 @@ end
 
 function ENT:FireShell()
 	
-	local CanDo = hook.Run("ACF_FireShell", self.Entity, self.BulletData )
+	local CanDo = hook.Run("ACF_FireShell", self, self.BulletData )
 	if CanDo == false then return end
 	if(self.IsUnderWeight == nil) then
 		self.IsUnderWeight = true
@@ -357,7 +375,7 @@ function ENT:FireShell()
 			bool = false
 		end
 	end
-	if ( bool and self.IsUnderWeight and self.Ready and self.Entity:GetPhysicsObject():GetMass() >= self.Mass and not self.Entity:GetParent():IsValid() ) then
+	if ( bool and self.IsUnderWeight and self.Ready and self:GetPhysicsObject():GetMass() >= self.Mass and not self:GetParent():IsValid() ) then
 		Blacklist = {}
 		if not ACF.AmmoBlacklist[self.BulletData["Type"]] then
 			Blacklist = {}
@@ -375,11 +393,11 @@ function ENT:FireShell()
 			self.BulletData["Pos"] = MuzzlePos
 			self.BulletData["Flight"] = (MuzzleVec+Inaccuracy):GetNormalized() * self.BulletData["MuzzleVel"] * 39.37 + self:GetVelocity()
 			self.BulletData["Owner"] = self.User
-			self.BulletData["Gun"] = self.Entity
+			self.BulletData["Gun"] = self
 			self.CreateShell = ACF.RoundTypes[self.BulletData["Type"]]["create"]
 			self:CreateShell( self.BulletData )
 		
-			local Gun = self.Entity:GetPhysicsObject()  	
+			local Gun = self:GetPhysicsObject()  	
 			if (Gun:IsValid()) then 	
 				Gun:ApplyForceCenter( self:GetForward() * -(self.BulletData["ProjMass"] * self.BulletData["MuzzleVel"] * 39.37 + self.BulletData["PropMass"] * 3000 * 39.37))			
 			end
@@ -393,11 +411,11 @@ function ENT:FireShell()
 			else
 				self:LoadAmmo(false, false)	
 			end
-			Wire_TriggerOutput(self.Entity, "Ready", 0)
+			Wire_TriggerOutput(self, "Ready", 0)
 		else
 			self.CurrentShot = 0
 			self.Ready = false
-			Wire_TriggerOutput(self.Entity, "Ready", 0)
+			Wire_TriggerOutput(self, "Ready", 0)
 			self:LoadAmmo(false, true)	
 		end
 	end
@@ -441,12 +459,12 @@ function ENT:LoadAmmo( AddTime, Reload )
 		self.BulletData["Crate"] = AmmoEnt:EntIndex()
 		
 		self.ReloadTime = ((self.BulletData["RoundVolume"]/500)^0.60)*self.RoFmod*self.PGRoFmod
-		Wire_TriggerOutput(self.Entity, "Loaded", self.BulletData["Type"])
+		Wire_TriggerOutput(self, "Loaded", self.BulletData["Type"])
 		
 		self.RateOfFire = (60/self.ReloadTime)
-		Wire_TriggerOutput(self.Entity, "Fire Rate", self.RateOfFire)
-		Wire_TriggerOutput(self.Entity, "Muzzle Weight", math.floor(self.BulletData["ProjMass"]*1000) )
-		Wire_TriggerOutput(self.Entity, "Muzzle Velocity", math.floor(self.BulletData["MuzzleVel"]*ACF.VelScale) )
+		Wire_TriggerOutput(self, "Fire Rate", self.RateOfFire)
+		Wire_TriggerOutput(self, "Muzzle Weight", math.floor(self.BulletData["ProjMass"]*1000) )
+		Wire_TriggerOutput(self, "Muzzle Velocity", math.floor(self.BulletData["MuzzleVel"]*ACF.VelScale) )
 		
 		self.NextFire = CurTime() + self.ReloadTime
 		if AddTime then
@@ -455,7 +473,7 @@ function ENT:LoadAmmo( AddTime, Reload )
 		if Reload then
 			self:ReloadEffect()
 		end
-		self.Entity:Think()
+		self:Think()
 		return true	
 	else
 		self.BulletData = {}
@@ -464,10 +482,10 @@ function ENT:LoadAmmo( AddTime, Reload )
 			self.BulletData["ProjMass"] = 0
 		
 		self:EmitSound("weapons/pistol/pistol_empty.wav",500,100)
-		Wire_TriggerOutput(self.Entity, "Loaded", "Empty")
+		Wire_TriggerOutput(self, "Loaded", "Empty")
 				
 		self.NextFire = CurTime()+0.5
-		self.Entity:Think()
+		self:Think()
 	end
 	return false
 	
@@ -481,7 +499,7 @@ function ENT:UnloadAmmo()
 	end
 	
 	self.Ready = false
-	Wire_TriggerOutput(self.Entity, "Ready", 0)
+	Wire_TriggerOutput(self, "Ready", 0)
 	self:LoadAmmo( math.min(self.ReloadTime,math.max(self.ReloadTime - (self.NextFire - CurTime()),0) )	, true )
 	self:EmitSound("weapons/357/357_reload4.wav",500,100)
 
@@ -490,7 +508,7 @@ end
 function ENT:MuzzleEffect()
 	
 	local Effect = EffectData()
-		Effect:SetEntity( self.Entity )
+		Effect:SetEntity( self )
 		Effect:SetScale( self.BulletData["PropMass"] )
 		Effect:SetMagnitude( self.ReloadTime )
 		Effect:SetSurfaceProp( ACF.RoundTypes[self.BulletData["Type"]]["netid"]  )	--Encoding the ammo type into a table index
@@ -501,7 +519,7 @@ end
 function ENT:ReloadEffect()
 
 	local Effect = EffectData()
-		Effect:SetEntity( self.Entity )
+		Effect:SetEntity( self )
 		Effect:SetScale( 0 )
 		Effect:SetMagnitude( self.ReloadTime )
 		Effect:SetSurfaceProp( ACF.RoundTypes[self.BulletData["Type"]]["netid"]  )	--Encoding the ammo type into a table index
@@ -523,13 +541,13 @@ function ENT:PreEntityCopy()
 	end
 	info.entities = entids
 	if info.entities then
-		duplicator.StoreEntityModifier( self.Entity, "ACFAmmoLink", info )
+		duplicator.StoreEntityModifier( self, "ACFAmmoLink", info )
 	end
 	
 	//Wire dupe info
-	local DupeInfo = WireLib.BuildDupeInfo(self.Entity)
+	local DupeInfo = WireLib.BuildDupeInfo(self)
 	if(DupeInfo) then
-		duplicator.StoreEntityModifier(self.Entity,"WireDupeInfo",DupeInfo)
+		duplicator.StoreEntityModifier(self,"WireDupeInfo",DupeInfo)
 	end
 	
 end
@@ -557,11 +575,9 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 end
 
 function ENT:OnRemove()
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
-
-

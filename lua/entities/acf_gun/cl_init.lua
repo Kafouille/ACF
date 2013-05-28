@@ -7,7 +7,7 @@ ENT.AutomaticFrameAdvance = true
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
-    Wire_Render(self.Entity)
+    Wire_Render(self)
 end
 
 function ENT:Initialize()
@@ -23,7 +23,7 @@ function ENT:Initialize()
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		if(self:GetOverlayText() ~= "") then
 			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
@@ -34,7 +34,7 @@ end
 function ENT:Think()
 	if (CurTime() >= (self.NextRBUpdate or 0)) then
 	    self.NextRBUpdate = CurTime() + math.random(30,100)/10 --update renderbounds every 3 to 10 seconds
-		Wire_UpdateRenderBounds(self.Entity)
+		Wire_UpdateRenderBounds(self)
 	end
 		
 	local SinceFire = (CurTime() - self.LastFire)
@@ -46,7 +46,7 @@ function ENT:Think()
 		self:SetPlaybackRate( self.Rate )
 	end
 	
-	self.Entity:NextThink(CurTime())
+	self:NextThink(CurTime())
 	return true
 end
 

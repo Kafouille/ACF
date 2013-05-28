@@ -90,22 +90,24 @@ end
 list.Set( "ACFCvars", "acf_engine" , {"id"} )
 duplicator.RegisterEntityClass("acf_engine", MakeACF_Engine, "Pos", "Angle", "Id")
 
-function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
+function ENT:Update( ArgsTable )	
+	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
+	-- and pos and angle of the tool trace inserted at the start
 
-	local Feedback = "Engine updated"
 	if self.Active then
-		Feedback = "Please turn off the engine before updating it"
-	return Feedback end
-	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		Feedback = "You don't own that engine !"
-	return Feedback end
+		return false, "Turn off the engine before updating it!"
+	end
+	
+	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
+		return false, "You don't own that engine!"
+	end
 
-	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 
-	if ( List["Mobility"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
-		Feedback = "The new engine needs to have the same model as the old one !"
-	return end
+	if List["Mobility"][Id]["model"] ~= self.Model then
+		return false, "The new engine must have the same model!"
+	end
 
 	self.Id = Id
 	self.SoundPath = List["Mobility"][Id]["sound"]
@@ -125,14 +127,14 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Out = self:WorldToLocal(self:GetAttachment(self:LookupAttachment( "driveshaft" )).Pos)
 
 	local phys = self:GetPhysicsObject()  	
-	if (phys:IsValid()) then 
+	if IsValid( phys ) then 
 		phys:SetMass( self.Weight ) 
 	end
 
 	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("Torque",self.PeakTorque)
 	-- add in the variable to check if its an electric motor
-	if (self.iselec == true)  then
+	if self.iselec then
 		self:SetNetworkedBeamInt("Power",self.elecpower) -- add in the value from the elecpower
 	else
 		self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
@@ -142,8 +144,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
 
-
-	return Feedback
+	return true, "Engine updated successfully!"
 end
 
 function ENT:TriggerInput( iname , value )
@@ -349,36 +350,32 @@ end
 
 function ENT:Link( Target )
 
-	if ( !Target or Target:GetClass() != "acf_gearbox" ) then return ("Can only link to Gearboxes") end
+	if not IsValid( Target ) or Target:GetClass() ~= "acf_gearbox" then
+		return false, "Can only link to gearboxes!"
+	end
 
-	local Duplicate = false
-	for Key,Value in pairs(self.GearLink) do
+	-- Check if target is already linked
+	for Key, Value in pairs( self.GearLink ) do
 		if Value == Target then
-			Duplicate = true
+			return false, "That is already linked to this engine!"
 		end
 	end
 
-	if not Duplicate then
-
-		local InPos = Target:LocalToWorld(Target.In)
-		local OutPos = self:LocalToWorld(self.Out)
-		local DrvAngle = (OutPos - InPos):GetNormalized():DotProduct((self:GetForward()))
-		if ( DrvAngle < 0.7 ) then
-			return 'ERROR : Excessive driveshaft angle'
-		end
-
-		table.insert(self.GearLink,Target)
-		table.insert(Target.Master,self)
-		local RopeL = (OutPos-InPos):Length()
-		constraint.Rope( self, Target, 0, 0, self.Out, Target.In, RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
-		table.insert(self.GearRope,RopeL)
-
-		return false
-	else
-		return ('ERROR : Gearbox already linked to this Engine')
+	local InPos = Target:LocalToWorld(Target.In)
+	local OutPos = self:LocalToWorld(self.Out)
+	local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( self:GetForward() )
+	if DrvAngle < 0.7 then
+		return false, "Cannot link due to excessive driveshaft angle!"
 	end
 
-
+	table.insert( self.GearLink, Target )
+	table.insert( Target.Master, self )
+	local RopeL = ( OutPos-InPos ):Length()
+	constraint.Rope( self, Target, 0, 0, self.Out, Target.In, RopeL, RopeL * 0.2, 0, 1, "cable/cable2", false )
+	table.insert( self.GearRope, RopeL )
+	
+	return true, "Link successful!"
+	
 end
 
 function ENT:Unlink( Target )
@@ -403,9 +400,9 @@ function ENT:Unlink( Target )
 	end
 
 	if Success then
-		return false
+		return true, "Unlink successful!"
 	else
-		return ('ERROR : Did not find the Gearbox to unlink')
+		return false, "That gearbox is not linked to this engine!"
 	end
 
 end
