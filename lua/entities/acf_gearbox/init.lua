@@ -163,19 +163,20 @@ end
 list.Set( "ACFCvars", "acf_gearbox" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
 duplicator.RegisterEntityClass("acf_gearbox", MakeACF_Gearbox, "Pos", "Angle", "Id", "Gear1", "Gear2", "Gear3", "Gear4", "Gear5", "Gear6", "Gear7", "Gear8", "Gear9", "Gear0" )
 
-function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
-
-	local Feedback = "Gearbox updated successfully"
-	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		Feedback = "You don't own that gearbox !"
-	return Feedback end
-		
-	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+function ENT:Update( ArgsTable )
+	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
+	-- and pos and angle of the tool trace inserted at the start
+	
+	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
+		return false, "You don't own that gearbox!"
+	end
+	
+	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 	
-	if ( List["Mobility"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
-		Feedback = "The new gearbox needs to have the same size and orientation as the old one !"
-	return Feedback end
+	if List["Mobility"][Id]["model"] ~= self.Model then
+		return false, "The new gearbox must have the same model!"
+	end
 		
 	if self.Id != Id then
 	
@@ -207,15 +208,15 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
         end
 		
 		self.Inputs = Wire_CreateInputs( self, Inputs )
-        self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, Outputs, OutputTypes )
-        Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+        self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputTypes )
+        Wire_TriggerOutput( self, "Entity", self )
 	end
     
     if self.CVT then 
         self.TargetMinRPM = ArgsTable[7]
         self.TargetMaxRPM = math.max(ArgsTable[8],ArgsTable[7]+100)
-		Wire_TriggerOutput(self.Entity, "Min Target RPM", self.TargetMinRPM)
-		Wire_TriggerOutput(self.Entity, "Max Target RPM", self.TargetMaxRPM)
+		Wire_TriggerOutput(self, "Min Target RPM", self.TargetMinRPM)
+		Wire_TriggerOutput(self, "Max Target RPM", self.TargetMaxRPM)
     end
 	
 	self.GearTable["Final"] = ArgsTable[14]
@@ -261,7 +262,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		self:SetNetworkedBeamInt( "TargetMaxRPM", self.TargetMaxRPM )
 	end
 	
-	return Feedback
+	return true, "Gearbox updated successfully!"
 end
 
 function ENT:TriggerInput( iname , value )
@@ -391,7 +392,7 @@ function ENT:Calc( InputRPM, InputInertia )
             if self.CVT and self.Gear == 1 then
                 self.GearTable[1] = math.Clamp((InputRPM - self.TargetMinRPM) / ((self.TargetMaxRPM - self.TargetMinRPM) or 1),0.05,1)
                 self.GearRatio = (self.GearTable[1] or 0)*self.GearTable["Final"]
-                Wire_TriggerOutput(self.Entity, "Ratio", self.GearRatio)
+                Wire_TriggerOutput(self, "Ratio", self.GearRatio)
             end
 		
 			self.WheelReqTq[Key] = 0
@@ -505,19 +506,25 @@ end
 
 function ENT:Link( Target )
 
-	if ( !Target or (Target:GetClass() != "prop_physics" and Target:GetClass() != "acf_gearbox") ) then return "Can only link plain props or other gearboxes" end
+	if not IsValid( Target ) or ( Target:GetClass() ~= "prop_physics" and Target:GetClass() ~= "acf_gearbox" ) then
+		return false, "Can only link props or gearboxes!"
+	end
 	
-	for Key,Value in pairs(self.WheelLink) do
-		if Value == Target then return "This is already linked to this gearbox !" end
+	-- Check if target is already linked
+	for Key, Value in pairs( self.WheelLink ) do
+		if Value == Target then 
+			return false, "That is already linked to this gearbox!"
+		end
 	end
 		
 	local TargetPos = Target:GetPos()
 	if Target.IsGeartrain then
-		TargetPos = Target:LocalToWorld(Target.In)
+		TargetPos = Target:LocalToWorld( Target.In )
 	end
-	local LinkPos = Vector(0,0,0)
+	
+	local LinkPos = Vector( 0, 0, 0 )
 	local Side = 0
-	if self:WorldToLocal(TargetPos).y < 0 then
+	if self:WorldToLocal( TargetPos ).y < 0 then
 		LinkPos = self.OutL
 		Side = 0
 	else
@@ -525,23 +532,23 @@ function ENT:Link( Target )
 		Side = 1
 	end
 	
-	local DrvAngle = (self:LocalToWorld(LinkPos) - TargetPos):GetNormalized():DotProduct( (self:GetRight()*LinkPos.y):GetNormalized() )
-	if ( DrvAngle < 0.7 ) then
-		return "Cannot link due to excessive driveshaft angle"
+	local DrvAngle = ( self:LocalToWorld( LinkPos ) - TargetPos ):GetNormalized():DotProduct( ( self:GetRight() * LinkPos.y ):GetNormalized() )
+	if DrvAngle < 0.7 then
+		return false, "Cannot link due to excessive driveshaft angle!"
 	end
 	
-	table.insert(self.WheelLink,Target)
-	table.insert(self.WheelSide,Side)
+	table.insert( self.WheelLink, Target )
+	table.insert( self.WheelSide, Side )
 	if not self.WheelCount[Side] then self.WheelCount[Side] = 0 end
 	self.WheelCount[Side] = self.WheelCount[Side] + 1
-	table.insert(self.WheelAxis,Target:WorldToLocal(self:GetRight()+TargetPos))
+	table.insert( self.WheelAxis, Target:WorldToLocal( self:GetRight() + TargetPos ) )
 	
-	local RopeL = ( self:LocalToWorld(LinkPos)-TargetPos ):Length()
-	constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal(TargetPos), RopeL, RopeL*0.2, 0, 1, "cable/cable2", false )
-	table.insert( self.WheelRopeL,RopeL )
-	table.insert( self.WheelOutput,LinkPos )
+	local RopeL = ( self:LocalToWorld( LinkPos ) - TargetPos ):Length()
+	constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal( TargetPos ), RopeL, RopeL * 0.2, 0, 1, "cable/cable2", false )
+	table.insert( self.WheelRopeL, RopeL )
+	table.insert( self.WheelOutput, LinkPos )
 	
-	return false
+	return true, "Link successful!"
 	
 end
 
@@ -567,11 +574,11 @@ function ENT:Unlink( Target )
 			table.remove(self.WheelSide,Key)
 			table.remove(self.WheelRopeL,Key)
 			table.remove(self.WheelOutput,Key)
-			return false
+			return true, "Unlink successful!"
 		end
 	end
 	
-	return "Didn't find the wheel to unlink"
+	return false, "That entity is not linked to this gearbox!"
 
 end
 
@@ -641,5 +648,3 @@ end
 function ENT:OnRestore()
     Wire_Restored(self)
 end
-
-

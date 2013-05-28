@@ -19,8 +19,8 @@ function ENT:Initialize()
 	self.Sequence = 0
 	
 	self.WireDebugName = "Ammo Crate"
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active" } ) --, "Fuse Length"
-	self.Outputs = Wire_CreateOutputs( self.Entity, { "Munitions" , "On Fire" } )
+	self.Inputs = Wire_CreateInputs( self, { "Active" } ) --, "Fuse Length"
+	self.Outputs = Wire_CreateOutputs( self, { "Munitions" , "On Fire" } )
 		
 	self.NextThink = CurTime() +  1
 	
@@ -33,7 +33,7 @@ function ENT:ACF_Activate( Recalc )
 
 	self.ACF = self.ACF or {} 
 	
-	local PhysObj = self.Entity:GetPhysicsObject()
+	local PhysObj = self:GetPhysicsObject()
 	if not self.ACF.Aera then
 		self.ACF.Aera = PhysObj:GetSurfaceArea() * 6.45
 	end
@@ -67,16 +67,16 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	if HitRes.Kill then
-		local CanDo = hook.Run("ACF_AmmoExplode", self.Entity, self.BulletData )
+		local CanDo = hook.Run("ACF_AmmoExplode", self, self.BulletData )
 		if CanDo == false then return HitRes end
 		self.Exploding = true
 		if( Inflictor and Inflictor:IsValid() and Inflictor:IsPlayer() ) then
 			self.Inflictor = Inflictor
 		end
 		if self.Ammo > 1 then
-			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
+			ACF_AmmoExplosion( self , self:GetPos() )
 		else
-			ACF_HEKill( self.Entity , VectorRand() )
+			ACF_HEKill( self , VectorRand() )
 		end
 	end
 	
@@ -86,7 +86,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	if ( Ratio * self.Capacity/self.Ammo ) > math.Rand(0,1) then  
 		self.Inflictor = Inflictor
 		self.Damaged = CurTime() + (5 - Ratio*3)
-		Wire_TriggerOutput(self.Entity, "On Fire", 1)
+		Wire_TriggerOutput(self, "On Fire", 1)
 	end
 	
 	return HitRes --This function needs to return HitRes
@@ -134,25 +134,27 @@ end
 list.Set( "ACFCvars", "acf_ammo" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
 duplicator.RegisterEntityClass("acf_ammo", MakeACF_Ammo, "Pos", "Angle", "Id", "RoundId", "RoundType", "RoundPropellant", "RoundProjectile", "RoundData5", "RoundData6", "RoundData7", "RoundData8", "RoundData9", "RoundData10" )
 
-function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
+function ENT:Update( ArgsTable )
+	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
+	-- and pos and angle of the tool trace inserted at the start
 
-	local Feedback = "Ammocrate updated succesfully"
+	local msg = "Ammo crate updated successfully!"
 	
-	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		Feedback = "You don't own that ammo crate !"
-	return end
+	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
+		return false, "You don't own that ammo crate!"
+	end
 	
-	if ( ArgsTable[6] == "Refill" ) then --Argtable[6] is the round type. If it's refill it shouldn't be loaded into guns, so we refuse to change to it
-		Feedback = "Refill ammo type is only avaliable for new crates"
-	return end
+	if ArgsTable[6] == "Refill" then -- Argtable[6] is the round type. If it's refill it shouldn't be loaded into guns, so we refuse to change to it
+		return false, "Refill ammo type is only avaliable for new crates"
+	end
 	
-	if ( ArgsTable[5] != self.RoundId ) then --Argtable[5] is the weapon ID the new ammo loads into
+	if ArgsTable[5] ~= self.RoundId then -- Argtable[5] is the weapon ID the new ammo loads into
 		for Key, Gun in pairs( self.Master ) do
-			if Gun:IsValid() then
-				Gun:Unlink( self.Entity )
+			if IsValid( Gun ) then
+				Gun:Unlink( self )
 			end
 		end
-		Feedback = "New ammo type loaded, crate unlinked"
+		msg = "New ammo type loaded, crate unlinked."
 	end
 	
 	local AmmoPercent = self.Ammo/math.max(self.Capacity,1)
@@ -161,9 +163,9 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
 	local AmmoMass = self:AmmoMass()
-	self.Mass = math.min(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
+	self.Mass = math.min(self.EmptyMass, self:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
 		
-	return FeedBack
+	return true, msg
 end
 
 function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
@@ -237,12 +239,12 @@ end
 
 function ENT:Think()
 	local AmmoMass = self:AmmoMass()
-	self.Mass = math.max(self.EmptyMass, self.Entity:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
-	self.Entity:GetPhysicsObject():SetMass(self.Mass) 
+	self.Mass = math.max(self.EmptyMass, self:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
+	self:GetPhysicsObject():SetMass(self.Mass) 
 	
 	self:SetNetworkedString("Ammo",self.Ammo)
 	
-	local color = self.Entity:GetColor();
+	local color = self:GetColor();
 	self:SetNetworkedVector("TracerColour", Vector( color.r, color.g, color.b ) )
 	
 	local cvarGrav = GetConVar("sv_gravity")
@@ -253,24 +255,24 @@ function ENT:Think()
 		
 	self:SetNetworkedVector("Accel", vec)
 		
-	self.Entity:NextThink( CurTime() +  1 )
+	self:NextThink( CurTime() +  1 )
 	
 	if self.Damaged then
 		if self.Damaged < CurTime() then
-			ACF_AmmoExplosion( self.Entity , self.Entity:GetPos() )
+			ACF_AmmoExplosion( self , self:GetPos() )
 		else
 			if not (self.BulletData["Type"] == "Refill") then
 				if math.Rand(0,150) > self.BulletData["RoundVolume"]^0.5 and math.Rand(0,1) < self.Ammo/math.max(self.Capacity,1) and ACF.RoundTypes[self.BulletData["Type"]] then
-					self.Entity:EmitSound( "ambient/explosions/explode_4.wav" , 350 , math.max(255 - self.BulletData["PropMass"]*100,60)  )	
-					local MuzzlePos = self.Entity:GetPos()
+					self:EmitSound( "ambient/explosions/explode_4.wav" , 350 , math.max(255 - self.BulletData["PropMass"]*100,60)  )	
+					local MuzzlePos = self:GetPos()
 					local MuzzleVec = VectorRand()
 					local Speed = ACF_MuzzleVelocity( self.BulletData["PropMass"], self.BulletData["ProjMass"]/2, self.Caliber )
 					
 					self.BulletData["Pos"] = MuzzlePos
 					self.BulletData["Flight"] = (MuzzleVec):GetNormalized() * Speed * 39.37 + self:GetVelocity()
 					self.BulletData["Owner"] = self.Inflictor or self.Owner
-					self.BulletData["Gun"] = self.Entity
-					self.BulletData["Crate"] = self.Entity:EntIndex()
+					self.BulletData["Gun"] = self
+					self.BulletData["Crate"] = self:EntIndex()
 					self.CreateShell = ACF.RoundTypes[self.BulletData["Type"]]["create"]
 					self:CreateShell( self.BulletData )
 					
@@ -278,13 +280,13 @@ function ENT:Think()
 					
 				end
 			end
-			self.Entity:NextThink( CurTime() + 0.01 + self.BulletData["RoundVolume"]^0.5/100 )
+			self:NextThink( CurTime() + 0.01 + self.BulletData["RoundVolume"]^0.5/100 )
 		end
 	elseif self.RoundType == "Refill" and self.Ammo > 0 then // Completely new, fresh, genius, beautiful, flawless refill system.
 		if self.Load then
 			for _,Ammo in pairs( ACF.AmmoCrates ) do
 				if Ammo.RoundType ~= "Refill" then
-					local dist = self.Entity:GetPos():Distance(Ammo:GetPos())
+					local dist = self:GetPos():Distance(Ammo:GetPos())
 					if dist < ACF.RefillDistance then
 					
 						if Ammo.Capacity > Ammo.Ammo then
@@ -316,7 +318,7 @@ function ENT:Think()
 				table.remove(self.SupplyingTo, k)
 				self:StopRefillEffect( Ammo )
 			else
-				local dist = self.Entity:GetPos():Distance(Ammo:GetPos())
+				local dist = self:GetPos():Distance(Ammo:GetPos())
 				if dist > ACF.RefillDistance or Ammo.Capacity <= Ammo.Ammo or self.Damaged or not self.Load then // If ammo crate is out of refill max distance or is full or our refill crate is damaged or just in-active then stop refiliing it.
 					table.remove(self.SupplyingTo, k)
 					self:StopRefillEffect( Ammo )
@@ -325,14 +327,14 @@ function ENT:Think()
 		end
 	end
 	
-	Wire_TriggerOutput(self.Entity, "Munitions", self.Ammo)
+	Wire_TriggerOutput(self, "Munitions", self.Ammo)
 	return true
 
 end
 
 function ENT:RefillEffect( Target )
 	umsg.Start("ACF_RefillEffect")
-		umsg.Float( self.Entity:EntIndex() )
+		umsg.Float( self:EntIndex() )
 		umsg.Float( Target:EntIndex() )
 		umsg.String( Target.RoundType )
 	umsg.End()
@@ -340,7 +342,7 @@ end
 
 function ENT:StopRefillEffect( Target )
 	umsg.Start("ACF_StopRefillEffect")
-		umsg.Float( self.Entity:EntIndex() )
+		umsg.Float( self:EntIndex() )
 		umsg.Float( Target:EntIndex() )
 	umsg.End()
 end
@@ -370,7 +372,7 @@ function ENT:Touch( Supplier ) // OLD REFILL SYSTEM
 				Supplier.Ammo = Supplier.Ammo - math.floor(Transfert*self.BulletData["RoundVolume"])
 				
 				self.Supplied = true
-				self.Entity:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
+				self:EmitSound( "items/ammo_pickup.wav" , 500, 80 )
 				
 				if Transfer == Supply then			
 					Supplier:Remove()
@@ -388,7 +390,7 @@ end
 function ENT:OnRemove()
 	for Key,Value in pairs(self.Master) do
 		if self.Master[Key] and self.Master[Key]:IsValid() then
-			self.Master[Key]:Unlink( self.Entity )
+			self.Master[Key]:Unlink( self )
 			self.Ammo = 0
 		end
 	end
@@ -397,18 +399,18 @@ function ENT:OnRemove()
 			table.remove(ACF.AmmoCrates,k)
 		end
 	end
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
 
 function ENT:PreEntityCopy()
 	//Wire dupe info
-	local DupeInfo = WireLib.BuildDupeInfo(self.Entity)
+	local DupeInfo = WireLib.BuildDupeInfo(self)
 	if(DupeInfo) then
-		duplicator.StoreEntityModifier(self.Entity,"WireDupeInfo",DupeInfo)
+		duplicator.StoreEntityModifier(self,"WireDupeInfo",DupeInfo)
 	end
 end
 
