@@ -1,9 +1,9 @@
 
 -- 8-Speed Gearboxes
 
-local Gear8SW = 80
-local Gear8MW = 160
-local Gear8LW = 320
+local Gear8SW = 100
+local Gear8MW = 200
+local Gear8LW = 400
 
 -- Inline
 
@@ -14,7 +14,7 @@ ACF_DefineGearbox( "8Gear-L-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 240,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -37,7 +37,7 @@ ACF_DefineGearbox( "8Gear-L-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1000,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -85,7 +85,7 @@ ACF_DefineGearbox( "8Gear-LD-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 340,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -109,7 +109,7 @@ ACF_DefineGearbox( "8Gear-LD-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1000,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -159,7 +159,7 @@ ACF_DefineGearbox( "8Gear-T-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 340,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -182,7 +182,7 @@ ACF_DefineGearbox( "8Gear-T-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1000,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -230,7 +230,7 @@ ACF_DefineGearbox( "8Gear-TD-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 340,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -254,7 +254,7 @@ ACF_DefineGearbox( "8Gear-TD-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1000,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -304,7 +304,7 @@ ACF_DefineGearbox( "8Gear-ST-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 340,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -327,7 +327,7 @@ ACF_DefineGearbox( "8Gear-ST-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1000,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
