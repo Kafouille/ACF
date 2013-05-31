@@ -1,9 +1,9 @@
 
 -- 4-Speed gearboxes
 
-local Gear4SW = 40
-local Gear4MW = 80
-local Gear4LW = 160
+local Gear4SW = 60
+local Gear4MW = 120
+local Gear4LW = 240
 
 -- Inline
 
@@ -14,7 +14,7 @@ ACF_DefineGearbox( "4Gear-L-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 540,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -73,7 +73,7 @@ ACF_DefineGearbox( "4Gear-LD-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 540,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -135,7 +135,7 @@ ACF_DefineGearbox( "4Gear-T-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 540,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -194,7 +194,7 @@ ACF_DefineGearbox( "4Gear-TD-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 540,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -256,7 +256,7 @@ ACF_DefineGearbox( "4Gear-ST-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 540,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,

@@ -8,14 +8,14 @@ ACF_DefineEngine( "Electric-Small", {
 	sound = "acf_engines/electric_small.wav",
 	category = "Electric",
 	weight = 250,
-	torque = 400,
+	torque = 320,
 	flywheelmass = 0.25,
 	idlerpm = 10,
 	peakminrpm = 10,
 	peakmaxrpm = 10,
 	limitrpm = 10000,
 	iselec = true,
-	elecpower = 98,
+	elecpower = 78,
 	flywheeloverride = 5000
 } )
 
@@ -26,14 +26,14 @@ ACF_DefineEngine( "Electric-Medium", {
 	sound = "acf_engines/electric_medium.wav",
 	category = "Electric",
 	weight = 850,
-	torque = 1200,
+	torque = 960,
 	flywheelmass = 1.2,
 	idlerpm = 10,
 	peakminrpm = 10,
 	peakmaxrpm = 10,
 	limitrpm = 7000,
 	iselec = true,
-	elecpower = 208,
+	elecpower = 160,
 	flywheeloverride = 8000
 } )
 
@@ -44,13 +44,13 @@ ACF_DefineEngine( "Electric-Large", {
 	sound = "acf_engines/electric_large.wav",
 	category = "Electric",
 	weight = 1900,
-	torque = 3000,
+	torque = 2400,
 	flywheelmass = 8,
 	idlerpm = 10,
 	peakminrpm = 10,
 	peakmaxrpm = 10,
 	limitrpm = 4500,
 	iselec = true,
-	elecpower = 340,
+	elecpower = 272,
 	flywheeloverride = 6000
 } )

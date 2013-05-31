@@ -1,9 +1,9 @@
 
 -- 6-Speed gearboxes
 
-local Gear6SW = 60
-local Gear6MW = 120
-local Gear6LW = 240
+local Gear6SW = 80
+local Gear6MW = 160
+local Gear6LW = 320
 
 -- Inline
 
@@ -14,7 +14,7 @@ ACF_DefineGearbox( "6Gear-L-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 440,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -35,7 +35,7 @@ ACF_DefineGearbox( "6Gear-L-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1360,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -79,7 +79,7 @@ ACF_DefineGearbox( "6Gear-LD-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 440,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -101,7 +101,7 @@ ACF_DefineGearbox( "6Gear-LD-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1360,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -147,7 +147,7 @@ ACF_DefineGearbox( "6Gear-T-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 440,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -168,7 +168,7 @@ ACF_DefineGearbox( "6Gear-T-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1360,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -212,7 +212,7 @@ ACF_DefineGearbox( "6Gear-TD-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 440,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -234,7 +234,7 @@ ACF_DefineGearbox( "6Gear-TD-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1360,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -280,7 +280,7 @@ ACF_DefineGearbox( "6Gear-ST-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 550,
+	maxtq = 440,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -301,7 +301,7 @@ ACF_DefineGearbox( "6Gear-ST-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = 1360,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,

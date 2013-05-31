@@ -8,14 +8,14 @@ ACF_DefineEngine( "Turbine-Small", {
 	sound = "acf_engines/turbine_small.wav",
 	category = "Turbine",
 	weight = 200,
-	torque = 400,
+	torque = 320,
 	flywheelmass = 1,
 	idlerpm = 2000,
 	peakminrpm = 1,
 	peakmaxrpm = 1,
 	limitrpm = 10000,
 	iselec = true,
-	elecpower = 134,
+	elecpower = 110,
 	flywheeloverride = 6000
 } )
 
@@ -26,14 +26,14 @@ ACF_DefineEngine( "Turbine-Medium", {
 	sound = "acf_engines/turbine_medium.wav",
 	category = "Turbine",
 	weight = 400,
-	torque = 600,
+	torque = 480,
 	flywheelmass = 2,
 	idlerpm = 2000,
 	peakminrpm = 1,
 	peakmaxrpm = 1,
 	limitrpm = 12000,
 	iselec = true,
-	elecpower = 248,
+	elecpower = 200,
 	flywheeloverride = 6000
 } )
 
@@ -44,13 +44,13 @@ ACF_DefineEngine( "Turbine-Large", {
 	sound = "acf_engines/turbine_large.wav",
 	category = "Turbine",
 	weight = 1000,
-	torque = 1500,
+	torque = 1200,
 	flywheelmass = 4,
 	idlerpm = 2000,
 	peakminrpm = 1,
 	peakmaxrpm = 1,
 	limitrpm = 13500,
 	iselec = true,
-	elecpower = 700,
+	elecpower = 560,
 	flywheeloverride = 6000
 } )
