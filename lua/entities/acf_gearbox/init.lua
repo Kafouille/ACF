@@ -399,7 +399,7 @@ function ENT:Calc( InputRPM, InputInertia )
 			if WheelEnt.IsGeartrain then
 				local Inertia = 0
 				if self.GearRatio ~= 0 then Inertia = InputInertia / self.GearRatio end
-				self.WheelReqTq[Key] = math.abs( WheelEnt:Calc( InputRPM * self.GearRatio, Inertia ) * self.GearRatio )
+				self.WheelReqTq[Key] = math.min( Clutch, math.abs( WheelEnt:Calc( InputRPM * self.GearRatio, Inertia ) * self.GearRatio ) )
 			else
 				local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
 				if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
