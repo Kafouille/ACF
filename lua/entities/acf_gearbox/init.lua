@@ -265,6 +265,11 @@ function ENT:Update( ArgsTable )
 	return true, "Gearbox updated successfully!"
 end
 
+-- prevent people from changing bodygroup
+function ENT:CanProperty( ply, property )
+	return property ~= "bodygroups"
+end
+
 function ENT:TriggerInput( iname , value )
 
 	if ( iname == "Gear" and self.Gear != math.floor(value) ) then
