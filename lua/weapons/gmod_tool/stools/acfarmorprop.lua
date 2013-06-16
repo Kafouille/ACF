@@ -12,15 +12,15 @@ TOOL.ClientConVar["marmor"] = "1"
 TOOL.ClientConVar["area"] = "1"
 
 if CLIENT then
-	language.Add( "Tool.acfarmorprop.name", "ACF Armor Properties" )
-	language.Add( "Tool.acfarmorprop.desc", "Sets objects armor" )
-	language.Add( "Tool.acfarmorprop.0", "Left click to apply options. Right click to props properties. Reload to get Total Mass of a Constrained Contraption" )
+	language.Add( "Tool.acfarmorprop.name", "ACF Armour Properties" )
+	language.Add( "Tool.acfarmorprop.desc", "Sets the weight and thickness-vs-health bias of an object." )
+	language.Add( "Tool.acfarmorprop.0", "Left click to apply settings.  Right click to copy settings.  Reload to get the total mass of an object and all constrained objects." )
 	language.Add( "Tool_acfarmorprop_weight", "Weight:" )
 	language.Add( "Tool_acfarmorprop_thick" , "Armour Thickness")
-	language.Add( "Tool_acfarmorprop_thick_desc" , "Set a thickness and the weight will be scaled" )
+	language.Add( "Tool_acfarmorprop_thick_desc" , "Set a thickness and the weight will be set to provide it." )
 	language.Add( "Tool_acfarmorprop_ductility", "Ductility:" )
-	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets ductility of prop. Higher than zero will make prop more resistant to penetration but it will lower its health. Lower than zero will make prop less resistant to penetration but it will endure longer fire" )
-	language.Add( "Tool_acfarmorprop_zeromass", "Mass must be above 0!" )
+	language.Add( "Tool_acfarmorprop_ductility_desc" , "Sets object ductility (thickness-vs-health bias). A ductile prop can survive more damage but can be penetrated easily (slider > 0).  A non-ductile prop is brittle: hardened against penetration, but easily shattered by bullets and explosions (slider < 0)." )
+	language.Add( "Tool_acfarmorprop_zeromass", "Mass must be above zero!" )
 end
 
 local function ApplySettings( Player, Entity, Data )
