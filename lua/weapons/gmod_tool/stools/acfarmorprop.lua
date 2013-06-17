@@ -79,6 +79,7 @@ local function Recalc(Ply, What)
 	Ply:ConCommand("acfarmorprop_mhealth "..MHealth)
 	Ply:ConCommand("acfarmorprop_marmor "..MArmour)
 	Ply:ConCommand("acfarmorprop_reloadui")
+	return Mass
 end
 
 local function IsReallyValid(trace)
@@ -94,9 +95,10 @@ function TOOL:LeftClick( trace )
 	
 	self:GetOwner():ConCommand("acfarmorprop_area "..trace.Entity.ACF.Aera);
 	
-	Recalc(self:GetOwner())
+	--Recalc(self:GetOwner())
 	
-	local mass = tonumber(self:GetClientInfo("mass"))
+	--local mass = tonumber(self:GetClientInfo("mass"))
+	local mass = Recalc(self:GetOwner())
 	local ductility = tonumber(self:GetClientInfo("ductility"))
 	
 	ApplySettings( self:GetOwner(), trace.Entity, { Mass = mass, Ductility = ductility } )
