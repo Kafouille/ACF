@@ -34,7 +34,7 @@ function ACF_Activate ( Entity , Recalc )
 	if PhysObj:IsValid() and Count and Count>100 then
 
 		if not Entity.ACF.Aera then
-			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 8.05) * 0.52505066107
+			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 8.5) * 0.52505066107
 		end
 		--if not Entity.ACF.Volume then
 		--	Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
@@ -42,7 +42,7 @@ function ACF_Activate ( Entity , Recalc )
 	else
 		local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
 		if not Entity.ACF.Aera then
-			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 8.05
+			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 8.5
 		end
 		--if not Entity.ACF.Volume then
 		--	Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
