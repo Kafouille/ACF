@@ -243,7 +243,7 @@ function ACFHomeGUICreate( Table )
 	--start version
 	
 	acfmenupanel["CData"]["VersionInit"] = vgui.Create( "DLabel" )
-	versiontext = "Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
+	versiontext = "Version\n\n".."Git Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
 	acfmenupanel["CData"]["VersionInit"]:SetText(versiontext)	
 	acfmenupanel["CData"]["VersionInit"]:SetDark( true )
 	acfmenupanel["CData"]["VersionInit"]:SizeToContents()
@@ -301,6 +301,22 @@ function ACFHomeGUIUpdate( Table )
 	
 	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
 	acfmenupanel.CustomDisplay:PerformLayout()
+	
+	local color
+	local versionstring
+	if ACF.Version >= ACF.CurrentVersion then
+		versionstring = "Up To Date"
+		color = Color(0,225,0,255)
+	else
+		versionstring = "Out Of Date"
+		color = Color(225,0,0,255)
+
+	end
+	
+	acfmenupanel["CData"]["VersionText"]:SetText("ACF Is "..versionstring.."!\n\n\n\n")
+	acfmenupanel["CData"]["VersionText"]:SetDark( true )
+	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
+	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
 	
 end
 

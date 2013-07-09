@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 397 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 398 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Threshold = 225	--Health Divisor
@@ -197,7 +197,7 @@ end
 function ACF_UpdateChecking( )
 	
 	http.Fetch("https://github.com/nrlulz/ACF",function(contents,size)
-		local rev = tonumber(string.match( contents, "([0-9]+) commits" ))
+		local rev = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev and ACF.Version >= rev then
 			print("[ACF] ACF Is Up To Date, Latest Version: "..rev)
 			
