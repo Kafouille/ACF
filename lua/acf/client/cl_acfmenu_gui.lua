@@ -191,7 +191,7 @@ function PANEL:UpdateDisplay( Table )
 	end
 	--Create the space to display the custom data
 	acfmenupanel.CustomDisplay = vgui.Create( "DPanelList", acfmenupanel )	
-		acfmenupanel.CustomDisplay:SetSpacing( 5 )
+		acfmenupanel.CustomDisplay:SetSpacing( 10 )
 		acfmenupanel.CustomDisplay:EnableHorizontal( false ) 
 		acfmenupanel.CustomDisplay:EnableVerticalScrollbar( false ) 
 		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
@@ -321,11 +321,11 @@ function ACFHomeGUIUpdate( Table )
 end
 
 function ACFChangelogHTTPCallBack(contents , size)
-	
 	local Temp = string.Explode( "*", contents )
+	
 	acfmenupanel.Changelog = {}
 	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog[tonumber(string.sub(String,2,3))] = string.Trim(string.sub(String, 5))
+		acfmenupanel.Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
 	end
 	table.SortByKey(acfmenupanel.Changelog,true)
 	
@@ -333,9 +333,9 @@ function ACFChangelogHTTPCallBack(contents , size)
 		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
 		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
 	acfmenupanel:UpdateDisplay( Table )
-
+	
 end
-http.Fetch("http://acf.googlecode.com/svn/trunk/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
 
 function PANEL:AmmoSelect( Blacklist )
 	
@@ -384,11 +384,16 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-			acfmenupanel["CData"][Name]:SetText( Title )
-			acfmenupanel["CData"][Name]:SetDark( true )
+			acfmenupanel["CData"][Name].Label:SetSize( 0 ) --Note : this is intentional 
+			acfmenupanel["CData"][Name]:SetTall( 50 ) -- make the slider taller to fit the new label
 			acfmenupanel["CData"][Name]:SetMin( 0 )
 			acfmenupanel["CData"][Name]:SetMax( 1000 )
 			acfmenupanel["CData"][Name]:SetDecimals( Decimals )
+		acfmenupanel["CData"][Name.."_label"] = vgui.Create( "DLabel", acfmenupanel["CData"][Name]) -- recreating the label
+			acfmenupanel["CData"][Name.."_label"]:SetPos( 0,0 )
+			acfmenupanel["CData"][Name.."_label"]:SetText( Title )
+			acfmenupanel["CData"][Name.."_label"]:SizeToContents()
+			acfmenupanel["CData"][Name.."_label"]:SetDark( true )
 			if acfmenupanel.AmmoData[Name] then
 				acfmenupanel["CData"][Name]:SetValue(acfmenupanel.AmmoData[Name])
 			end
@@ -408,6 +413,7 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
 			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
+			acfmenupanel["CData"][Name.."_text"]:SetTall( 20 )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
