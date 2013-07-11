@@ -1,0 +1,8 @@
+r398
+--Repaired the Version Checker
+
+*r399
+--Added the changelog back
+--Changed Ammo/Gearbox sliders.
+
+
