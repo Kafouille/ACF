@@ -236,7 +236,7 @@ end
 function ENT:TriggerInput( iname , value )
 	
 	if (iname == "Unload" and value > 0) then
-		timer.Simple( 0, self.UnloadAmmo() )
+		self:UnloadAmmo()
 	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
 		if self.NextFire < CurTime() then
 			self.User = self:GetUser(self.Inputs["Fire"].Src)
@@ -247,10 +247,8 @@ function ENT:TriggerInput( iname , value )
 		self.Firing = true
 	elseif ( iname == "Fire" and value <= 0 ) then
 		self.Firing = false
-	elseif ( iname == "Reload" and value > 0 ) then
+	elseif ( iname == "Reload" and value ~= 0 ) then
 		self.Reloading = true
-	elseif ( iname == "Reload" and value <= 0 ) then
-		self.Reloading = false
 	end		
 end
 
