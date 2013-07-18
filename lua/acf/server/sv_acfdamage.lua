@@ -264,6 +264,7 @@ end
 function ACF_HEKill( Entity , HitVector , Energy )
 	--print("ACF_HEKill ent: ".. Entity:GetModel() or "unknown")
 	--print("ACF_HEKill Energy "..Energy or "nill")
+	
 	local obj = Entity:GetPhysicsObject()
 	local grav = true
 	local mass = nil
@@ -273,6 +274,10 @@ function ACF_HEKill( Entity , HitVector , Energy )
 	end
 	constraint.RemoveAll( Entity )
 	Entity:Remove()
+	
+	if(Entity:BoundingRadius() < ACF.DebrisScale) then
+		return nil
+	end
 	
 	local Debris = ents.Create( "Debris" )
 		Debris:SetModel( Entity:GetModel() )
@@ -300,6 +305,10 @@ function ACF_APKill( Entity , HitVector , Power )
 
 	constraint.RemoveAll( Entity )
 	Entity:Remove()
+	
+	if(Entity:BoundingRadius() < ACF.DebrisScale) then
+		return nil
+	end
 
 	local Debris = ents.Create( "Debris" )
 		Debris:SetModel( Entity:GetModel() )

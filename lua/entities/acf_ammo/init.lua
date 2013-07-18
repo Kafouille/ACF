@@ -164,7 +164,7 @@ function ENT:Update( ArgsTable )
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
 	local AmmoMass = self:AmmoMass()
 	self.Mass = math.min(self.EmptyMass, self:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
-		
+	
 	return true, msg
 end
 

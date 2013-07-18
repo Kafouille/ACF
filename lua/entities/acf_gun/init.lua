@@ -128,7 +128,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	Owner:AddCount("_acf_gun", Gun)
 	Owner:AddCleanup( "acfmenu", Gun )
-	
+	ACF_Activate(Gun, 0)
 	return Gun
 end
 list.Set( "ACFCvars", "acf_gun" , {"id"} )
@@ -236,7 +236,7 @@ end
 function ENT:TriggerInput( iname , value )
 	
 	if (iname == "Unload" and value > 0) then
-		self:UnloadAmmo()
+		timer.Simple( 0, self.UnloadAmmo() )
 	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
 		if self.NextFire < CurTime() then
 			self.User = self:GetUser(self.Inputs["Fire"].Src)
@@ -247,8 +247,10 @@ function ENT:TriggerInput( iname , value )
 		self.Firing = true
 	elseif ( iname == "Fire" and value <= 0 ) then
 		self.Firing = false
-	elseif ( iname == "Reload" and value ~= 0 ) then
+	elseif ( iname == "Reload" and value > 0 ) then
 		self.Reloading = true
+	elseif ( iname == "Reload" and value <= 0 ) then
+		self.Reloading = false
 	end		
 end
 
@@ -384,7 +386,12 @@ function ENT:FireShell()
 		
 			local MuzzlePos = self:LocalToWorld(self.Muzzle)
 			local MuzzleVec = self:GetForward()
-			local Inaccuracy = VectorRand() / 360 * self.Inaccuracy
+			local SpreadScale = ACF.SpreadScale
+			local IaccMult = 1
+			if (self.ACF.Health and self.ACF.MaxHealth) then
+				IaccMult = math.Clamp(((1 - SpreadScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, 1, SpreadScale)
+			end
+			local Inaccuracy = (VectorRand() / 360 * self.Inaccuracy) * IaccMult
 			
 			self:MuzzleEffect( MuzzlePos , MuzzleVec )
 			

@@ -43,7 +43,8 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.Model = List["Mobility"][Id]["model"]
 	Engine.SoundPath = List["Mobility"][Id]["sound"]
 	Engine.Weight = List["Mobility"][Id]["weight"]
-	Engine.PeakTorque = List["Mobility"][Id]["torque"]
+	Engine.PeakTorqueHeld = List["Mobility"][Id]["torque"]
+	Engine.PeakTorque = Engine.PeakTorqueHeld
 	Engine.IdleRPM = List["Mobility"][Id]["idlerpm"]
 	Engine.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	Engine.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
@@ -53,6 +54,8 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.elecpower = List["Mobility"][Id]["elecpower"]
 	Engine.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"]
 	Engine.IsTrans = List["Mobility"][Id]["istrans"] -- driveshaft outputs to the side
+	
+	Engine.SpecialHealth = true
 
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
@@ -85,7 +88,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	
 	Owner:AddCount("_acf_engine", Engine)
 	Owner:AddCleanup( "acfmenu", Engine )
-
+	ACF_Activate( Engine, 0 )
 	return Engine
 end
 list.Set( "ACFCvars", "acf_engine" , {"id"} )
@@ -113,7 +116,8 @@ function ENT:Update( ArgsTable )
 	self.Id = Id
 	self.SoundPath = List["Mobility"][Id]["sound"]
 	self.Weight = List["Mobility"][Id]["weight"]
-	self.PeakTorque = List["Mobility"][Id]["torque"]
+	self.PeakTorqueHeld = List["Mobility"][Id]["torque"]
+	self.PeakTorque = self.PeakTorqueHeld
 	self.IdleRPM = List["Mobility"][Id]["idlerpm"]
 	self.PeakMinRPM = List["Mobility"][Id]["peakminrpm"]
 	self.PeakMaxRPM = List["Mobility"][Id]["peakmaxrpm"]
@@ -123,6 +127,8 @@ function ENT:Update( ArgsTable )
 	self.elecpower = List["Mobility"][Id]["elecpower"] -- how much power does it output
 	self.FlywheelOverride = List["Mobility"][Id]["flywheeloverride"] -- how much power does it output
 	self.IsTrans = List["Mobility"][Id]["istrans"]
+	
+	self.SpecialHealth = true
 
 	self:SetModel( self.Model )	
 	self:SetSolid( SOLID_VPHYSICS )
@@ -145,7 +151,7 @@ function ENT:Update( ArgsTable )
 	self:SetNetworkedBeamInt("MinRPM",self.PeakMinRPM)
 	self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
-
+	ACF_Activate( Engine, 1 )
 	return true, "Engine updated successfully!"
 end
 
@@ -174,6 +180,58 @@ function ENT:TriggerInput( iname , value )
 	end
 end
 
+function ENT:ACF_Activate()
+	--Density of steel = 7.8g cm3 so 7.8kg for a 1mx1m plate 1m thick
+	local Entity = self
+	Entity.ACF = Entity.ACF or {} 
+	
+	local Count
+	local PhysObj = Entity:GetPhysicsObject()
+	if PhysObj:GetMesh() then Count = #PhysObj:GetMesh() end
+	if PhysObj:IsValid() and Count and Count>100 then
+
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = (PhysObj:GetSurfaceArea() * 6.45) * 0.52505066107
+		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = (PhysObj:GetVolume() * 16.38)
+		--end
+	else
+		local Size = Entity.OBBMaxs(Entity) - Entity.OBBMins(Entity)
+		if not Entity.ACF.Aera then
+			Entity.ACF.Aera = ((Size.x * Size.y)+(Size.x * Size.z)+(Size.y * Size.z)) * 6.45
+		end
+		--if not Entity.ACF.Volume then
+		--	Entity.ACF.Volume = Size.x * Size.y * Size.z * 16.38
+		--end
+	end
+	
+	Entity.ACF.Ductility = Entity.ACF.Ductility or 0
+	--local Area = (Entity.ACF.Aera+Entity.ACF.Aera*math.Clamp(Entity.ACF.Ductility,-0.8,0.8))
+	local Area = (Entity.ACF.Aera)
+	--local Armour = (Entity:GetPhysicsObject():GetMass()*1000 / Area / 0.78) / (1 + math.Clamp(Entity.ACF.Ductility, -0.8, 0.8))^(1/2)	--So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
+	local Armour = (Entity:GetPhysicsObject():GetMass()*1000 / Area / 0.78) 
+	--local Health = (Area/ACF.Threshold) * (1 + math.Clamp(Entity.ACF.Ductility, -0.8, 0.8))												--Setting the threshold of the prop aera gone
+	local Health = (Area/ACF.Threshold)
+	
+	local Percent = 1 
+	
+	if Recalc and Entity.ACF.Health and Entity.ACF.MaxHealth then
+		Percent = Entity.ACF.Health/Entity.ACF.MaxHealth
+	end
+	
+	Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
+	Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
+	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
+	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
+	Entity.ACF.Type = nil
+	Entity.ACF.Mass = PhysObj:GetMass()
+	--Entity.ACF.Density = (PhysObj:GetMass()*1000)/Entity.ACF.Volume
+	
+	Entity.ACF.Type = "Prop"
+	--print(Entity.ACF.Health)
+end
+
 function ENT:Think()
 
 	local Time = CurTime()
@@ -194,7 +252,6 @@ function ENT:Think()
 
 			self.LastCheck = Time + math.Rand(5, 10)
 		end
-
 	end
 
 	self.LastThink = Time
@@ -260,6 +317,13 @@ function ENT:CalcRPM()
 	//local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
 	
 	-- Calculate the current torque from flywheel RPM
+	local TorqueScale = ACF.TorqueScale
+	local TorqueMult = 1
+	if (self.ACF.Health and self.ACF.MaxHealth) then
+		TorqueMult = math.Clamp(((1 - TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, TorqueScale, 1)
+	end
+	self.PeakTorque = self.PeakTorqueHeld * TorqueMult
+
 	self.Torque = self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
 	
 	local Drag 
