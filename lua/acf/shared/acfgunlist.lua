@@ -1003,6 +1003,46 @@ local AmmoLarge = {}
 	AmmoLarge.weight = 1000
 AmmoTable["AmmoLarge"] = AmmoLarge
 
+local Ammo1x1x8 = {}
+	Ammo1x1x8.id = "Ammo1x1x8"
+	Ammo1x1x8.ent = "acf_ammo"
+	Ammo1x1x8.type = "Ammo"
+	Ammo1x1x8.name = "Modular Ammo Crate"
+	Ammo1x1x8.desc = "Modular Ammo Crate 1x1x8 Size\n"
+	Ammo1x1x8.model = "models/ammocrates/ammo_1x1x8.mdl"
+	Ammo1x1x8.weight = 40
+AmmoTable["Ammo1x1x8"] = Ammo1x1x8
+
+local Ammo1x1x6 = {}
+	Ammo1x1x6.id = "Ammo1x1x6"
+	Ammo1x1x6.ent = "acf_ammo"
+	Ammo1x1x6.type = "Ammo"
+	Ammo1x1x6.name = "Modular Ammo Crate"
+	Ammo1x1x6.desc = "Modular Ammo Crate 1x1x6 Size\n"
+	Ammo1x1x6.model = "models/ammocrates/ammo_1x1x6.mdl"
+	Ammo1x1x6.weight = 30
+AmmoTable["Ammo1x1x6"] = Ammo1x1x6
+
+local Ammo1x1x4 = {}
+	Ammo1x1x4.id = "Ammo1x1x4"
+	Ammo1x1x4.ent = "acf_ammo"
+	Ammo1x1x4.type = "Ammo"
+	Ammo1x1x4.name = "Modular Ammo Crate"
+	Ammo1x1x4.desc = "Modular Ammo Crate 1x1x4 Size\n"
+	Ammo1x1x4.model = "models/ammocrates/ammo_1x1x4.mdl"
+	Ammo1x1x4.weight = 20
+AmmoTable["Ammo1x1x4"] = Ammo1x1x4
+
+local Ammo1x1x2 = {}
+	Ammo1x1x2.id = "Ammo1x1x2"
+	Ammo1x1x2.ent = "acf_ammo"
+	Ammo1x1x2.type = "Ammo"
+	Ammo1x1x2.name = "Modular Ammo Crate"
+	Ammo1x1x2.desc = "Modular Ammo Crate 1x1x2 Size\n"
+	Ammo1x1x2.model = "models/ammocrates/ammo_1x1x2.mdl"
+	Ammo1x1x2.weight = 10
+AmmoTable["Ammo1x1x2"] = Ammo1x1x2
+
 local Ammo2x2x1 = {}
 	Ammo2x2x1.id = "Ammo2x2x1"
 	Ammo2x2x1.ent = "acf_ammo"
@@ -1032,6 +1072,26 @@ local Ammo2x2x4 = {}
 	Ammo2x2x4.model = "models/ammocrates/ammocrate_2x2x4.mdl"
 	Ammo2x2x4.weight = 80
 AmmoTable["Ammo2x2x4"] = Ammo2x2x4
+
+local Ammo2x2x6 = {}
+	Ammo2x2x6.id = "Ammo2x2x6"
+	Ammo2x2x6.ent = "acf_ammo"
+	Ammo2x2x6.type = "Ammo"
+	Ammo2x2x6.name = "Modular Ammo Crate"
+	Ammo2x2x6.desc = "Modular Ammo Crate 2x2x6 Size\n"
+	Ammo2x2x6.model = "models/ammocrates/ammo_2x2x6.mdl"
+	Ammo2x2x6.weight = 120
+AmmoTable["Ammo2x2x6"] = Ammo2x2x6
+
+local Ammo2x2x8 = {}
+	Ammo2x2x8.id = "Ammo2x2x8"
+	Ammo2x2x8.ent = "acf_ammo"
+	Ammo2x2x8.type = "Ammo"
+	Ammo2x2x8.name = "Modular Ammo Crate"
+	Ammo2x2x8.desc = "Modular Ammo Crate 2x2x8 Size\n"
+	Ammo2x2x8.model = "models/ammocrates/ammo_2x2x8.mdl"
+	Ammo2x2x8.weight = 160
+AmmoTable["Ammo2x2x8"] = Ammo2x2x8
 
 local Ammo2x3x1 = {}
 	Ammo2x3x1.id = "Ammo2x3x1"
@@ -1163,6 +1223,16 @@ local Ammo3x4x8 = {}
 	Ammo3x4x8.weight = 480
 AmmoTable["Ammo3x4x8"] = Ammo3x4x8
 
+local Ammo4x4x1 = {}
+	Ammo4x4x1.id = "Ammo4x4x1"
+	Ammo4x4x1.ent = "acf_ammo"
+	Ammo4x4x1.type = "Ammo"
+	Ammo4x4x1.name = "Modular Ammo Crate"
+	Ammo4x4x1.desc = "Modular Ammo Crate 4x4x1 Size\n"
+	Ammo4x4x1.model = "models/ammocrates/ammo_4x4x1.mdl"
+	Ammo4x4x1.weight = 80
+AmmoTable["Ammo4x4x1"] = Ammo4x4x1
+
 local Ammo4x4x2 = {}
 	Ammo4x4x2.id = "Ammo4x4x2"
 	Ammo4x4x2.ent = "acf_ammo"
@@ -1202,5 +1272,38 @@ local Ammo4x4x8 = {}
 	Ammo4x4x8.model = "models/ammocrates/ammocrate_4x4x8.mdl"
 	Ammo4x4x8.weight = 640
 AmmoTable["Ammo4x4x8"] = Ammo4x4x8
+
+
+local Ammo4x6x8 = {}
+	Ammo4x6x8.id = "Ammo4x6x8"
+	Ammo4x6x8.ent = "acf_ammo"
+	Ammo4x6x8.type = "Ammo"
+	Ammo4x6x8.name = "Modular Ammo Crate"
+	Ammo4x6x8.desc = "Modular Ammo Crate 4x6x8 Size\n"
+	Ammo4x6x8.model = "models/ammocrates/ammo_4x6x8.mdl"
+	Ammo4x6x8.weight = 800
+AmmoTable["Ammo4x6x8"] = Ammo4x6x8
+
+
+local Ammo4x6x6 = {}
+	Ammo4x6x6.id = "Ammo4x6x6"
+	Ammo4x6x6.ent = "acf_ammo"
+	Ammo4x6x6.type = "Ammo"
+	Ammo4x6x6.name = "Modular Ammo Crate"
+	Ammo4x6x6.desc = "Modular Ammo Crate 4x6x6 Size\n"
+	Ammo4x6x6.model = "models/ammocrates/ammo_4x6x6.mdl"
+	Ammo4x6x6.weight = 720
+AmmoTable["Ammo4x6x6"] = Ammo4x6x6
+
+
+local Ammo4x8x8 = {}
+	Ammo4x8x8.id = "Ammo4x8x8"
+	Ammo4x8x8.ent = "acf_ammo"
+	Ammo4x8x8.type = "Ammo"
+	Ammo4x8x8.name = "Modular Ammo Crate"
+	Ammo4x8x8.desc = "Modular Ammo Crate 4x8x8 Size\n"
+	Ammo4x8x8.model = "models/ammocrates/ammo_4x8x8.mdl"
+	Ammo4x8x8.weight = 960
+AmmoTable["Ammo4x8x8"] = Ammo4x8x8
 	
 list.Set( "ACFEnts", "Ammo", AmmoTable )	--end ammo containers listing
