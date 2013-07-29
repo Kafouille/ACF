@@ -166,7 +166,7 @@ local AC20mm = {}
 	AC20mm.model = "models/autocannon/autocannon_20mm.mdl"
 	AC20mm.caliber = 2.0
 	AC20mm.gunclass = "AC"
-	AC20mm.weight = 380
+	AC20mm.weight = 360
 	AC20mm.year = 1930
 		AC20mm.round = {}
 		AC20mm.round.id = "20mmAC"
@@ -190,7 +190,7 @@ local AC30mm = {}
 	AC30mm.model = "models/autocannon/autocannon_30mm.mdl"
 	AC30mm.caliber = 3.0
 	AC30mm.gunclass = "AC"
-	AC30mm.weight = 1000
+	AC30mm.weight = 960
 	AC30mm.year = 1935
 		AC30mm.round = {}
 		AC30mm.round.id = "30mmAC"
@@ -214,13 +214,13 @@ local AC40mm = {}
 	AC40mm.model = "models/autocannon/autocannon_40mm.mdl"
 	AC40mm.caliber = 4.0
 	AC40mm.gunclass = "AC"
-	AC40mm.weight = 1600
+	AC40mm.weight = 1500
 	AC40mm.year = 1940
 		AC40mm.round = {}
 		AC40mm.round.id = "40mmAC"
 		AC40mm.round.maxlength = 45
 		AC40mm.round.propweight = 0.9
-	AC40mm.rofmod = 1
+	AC40mm.rofmod = 0.92
 	AC40mm.magsize = 30
 	AC40mm.magreload = 3
 	if ( CLIENT ) then
@@ -238,13 +238,13 @@ local AC50mm = {}
 	AC50mm.model = "models/autocannon/autocannon_50mm.mdl"
 	AC50mm.caliber = 5.0
 	AC50mm.gunclass = "AC"
-	AC50mm.weight = 2200
+	AC50mm.weight = 2130
 	AC50mm.year = 1965
 		AC50mm.round = {}
 		AC50mm.round.id = "50mmAC"
 		AC50mm.round.maxlength = 52
 		AC50mm.round.propweight = 1.2
-	AC50mm.rofmod = 1
+	AC50mm.rofmod = 0.9
 	AC50mm.magsize = 20
 	AC50mm.magreload = 3
 	if ( CLIENT ) then
@@ -287,7 +287,7 @@ local SA37mm = {}
 	SA37mm.model = "models/autocannon/semiautocannon_37mm.mdl"
 	SA37mm.caliber = 3.7
 	SA37mm.gunclass = "SA"
-	SA37mm.weight = 500
+	SA37mm.weight = 480
 	SA37mm.year = 1940
 		SA37mm.round = {}
 		SA37mm.round.id = "37mmSA"
@@ -311,15 +311,15 @@ local SA45mm = {}
 	SA45mm.model = "models/autocannon/semiautocannon_45mm.mdl"
 	SA45mm.caliber = 4.5
 	SA45mm.gunclass = "SA"
-	SA45mm.weight = 900
+	SA45mm.weight = 870
 	SA45mm.year = 1965
 		SA45mm.round = {}
 		SA45mm.round.id = "45mmSA"
 		SA45mm.round.maxlength = 52
 		SA45mm.round.propweight = 1.8
 	SA45mm.rofmod = 1
-	SA45mm.magsize = 5
-	SA45mm.magreload = 5
+	SA45mm.magsize = 6
+	SA45mm.magreload = 4
 	if ( CLIENT ) then
 		SA45mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		SA45mm.guiupdate = function() return end
@@ -335,21 +335,46 @@ local SA57mm = {}
 	SA57mm.model = "models/autocannon/semiautocannon_57mm.mdl"
 	SA57mm.caliber = 5.7
 	SA57mm.gunclass = "SA"
-	SA57mm.weight = 1600
+	SA57mm.weight = 1560
 	SA57mm.year = 1965
 		SA57mm.round = {}
 		SA57mm.round.id = "57mmSA"
-		SA57mm.round.maxlength = 60
+		SA57mm.round.maxlength = 62
 		SA57mm.round.propweight = 2
 	SA57mm.rofmod = 1
 	SA57mm.magsize = 5
-	SA57mm.magreload = 5
+	SA57mm.magreload = 4.5
 	if ( CLIENT ) then
 		SA57mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		SA57mm.guiupdate = function() return end
 	end
 GunTable["57mmSA"] = SA57mm
 
+--12.7mmRAC--
+local RAC127mm = {}
+	RAC127mm.id = "12.7mmRAC"
+	RAC127mm.ent = "acf_gun"
+	RAC127mm.type = "Guns"
+	RAC127mm.name = "12.7mm Rotary Autocannon"
+	RAC127mm.desc = "Small RAC for light combat vehicles, won't do much against heavier targets, but should chew up light vehicles."
+	RAC127mm.model = "models/rotarycannon/rotarycannon_127mm.mdl"
+	RAC127mm.caliber = 1.27
+	RAC127mm.gunclass = "RAC"
+	RAC127mm.weight = 760
+	RAC127mm.year = 1965
+		RAC127mm.round = {}
+		RAC127mm.round.id = "12.7mmRAC"
+		RAC127mm.round.maxlength = 17
+		RAC127mm.round.propweight = 0.076
+	RAC127mm.magsize = 25
+	RAC127mm.magreload = 1.5
+	RAC127mm.rofmod = 1.1
+	if ( CLIENT ) then
+		RAC127mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		RAC127mm.guiupdate = function() return end
+	end
+GunTable["12.7mmRAC"] = RAC127mm
+	
 local RAC20mm = {}
 	RAC20mm.id = "20mmRAC"
 	RAC20mm.ent = "acf_gun"
@@ -365,8 +390,8 @@ local RAC20mm = {}
 		RAC20mm.round.id = "20mmRAC"
 		RAC20mm.round.maxlength = 28
 		RAC20mm.round.propweight = 0.12
-	RAC20mm.magsize = 20
-	RAC20mm.magreload = 2.5
+	RAC20mm.magsize = 25
+	RAC20mm.magreload = 1.5
 	if ( CLIENT ) then
 		RAC20mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		RAC20mm.guiupdate = function() return end
@@ -388,8 +413,8 @@ local RAC30mm = {}
 		RAC30mm.round.id = "30mmRAC"
 		RAC30mm.round.maxlength = 39
 		RAC30mm.round.propweight = 0.350
-	RAC30mm.magsize = 20
-	RAC30mm.magreload = 2.5
+	RAC30mm.magsize = 25
+	RAC30mm.magreload = 1.5
 	if ( CLIENT ) then
 		RAC30mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		RAC30mm.guiupdate = function() return end
@@ -411,7 +436,7 @@ local AL100mm = {}
 	-- new stuff
 	AL100mm.rofmod = 0.8
 	AL100mm.magsize = 6
-	AL100mm.magreload = 20
+	AL100mm.magreload = 18
 	--
 		AL100mm.round = {}
 		AL100mm.round.id = "100mmAL"
@@ -437,7 +462,7 @@ local AL120mm = {}
 	-- new stuff
 	AL120mm.rofmod = 0.8
 	AL120mm.magsize = 4
-	AL120mm.magreload = 30
+	AL120mm.magreload = 27
 	--
 		AL120mm.round = {}
 		AL120mm.round.id = "120mmAL"
@@ -463,7 +488,7 @@ local AL140mm = {}
 	-- new stuff
 	AL140mm.rofmod = 0.8
 	AL140mm.magsize = 4
-	AL140mm.magreload = 40
+	AL140mm.magreload = 35
 	--
 		AL140mm.round = {}
 		AL140mm.round.id = "140mmAL"
@@ -474,6 +499,33 @@ local AL140mm = {}
 		AL140mm.guiupdate = function() return end
 	end
 GunTable["140mmAL"] = AL140mm	
+
+--170mmAL--
+local AL170mm = {}
+	AL170mm.id = "170mmAL"
+	AL170mm.ent = "acf_gun"
+	AL170mm.type = "Guns"
+	AL170mm.name = "170mm Autoloading Cannon"
+	AL170mm.desc = "Fast firing, high velocity gun, however bulky, heavy and slow to reload.  The 170mm can shred an average 40ton tank's armor with one magazine."
+	AL170mm.model = "models/tankgun/tankgun_al_170mm.mdl"
+	AL170mm.caliber = 17.0
+	AL170mm.gunclass = "AL"
+	AL170mm.weight = 13350
+	AL170mm.year = 1970
+	-- new stuff
+	AL170mm.rofmod = 0.8
+	AL170mm.magsize = 4
+	AL170mm.magreload = 40
+	--
+		AL170mm.round = {}
+		AL170mm.round.id = "170mmAL"
+		AL170mm.round.maxlength = 154
+		AL170mm.round.propweight = 34
+	if ( CLIENT ) then
+		AL170mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		AL170mm.guiupdate = function() return end
+	end
+GunTable["170mmAL"] = AL170mm	
 
 local AL75mm = {}
 	AL75mm.id = "75mmAL"
@@ -489,7 +541,7 @@ local AL75mm = {}
 	-- new stuff
 	AL75mm.rofmod = 0.8
 	AL75mm.magsize = 6
-	AL75mm.magreload = 15
+	AL75mm.magreload = 14
 	--
 		AL75mm.round = {}
 		AL75mm.round.id = "75mmAL"
@@ -501,9 +553,6 @@ local AL75mm = {}
 	end
 GunTable["75mmAL"] = AL75mm
 	
-
-
-
 local Gun50mm = {}
 	Gun50mm.id = "50mmC"
 	Gun50mm.ent = "acf_gun"
@@ -609,6 +658,28 @@ local Gun140mm = {}
 		Gun140mm.guiupdate = function() return end
 	end
 GunTable["140mmC"] = Gun140mm
+
+--170mmC--
+local Gun170mm = {}
+	Gun170mm.id = "170mmC"
+	Gun170mm.ent = "acf_gun"
+	Gun170mm.type = "Guns"
+	Gun170mm.name = "170mm Tank Gun"
+	Gun170mm.desc = "High velocity guns that can fire very powerful ammunition, but are rather slow to reload. The 170mm fires a gigantic shell with ginormous penetrative capability, but has a glacial reload speed and an extremely hefty weight."
+	Gun170mm.model = "models/tankgun/tankgun_170mm.mdl"
+	Gun170mm.caliber = 17.0
+	Gun170mm.gunclass = "C"
+	Gun170mm.weight = 12350
+	Gun170mm.year = 1990
+		Gun170mm.round = {}
+		Gun170mm.round.id = "170mmC"
+		Gun170mm.round.maxlength = 154
+		Gun170mm.round.propweight = 34
+	if ( CLIENT ) then
+		Gun170mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		Gun170mm.guiupdate = function() return end
+	end
+GunTable["170mmC"] = Gun170mm
 	
 local How75mm = {}
 	How75mm.id = "75mmHW"
@@ -665,7 +736,7 @@ local How122mm = {}
 	How122mm.year = 1900
 		How122mm.round = {}
 		How122mm.round.id = "122mmHW"
-		How122mm.round.maxlength = 100
+		How122mm.round.maxlength = 104
 		How122mm.round.propweight = 6
 	if ( CLIENT ) then
 		How122mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
@@ -699,7 +770,7 @@ local How203mm = {}
 	How203mm.ent = "acf_gun"
 	How203mm.type = "Guns"
 	How203mm.name = "203mm Howitzer"
-	How203mm.desc = "An 8-inch deck gun, found on siege artillery and cruisers.  IT WILL END YOU."
+	How203mm.desc = "An 8-inch deck gun, found on siege artillery and cruisers."
 	How203mm.model = "models/howitzer/howitzer_203mm.mdl"
 	How203mm.caliber = 20.3
 	How203mm.gunclass = "HW"
@@ -714,6 +785,50 @@ local How203mm = {}
 		How203mm.guiupdate = function() return end
 	end
 GunTable["203mmHW"] = How203mm
+
+--240mmHW--	
+local How240mm = {}
+	How240mm.id = "240mmHW"
+	How240mm.ent = "acf_gun"
+	How240mm.type = "Guns"
+	How240mm.name = "240mm Howitzer"
+	How240mm.desc = "An 9.4-inch deck gun, found on heavy siege artillery and cruisers."
+	How240mm.model = "models/howitzer/howitzer_240mm.mdl"
+	How240mm.caliber = 24.0
+	How240mm.gunclass = "HW"
+	How240mm.weight = 12980
+	How240mm.year = 1900
+		How240mm.round = {}
+		How240mm.round.id = "240mmHW"
+		How240mm.round.maxlength = 192.0
+		How240mm.round.propweight = 33.7
+	if ( CLIENT ) then
+		How240mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		How240mm.guiupdate = function() return end
+	end
+GunTable["240mmHW"] = How240mm
+
+--290mmHW--
+local How290mm = {}
+	How290mm.id = "290mmHW"
+	How290mm.ent = "acf_gun"
+	How290mm.type = "Guns"
+	How290mm.name = "290mm Howitzer"
+	How290mm.desc = " Mother of all howitzers. This 12in beast can be found on battleships. It WILL fuck your day up... when it reloads."
+	How290mm.model = "models/howitzer/howitzer_290mm.mdl"
+	How290mm.caliber = 29
+	How290mm.gunclass = "HW"
+	How290mm.weight = 24960
+	How290mm.year = 1900
+		How290mm.round = {}
+		How290mm.round.id = "290mmHW"
+		How290mm.round.maxlength = 325
+		How290mm.round.propweight = 57.0
+	if ( CLIENT ) then
+		How290mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		How290mm.guiupdate = function() return end
+	end
+GunTable["290mmHW"] = How290mm
 	
 local GL40mm = {}
 	GL40mm.id = "40mmGL"
@@ -799,6 +914,28 @@ local MO120mm = {}
 	end
 GunTable["120mmM"] = MO120mm
 	
+--150mmM--
+local MO150mm = {}
+	MO150mm.id = "150mmM"
+	MO150mm.ent = "acf_gun"
+	MO150mm.type = "Guns"
+	MO150mm.name = "150mm Mortar"
+	MO150mm.desc = "Mortars are able to fire shells with extremely high useful payloads from a light weight gun, at the price of a low rate of fire and extremely limited velocities. The perfect balance between the 120mm and the 200mm. Can prove a worthy main gun weapon, as well as a mighty good mortar emplacement"
+	MO150mm.model = "models/mortar/mortar_150mm.mdl"
+	MO150mm.caliber = 15.0
+	MO150mm.gunclass = "MO"
+	MO150mm.weight = 1745
+	MO150mm.year = 1945
+		MO150mm.round = {}
+		MO150mm.round.id = "150mmM"
+		MO150mm.round.maxlength = 63
+		MO150mm.round.propweight = 0.255 
+	if ( CLIENT ) then
+		MO150mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		MO150mm.guiupdate = function() return end
+	end
+GunTable["150mmM"] = MO150mm
+	
 local MO200mm = {}
 	MO200mm.id = "200mmM"
 	MO200mm.ent = "acf_gun"
@@ -819,6 +956,28 @@ local MO200mm = {}
 		MO200mm.guiupdate = function() return end
 	end
 GunTable["200mmM"] = MO200mm
+
+--280mmM--
+local MO280mm = {}
+	MO280mm.id = "280mmM"
+	MO280mm.ent = "acf_gun"
+	MO280mm.type = "Guns"
+	MO280mm.name = "280mm Mortar"
+	MO280mm.desc = "Mortars are able to fire shells with extremely high useful payloads from a light weight gun, at the price of a low rate of fire and extremely limited velocities. Massive payload, with a reload time to match. Found in rare WW2 siege artillery pieces. It's the perfect size for a jeep."
+	MO280mm.model = "models/mortar/mortar_280mm.mdl"
+	MO280mm.caliber = 28.0
+	MO280mm.gunclass = "MO"
+	MO280mm.weight = 9035
+	MO280mm.year = 1945
+		MO280mm.round = {}
+		MO280mm.round.id = "280mmM"
+		MO280mm.round.maxlength = 138
+		MO280mm.round.propweight = 0.462 
+	if ( CLIENT ) then
+		MO280mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
+		MO280mm.guiupdate = function() return end
+	end
+GunTable["280mmM"] = MO280mm
 
 local SL40mm = {}
 	SL40mm.id = "40mmSL"
@@ -970,7 +1129,7 @@ local AmmoSmall = {}
 	AmmoSmall.name = "Small Ammo Crate"
 	AmmoSmall.desc = "Small ammo crate\n"
 	AmmoSmall.model = "models/ammocrate_small.mdl"
-	AmmoSmall.weight = 7
+	AmmoSmall.weight = 10
 AmmoTable["AmmoSmall"] = AmmoSmall
 
 local AmmoMedCube = {}
