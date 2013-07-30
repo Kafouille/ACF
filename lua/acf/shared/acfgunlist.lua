@@ -351,6 +351,7 @@ local SA57mm = {}
 GunTable["57mmSA"] = SA57mm
 
 --12.7mmRAC--
+--[[
 local RAC127mm = {}
 	RAC127mm.id = "12.7mmRAC"
 	RAC127mm.ent = "acf_gun"
@@ -374,7 +375,8 @@ local RAC127mm = {}
 		RAC127mm.guiupdate = function() return end
 	end
 GunTable["12.7mmRAC"] = RAC127mm
-	
+]]--	
+
 local RAC20mm = {}
 	RAC20mm.id = "20mmRAC"
 	RAC20mm.ent = "acf_gun"
@@ -499,7 +501,7 @@ local AL140mm = {}
 		AL140mm.guiupdate = function() return end
 	end
 GunTable["140mmAL"] = AL140mm	
-
+--[[
 --170mmAL--
 local AL170mm = {}
 	AL170mm.id = "170mmAL"
@@ -526,6 +528,7 @@ local AL170mm = {}
 		AL170mm.guiupdate = function() return end
 	end
 GunTable["170mmAL"] = AL170mm	
+]]--
 
 local AL75mm = {}
 	AL75mm.id = "75mmAL"
@@ -659,6 +662,7 @@ local Gun140mm = {}
 	end
 GunTable["140mmC"] = Gun140mm
 
+--[[
 --170mmC--
 local Gun170mm = {}
 	Gun170mm.id = "170mmC"
@@ -680,7 +684,8 @@ local Gun170mm = {}
 		Gun170mm.guiupdate = function() return end
 	end
 GunTable["170mmC"] = Gun170mm
-	
+]]--	
+
 local How75mm = {}
 	How75mm.id = "75mmHW"
 	How75mm.ent = "acf_gun"
@@ -786,6 +791,7 @@ local How203mm = {}
 	end
 GunTable["203mmHW"] = How203mm
 
+--[[
 --240mmHW--	
 local How240mm = {}
 	How240mm.id = "240mmHW"
@@ -829,7 +835,8 @@ local How290mm = {}
 		How290mm.guiupdate = function() return end
 	end
 GunTable["290mmHW"] = How290mm
-	
+]]--	
+
 local GL40mm = {}
 	GL40mm.id = "40mmGL"
 	GL40mm.ent = "acf_gun"
@@ -914,6 +921,7 @@ local MO120mm = {}
 	end
 GunTable["120mmM"] = MO120mm
 	
+--[[
 --150mmM--
 local MO150mm = {}
 	MO150mm.id = "150mmM"
@@ -935,7 +943,7 @@ local MO150mm = {}
 		MO150mm.guiupdate = function() return end
 	end
 GunTable["150mmM"] = MO150mm
-	
+--]]	
 local MO200mm = {}
 	MO200mm.id = "200mmM"
 	MO200mm.ent = "acf_gun"
@@ -957,7 +965,7 @@ local MO200mm = {}
 	end
 GunTable["200mmM"] = MO200mm
 
---280mmM--
+--[[280mmM--
 local MO280mm = {}
 	MO280mm.id = "280mmM"
 	MO280mm.ent = "acf_gun"
@@ -978,6 +986,7 @@ local MO280mm = {}
 		MO280mm.guiupdate = function() return end
 	end
 GunTable["280mmM"] = MO280mm
+]]--
 
 local SL40mm = {}
 	SL40mm.id = "40mmSL"
