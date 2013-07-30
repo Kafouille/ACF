@@ -40,14 +40,17 @@ function ENT:Draw()
 	end
 end
 
+local nullcrate = {cratetxt = function() return "" end}
+
 function ENT:DoNormalDraw()
 	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		local Tracer = ""
 		if self:GetNetworkedInt("Tracer") > 0 then Tracer = "-T" end
 		local txt = self:GetNetworkedString("AmmoID").." : " ..self:GetNetworkedString("Ammo").. "\nRound Type : "..self:GetNetworkedString("AmmoType")..Tracer.."\n"
-		self.AmmoString = ACF.RoundTypes[self:GetNetworkedString("AmmoType")]["cratetxt"] or ""
-		local Ammotxt = self:AmmoString()
+		local atype = self:GetNetworkedString("AmmoType")
+		self.AmmoString = (ACF.RoundTypes[atype] or nullcrate)["cratetxt"](self)
+		local Ammotxt = self:GetAmmoString()
 		if (not game.SinglePlayer()) then
 			local PlayerName = self:GetPlayerName()
 			txt = txt .."".. Ammotxt .. "\n(" .. PlayerName .. ")"
@@ -57,9 +60,9 @@ function ENT:DoNormalDraw()
 	e:DrawModel()
 end
 
-function ENT:AmmoString()
+function ENT:GetAmmoString()
 
-	return ""
+	return self.AmmoString or ""
 end
 
 
@@ -93,10 +96,10 @@ function ENT:Think()
 end
 
 usermessage.Hook("ACF_RefillEffect", function( msg )
-	local EntFrom, EntTo, Index = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() ), msg:ReadString()
+	local EntFrom, EntTo, Weapon = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() ), msg:ReadString()
 	if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end
-	local List = list.Get( "ACFRoundTypes")
-	local Mdl = List[Index].model or "models/munitions/round_100mm_shot.mdl"
+	//local List = list.Get( "ACFRoundTypes")	
+	local Mdl = ACF.Weapons.Guns[Weapon].round.model or "models/munitions/round_100mm_shot.mdl"
 	EntFrom.RefillAmmoEffect = EntFrom.RefillAmmoEffect or {}
 	table.insert( EntFrom.RefillAmmoEffect, {EntFrom = EntFrom, EntTo = EntTo, Model = Mdl, StTime = SysTime()} )
 
