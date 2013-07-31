@@ -48,7 +48,7 @@ function PANEL:Init( )
 	function HomeNode:DoClick()
 		acfmenupanel:UpdateDisplay(self.mytable)
 	end
-	HomeNode.Icon:SetImage( "gui/silkicons/newspaper" )
+	HomeNode.Icon:SetImage( "icon16/newspaper.png" )
 	
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
@@ -71,7 +71,7 @@ function PANEL:Init( )
 					RunConsoleCommand( "acfmenu_type", self.mytable.type )
 					acfmenupanel:UpdateDisplay( self.mytable )
 				end
-				EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+				EndNode.Icon:SetImage( "icon16/newspaper.png" )
 			end
 		end
 		
@@ -86,7 +86,7 @@ function PANEL:Init( )
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 		
 	end
 	
@@ -145,7 +145,7 @@ function PANEL:Init( )
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 
 	end
 	
@@ -162,7 +162,7 @@ function PANEL:Init( )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
     
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper")
+		EndNode.Icon:SetImage( "icon16/newspaper.png")
     
 	end*/
 	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
@@ -174,7 +174,7 @@ function PANEL:Init( )
 			-- RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			-- acfmenupanel:UpdateDisplay( self.mytable )
 		-- end
-		-- EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		-- EndNode.Icon:SetImage( "icon16/newspaper.png" )
 		
 	-- end
 	
@@ -291,7 +291,7 @@ function ACFHomeGUICreate( Table )
 			function Node:DoClick()
 				acfmenupanel:UpdateAttribs( Node.mytable )
 			end
-			Node.Icon:SetImage( "gui/silkicons/newspaper" )
+			Node.Icon:SetImage( "icon16/newspaper.png" )
 			
 		end	
 		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
