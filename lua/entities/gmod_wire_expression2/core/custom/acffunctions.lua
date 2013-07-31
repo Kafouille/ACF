@@ -645,16 +645,18 @@ e2function void entity:acfRefuelDuty(number on)
 	this:TriggerInput("Refuel Duty", on)
 end
 
-__e2setcost( 5 )
+__e2setcost( 10 )
 
 -- Returns the remaining liters or kilowatt hours of fuel in an ACF fuel tank or engine
 e2function number entity:acfFuel()
-	if restrictInfo(self, this) then return 0 end
 	if isFuel(this) then
+		if restrictInfo(self, this) then return 0 end
 		return math.Round(this.Fuel, 3)
 	elseif isEngine(this) then
+		if restrictInfo(self, this) then return 0 end
 		local liters = 0
 		for _,tank in pairs(this.FuelLink) do
+			if not validPhysics(tank) then continue end
 			if tank.Active then liters = liters + tank.Fuel end
 		end
 		return math.Round(liters, 3)
@@ -664,19 +666,22 @@ end
 
 -- Returns the amount of fuel in an ACF fuel tank or linked to engine as a percentage of capacity
 e2function number entity:acfFuelLevel()
-	if restrictInfo(self, this) then return 0 end
 	if isFuel(this) then
+		if restrictInfo(self, this) then return 0 end
 		return math.Round(this.Fuel / this.Capacity, 3)
 	elseif isEngine(this) then
+		if restrictInfo(self, this) then return 0 end
 		local liters = 0
 		local capacity = 0
 		if not #(this.FuelLink) then return 0 end --if no tanks, return 0
 		for _,tank in pairs(this.FuelLink) do
+			if not validPhysics(tank) then continue end
 			if tank.Active then 
 				capacity = capacity + tank.Capacity
 				liters = liters + tank.Fuel
 			end
 		end
+		if not (capacity > 0) then return 0 end
 		return math.Round(liters / capacity, 3)
 	end
 	return 0
@@ -688,6 +693,7 @@ e2function number entity:acfFuelUse()
 	if restrictInfo(self, this) then return 0 end
 	local Tank = nil
 	for _,fueltank in pairs(self.FuelLink) do
+		if not validPhysics(fueltank) then continue end
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
 	end
 	if not tank then return 0 end
@@ -709,6 +715,7 @@ e2function number entity:acfPeakFuelUse()
 	local fuel = "Petrol"
 	local Tank = nil
 	for _,fueltank in pairs(self.FuelLink) do
+		if not validPhysics(fueltank) then continue end
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
 	end
 	if tank then fuel = tank.Fuel end
@@ -722,6 +729,3 @@ e2function number entity:acfPeakFuelUse()
 	end
 	return math.Round(Consumption, 3)
 end
-
-
-__e2setcost(nil)

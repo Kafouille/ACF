@@ -107,6 +107,10 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
+	local SId = Data1
+	local Tanks = list.Get("ACFEnts")["FuelTanks"]
+	if not Tanks[SId]["model"] then return false end --SId = "Tank_4x4x2" end
+	
 	local Tank = ents.Create("acf_fueltank")
 	if not Tank:IsValid() then return false end
 	Tank:SetAngles(Angle)
@@ -115,10 +119,8 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Tank:SetPlayer(Owner)
 	Tank.Owner = Owner
 	
-	local Tanks = list.Get("ACFEnts")["FuelTanks"]
-	
 	Tank.Id = Id
-	Tank.SizeId = Data1
+	Tank.SizeId = SId
 	Tank.Model = Tanks[Tank.SizeId]["model"]
 	Tank:SetModel( Tank.Model )	
 	
@@ -126,7 +128,7 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Tank:SetMoveType( MOVETYPE_VPHYSICS )     	
 	Tank:SetSolid( SOLID_VPHYSICS )
 
-	Tank:UpdateFuelTank(Id, Data1, Data2)
+	Tank:UpdateFuelTank(Id, SId, Data2)
 	
 	Owner:AddCount( "_acf_fueltank", Tank )
 	Owner:AddCleanup( "acfmenu", Tank )
@@ -140,6 +142,7 @@ duplicator.RegisterEntityClass("acf_fueltank", MakeACF_FuelTank, "Pos", "Angle",
 
 function ENT:UpdateFuelTank(Id, Data1, Data2)
 
+	local lookup = list.Get("ACFEnts")["FuelTanks"]
 	local Size = self:OBBMaxs() - self:OBBMins() --outer dimensions of tank
 	local Wall = 0.1 --wall thickness in inches
 	local pct = 1 --how full is the tank?
@@ -150,15 +153,15 @@ function ENT:UpdateFuelTank(Id, Data1, Data2)
 	self.Capacity = self.Volume * ACF.CuIToLiter * ACF.TankVolumeMul * 0.125 --internal volume available for fuel in liters
 	self.EmptyMass = ((self.Size - self.Volume)*16.387)*7.9/1000  -- total wall volume * cu in to cc * density of steel (kg/cc)
 	self.FuelType = Data2
+	self.IsExplosive = self.FuelType ~= "Electric" and lookup[Data1]["explosive"] ~= false
+	self.NoLinks = lookup[Data1]["nolinks"] == true
 	
 	if self.FuelType == "Electric" then
 		self.Liters = self.Capacity --batteries capacity is different from internal volume
 		self.Capacity = self.Capacity * ACF.LiIonED
 		self.Fuel = pct * self.Capacity
-		self.IsExplosive = false
 	else
 		self.Fuel = pct * self.Capacity
-		self.IsExplosive = true
 	end
 	
 	self:UpdateFuelMass()

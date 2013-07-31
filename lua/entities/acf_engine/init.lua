@@ -547,6 +547,10 @@ function ENT:Link( Target )
 			end
 		end
 		
+		if Target.NoLinks then
+			return false, "This fuel tank doesn\'t allow linking."
+		end
+		
 		local Duplicate = false
 		for Key,Value in pairs(self.FuelLink) do
 			if Value == Target then Duplicate = true break end

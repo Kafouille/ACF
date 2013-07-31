@@ -28,3 +28,19 @@ r398
 *r409
 --Added high grade fuel
 --Added electric motors without attached batteries
+
+*r410
+--Fixed a couple client-errors in muzzleflash and ammo.
+
+*r411
+--Disabled new guns while balance is being worked out.
+
+*r413
+--Fixed menu icons
+
+*r414
+--Added new fueltanks, courtesy of Labrasones
+--Added jerry can
+--Disabled explosions on transport and storage fuel tanks. They were pretty rediculous.
+--Disabled linking on jerry can, fuel drum, transport, and storage tanks
+--Fixed a few errors in fuel e2 functions

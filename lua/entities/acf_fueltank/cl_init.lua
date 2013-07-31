@@ -38,7 +38,7 @@ function ACFFuelTankGUICreate( Table )
 	if not acfmenupanel.CustomDisplay then return end
 	if not acfmenupanel.FuelTankData then
 		acfmenupanel.FuelTankData = {}
-		acfmenupanel.FuelTankData["Id"] = "Crate_2x2x4"
+		acfmenupanel.FuelTankData["Id"] = "Tank_4x4x2"
 		acfmenupanel.FuelTankData["FuelID"] = "Petrol"
 	end
 	
@@ -136,6 +136,12 @@ function ACFFuelTankGUIUpdate( Table )
 		acfmenupanel:CPanelText("Cap", "Capacity: " ..math.Round(Capacity,1).. " liters / " ..math.Round(Capacity*0.264172,1).. " gallons")
 		acfmenupanel:CPanelText("Mass", "Full mass: " ..math.Round(Mass,1).. " kg, Empty mass: " ..math.Round(EmptyMass,1).. " kg")
 	end
+
+	local text = "\n"
+	if Tanks[TankID]["nolinks"] then
+		text = "\nThis fuel tank won\'t link to engines. It's intended to resupply fuel to other fuel tanks."
+	end
+	acfmenupanel:CPanelText("Links", text)
 	
 	--fuel tank model display
 	if not acfmenupanel.CData.DisplayModel then

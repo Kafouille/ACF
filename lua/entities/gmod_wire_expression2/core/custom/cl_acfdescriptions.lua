@@ -3,6 +3,7 @@ E2Helper.Descriptions["acfIsEngine"] = "Returns 1 if the entity is an ACF engine
 E2Helper.Descriptions["acfIsGearbox"] = "Returns 1 if the entity is an ACF gearbox."
 E2Helper.Descriptions["acfIsGun"] = "Returns 1 if the entity is an ACF gun."
 E2Helper.Descriptions["acfIsAmmo"] = "Returns 1 if the entity is an ACF ammo crate."
+E2Helper.Descriptions["acfIsFuel"] = "Returns 1 if the entity is an ACF fuel tank."
 E2Helper.Descriptions["acfActive"] = "Gets/sets Active (0-1) for an ACF engine, ammo crate, or fuel tank."
 E2Helper.Descriptions["acfNameShort"] = "Returns the short name of an ACF entity."
 E2Helper.Descriptions["acfName"] = "Returns the full name of an ACF entity."
