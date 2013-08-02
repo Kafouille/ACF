@@ -1,14 +1,4 @@
-r398
---Repaired the Version Checker
-
-*r399
---Added the changelog back
---Changed Ammo/Gearbox sliders.
-
-*r401
---Fixed gun unloading
-
-*r403
+r403
 --Engine health reduced 87.5%
 --Engine damage degrades performance by up to 75%
 --Gun damage degrades accuracy by up to 4x
@@ -44,3 +34,6 @@ r398
 --Disabled explosions on transport and storage fuel tanks. They were pretty rediculous.
 --Disabled linking on jerry can, fuel drum, transport, and storage tanks
 --Fixed a few errors in fuel e2 functions
+
+*r415
+--Replaced wankel models with more realistically sized versions, courtesy of Labrasones

@@ -3,8 +3,8 @@
 
 ACF_DefineEngine( "900cc-R", {
 	name = "900cc Rotary",
-	desc = "Small rotary engine, very high strung and suited for yard use.",
-	model = "models/engines/wankelsmall.mdl",
+	desc = "Small 2 rotor Wankel engine, very high strung and suited for yard use.",
+	model = "models/engines/wankel_2_small.mdl",
 	sound = "acf_engines/wankel_small.wav",
 	category = "Rotary",
 	fuel = "Petrol",
@@ -20,8 +20,8 @@ ACF_DefineEngine( "900cc-R", {
 
 ACF_DefineEngine( "1.3L-R", {
 	name = "1.3L Rotary",
-	desc = "Medium Wankel for general use. Wankels have a somewhat wide powerband, but very high strung.",
-	model = "models/engines/wankelmed.mdl",
+	desc = "A medium 2 rotor Wankel. Wankels have a somewhat wide powerband, but very high strung.",
+	model = "models/engines/wankel_2_med.mdl",
 	sound = "acf_engines/wankel_medium.wav",
 	category = "Rotary",
 	fuel = "Petrol",
@@ -37,8 +37,8 @@ ACF_DefineEngine( "1.3L-R", {
 
 ACF_DefineEngine( "2.0L-R", {
 	name = "2.0L Rotary",
-	desc = "High performance rotary engine.",
-	model = "models/engines/wankellarge.mdl",
+	desc = "High performance 3 rotor Wankel engine.",
+	model = "models/engines/wankel_3_med.mdl",
 	sound = "acf_engines/wankel_large.wav",
 	category = "Rotary",
 	fuel = "Petrol",
