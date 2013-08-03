@@ -654,11 +654,14 @@ e2function number entity:acfFuel()
 		return math.Round(this.Fuel, 3)
 	elseif isEngine(this) then
 		if restrictInfo(self, this) then return 0 end
+		if not #(this.FuelLink) then return 0 end --if no tanks, return 0
+		
 		local liters = 0
 		for _,tank in pairs(this.FuelLink) do
 			if not validPhysics(tank) then continue end
 			if tank.Active then liters = liters + tank.Fuel end
 		end
+		
 		return math.Round(liters, 3)
 	end
 	return 0
@@ -671,9 +674,10 @@ e2function number entity:acfFuelLevel()
 		return math.Round(this.Fuel / this.Capacity, 3)
 	elseif isEngine(this) then
 		if restrictInfo(self, this) then return 0 end
+		if not #(this.FuelLink) then return 0 end --if no tanks, return 0
+		
 		local liters = 0
 		local capacity = 0
-		if not #(this.FuelLink) then return 0 end --if no tanks, return 0
 		for _,tank in pairs(this.FuelLink) do
 			if not validPhysics(tank) then continue end
 			if tank.Active then 
@@ -682,6 +686,7 @@ e2function number entity:acfFuelLevel()
 			end
 		end
 		if not (capacity > 0) then return 0 end
+		
 		return math.Round(liters / capacity, 3)
 	end
 	return 0
@@ -691,8 +696,10 @@ end
 e2function number entity:acfFuelUse()
 	if not isEngine(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
+	if not #(this.FuelLink) then return 0 end --if no tanks, return 0
+	
 	local Tank = nil
-	for _,fueltank in pairs(self.FuelLink) do
+	for _,fueltank in pairs(this.FuelLink) do
 		if not validPhysics(fueltank) then continue end
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
 	end
@@ -712,10 +719,11 @@ end
 e2function number entity:acfPeakFuelUse()
 	if not isEngine(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
+	if not #(this.FuelLink) then return 0 end --if no tanks, return 0
+	
 	local fuel = "Petrol"
 	local Tank = nil
-	for _,fueltank in pairs(self.FuelLink) do
-		if not validPhysics(fueltank) then continue end
+	for _,fueltank in pairs(this.FuelLink) do
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
 	end
 	if tank then fuel = tank.Fuel end

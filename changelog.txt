@@ -37,3 +37,6 @@ r403
 
 *r415
 --Replaced wankel models with more realistically sized versions, courtesy of Labrasones
+
+*r416
+--Minor updates to e2 fuel functions
