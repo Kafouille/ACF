@@ -40,3 +40,6 @@ r403
 
 *r416
 --Minor updates to e2 fuel functions
+
+*r417
+--Fixed errors on gearbox when networked data hasn't been received
