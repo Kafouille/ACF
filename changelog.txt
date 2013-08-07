@@ -43,3 +43,7 @@ r403
 
 *r417
 --Fixed errors on gearbox when networked data hasn't been received
+
+*r419
+--Updated several sounds with fixed versions, courtesy of Switchblade
+
