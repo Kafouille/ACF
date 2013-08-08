@@ -47,3 +47,6 @@ r403
 *r419
 --Updated several sounds with fixed versions, courtesy of Switchblade
 
+*r420
+--Temporarily reverted ductility behaviour until armour tool gets properly fixed
+--Armour tool should now apply intended amount of armor
