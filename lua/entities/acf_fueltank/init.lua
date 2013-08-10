@@ -80,6 +80,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	
 	if HitRes.Kill then
+		if hook.Run( "ACF_FuelExplode", self ) == false then return HitRes end
 		self.Exploding = true
 		if( Inflictor and Inflictor:IsValid() and Inflictor:IsPlayer() ) then
 			self.Inflictor = Inflictor
@@ -92,6 +93,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	local ExplodeChance = (1-(self.Fuel/self.Capacity))^0.75 --chance to explode from fumes in tank, less fuel = more explodey
 	 
 	if math.Rand(0,1) < (ExplodeChance + Ratio) then  --it's gonna blow
+		if hook.Run( "ACF_FuelExplode", self ) == false then return HitRes end
 		self.Inflictor = Inflictor
 		self.Exploding = true
 		ACF_ScaledExplosion( self )

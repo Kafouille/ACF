@@ -59,5 +59,10 @@ ACF_AmmoExplode( Ammo, Bullet )
 	- Ammo (entity): the ammo crate in question
 	- Bullet (BulletData): the bullet that would be fired
 	
+ACF_FuelExplode( Tank )
+	Return false to prevent fuel tank from exploding
+	Args:
+	- Tank (entity): the fuel tank in question
+	
 ACF_CanRefill( Refill, Ammo )
 	Return false to prevent ammo crate from being refilled (not yet implemented)
