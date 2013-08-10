@@ -332,7 +332,8 @@ function ENT:CalcMassRatio()
 	for k, v in pairs( PhysEnts ) do
 		
 		-- gotta make sure the parenting addon is installed...
-		if v.GetChildren then table.Merge( AllEnts, v:GetChildren() ) end
+		-- if v.GetChildren then table.Merge( AllEnts, v:GetChildren() ) end
+		table.Merge( AllEnts, ACF_GetAllChildren( v ) )
 	
 	end
 	

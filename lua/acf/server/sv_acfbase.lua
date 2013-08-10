@@ -344,3 +344,27 @@ function ACF_GetAllPhysicalConstraints( ent, ResultTable )
 	return ResultTable
 	
 end
+
+-- for those extra sneaky bastards
+function ACF_GetAllChildren( ent, ResultTable )
+	
+	if not ent.GetChildren then return end
+	
+	local ResultTable = ResultTable or {}
+	
+	if not IsValid( ent ) then return end
+	if ResultTable[ ent ] then return end
+	
+	ResultTable[ ent ] = ent
+	
+	local ChildTable = ent:GetChildren()
+	
+	for k, v in pairs( ChildTable ) do
+		
+		ACF_GetAllChildren( v, ResultTable )
+		
+	end
+	
+	return ResultTable
+	
+end
