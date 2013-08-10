@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 420 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 422 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Threshold = 225	--Health Divisor
@@ -143,6 +143,13 @@ timer.Simple( 0, function()
 		PrecacheParticleSystem(Table["muzzleflash"])
 	end
 end)
+
+-- changes here will be automatically reflected in the armor properties tool
+function ACF_CalcArmor( Area, Ductility, Mass )
+	
+	return ( Mass * 1000 / Area / 0.78 ) / ( 1 + Ductility ) ^ 0.5 * ACF.ArmorMod
+	
+end
 
 function ACF_MuzzleVelocity( Propellant, Mass, Caliber )
 

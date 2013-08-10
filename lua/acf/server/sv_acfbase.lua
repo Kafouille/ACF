@@ -51,9 +51,10 @@ function ACF_Activate ( Entity , Recalc )
 	
 	Entity.ACF.Ductility = Entity.ACF.Ductility or 0
 	--local Area = (Entity.ACF.Aera+Entity.ACF.Aera*math.Clamp(Entity.ACF.Ductility,-0.8,0.8))
-	local Area = (Entity.ACF.Aera)
-	local Armour = (Entity:GetPhysicsObject():GetMass()*1000 / Area / 0.78) / (1 + math.Clamp(Entity.ACF.Ductility, -0.8, 0.8)) --So we get the equivalent thickness of that prop in mm if all it's weight was a steel plate
-	local Health = (Area/ACF.Threshold) * (1 + math.Clamp(Entity.ACF.Ductility, -0.8, 0.8))												--Setting the threshold of the prop aera gone
+	local Area = Entity.ACF.Aera
+	local Ductility = math.Clamp( Entity.ACF.Ductility, -0.8, 0.8 )
+	local Armour = ACF_CalcArmor( Area, Ductility, Entity:GetPhysicsObject():GetMass() ) -- So we get the equivalent thickness of that prop in mm if all its weight was a steel plate
+	local Health = ( Area / ACF.Threshold ) * ( 1 + Ductility ) -- Setting the threshold of the prop aera gone
 	
 	local Percent = 1 
 	
