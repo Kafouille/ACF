@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 422 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 423 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Threshold = 225	--Health Divisor
@@ -75,12 +75,10 @@ CreateConVar('acf_meshvalue', 1)
 AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
-
-AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
-AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 AddCSLuaFile( "acf/client/cl_acfrender.lua" )
 
-if (SERVER) then
+if SERVER then
+
 	util.AddNetworkString( "ACF_KilledByACF" )
 	util.AddNetworkString( "ACF_RenderDamage" )
 	util.AddNetworkString( "ACF_Notify" )
@@ -89,12 +87,10 @@ if (SERVER) then
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
 
-	
-elseif (CLIENT) then
+elseif CLIENT then
 
 	include("acf/client/cl_acfballistics.lua")
 	include("acf/client/cl_acfrender.lua")
-	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 200, 200, 48, 255 ) )
@@ -234,11 +230,11 @@ function ACF_UpdateChecking( )
 		local rev = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev and ACF.Version >= rev then
 			print("[ACF] ACF Is Up To Date, Latest Version: "..rev)
-			
 		elseif !rev then
 			print("[ACF] No Internet Connection Detected! ACF Update Check Failed")
 		else
 			print("[ACF] A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
+			if CLIENT then chat.AddText( Color( 255, 0, 0 ), "A newer version of ACF is available!" ) end
 		end
 		ACF.CurrentVersion = rev
 		
@@ -246,28 +242,21 @@ function ACF_UpdateChecking( )
 end
 ACF_UpdateChecking( )
 
-function ACF_ChatVersionPrint(ply)
-	if not ACF.Version or ACF.Version < ACF.CurrentVersion then
-	timer.Simple( 2,function()
-		ply:SendLua(
-			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available!\")"
-			) 
-		end)
-		local Table = {}
-		for k,v in pairs( ents.GetAll() ) do
-			if v.ACF and v.ACF.PrHealth then
-				table.insert(Table,{ID = v:EntIndex(), Health = v.ACF.Health, v.ACF.MaxHealth})
-			end
+local function OnInitialSpawn( ply )
+	local Table = {}
+	for k,v in pairs( ents.GetAll() ) do
+		if v.ACF and v.ACF.PrHealth then
+			table.insert(Table,{ID = v:EntIndex(), Health = v.ACF.Health, v.ACF.MaxHealth})
 		end
-		if Table ~= {} then
-			net.Start("ACF_RenderDamage")
-				net.WriteTable(Table)
-			net.Send(ply)
-		end
-	end	
+	end
+	if Table ~= {} then
+		net.Start("ACF_RenderDamage")
+			net.WriteTable(Table)
+		net.Send(ply)
+	end
 end
 
-hook.Add("PlayerInitialSpawn","versioncheck",ACF_ChatVersionPrint)
+hook.Add( "PlayerInitialSpawn", "renderdamage", OnInitialSpawn )
 
 cvars.AddChangeCallback("acf_healthmod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
