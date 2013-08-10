@@ -171,10 +171,10 @@ function TOOL:Reload( trace )
 	
 	local total = 0
 	
-	for k, v in pairs( ACF_GetAllPhysicalConstraints( ent ) ) do
-		if not IsValid( ent ) then continue end
+	for k, v in pairs( constraint.GetAllConstrainedEntities( ent ) ) do
+		if not IsValid( v ) then continue end
 		
-		local phys = ent:GetPhysicsObject()
+		local phys = v:GetPhysicsObject()
 		if not IsValid( phys ) then continue end
 		
 		total = total + phys:GetMass()
