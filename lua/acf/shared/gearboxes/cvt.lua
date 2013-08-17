@@ -2,14 +2,14 @@
 -- CVT (continuously variable transmission)
 
 -- Weight
-local GearCVTSW = 25
-local GearCVTMW = 100
+local GearCVTSW = 65
+local GearCVTMW = 180
 local GearCVTLW = 500
 
 -- Torque Rating
-local GearCVTST = 350
-local GearCVTMT = 1000 
-local GearCVTLT = 2500
+local GearCVTST = 175
+local GearCVTMT = 650 
+local GearCVTLT = 3400
 
 -- general description
 local CVTDesc = "\n\nA CVT will adjust the ratio its first gear to keep an engine within a target rpm range, allowing constant peak performance. However, this comes at the cost of increased weight and limited torque ratings."
