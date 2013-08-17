@@ -1,6 +1,25 @@
 
 -- Special engines
 
+ACF_DefineEngine( "1.0L-I4", {
+	name = "1.0L I4 Petrol",
+	desc = "Tiny I4 designed for racing bikes. Doesn't pack much torque, but revs ludicrously high.",
+	model = "models/engines/inline4s.mdl",
+	sound = "acf_extra/vehiclefx/engines/l4/mini_onhigh.wav",
+	pitch = 0.75,
+	category = "Special",
+	fuel = "Petrol",
+	enginetype = "GenericPetrol",
+	requiresfuel = true,
+	weight = 63,
+	torque = 68,
+	flywheelmass = 0.05,
+	idlerpm = 1200,
+	peakminrpm = 7500,
+	peakmaxrpm = 11500,
+	limitrpm = 12000
+} )
+
 ACF_DefineEngine( "1.9L-I4", {
 	name = "1.9L I4 Petrol",
 	desc = "Supercharged racing 4 cylinder, most of the power in the high revs.",
@@ -17,6 +36,24 @@ ACF_DefineEngine( "1.9L-I4", {
 	peakminrpm = 5200,
 	peakmaxrpm = 8500,
 	limitrpm = 9000
+} )
+
+ACF_DefineEngine( "2.6L-Wankel", {
+	name = "2.6L Rotary",
+	desc = "4 rotor racing Wankel, high revving and high strung.",
+	model = "models/engines/wankel_4_med.mdl",
+	sound = "acf_engines/wankel_large.wav",
+	category = "Special",
+	fuel = "Petrol",
+	enginetype = "Wankel",
+	requiresfuel = true,
+	weight = 260,
+	torque = 250,
+	flywheelmass = 0.11,
+	idlerpm = 1200,
+	peakminrpm = 4500,
+	peakmaxrpm = 9000,
+	limitrpm = 9500
 } )
 
 ACF_DefineEngine( "2.9-V8", {
@@ -82,7 +119,7 @@ ACF_DefineEngine( "13.0-V12", {
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
 	weight = 520,
-	torque = 600,
+	torque = 660,
 	flywheelmass = 1,
 	idlerpm = 700,
 	peakminrpm = 2500,

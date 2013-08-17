@@ -62,6 +62,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.FuelType = Lookup["fuel"] or "Petrol"
 	Engine.EngineType = Lookup["enginetype"] or "GenericPetrol"
 	Engine.RequiresFuel = Lookup["requiresfuel"]
+	Engine.SoundPitch = Lookup["pitch"] or 1
 	Engine.SpecialHealth = true
 	
 	--calculate boosted peak kw
@@ -84,7 +85,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
 	Engine.Sound = nil
-	Engine.SoundPitch = 1
 	Engine.RPM = {}
 
 	Engine:PhysicsInit( SOLID_VPHYSICS )      	
@@ -160,6 +160,7 @@ function ENT:Update( ArgsTable )
 	self.FuelType = Lookup["fuel"]
 	self.EngineType = Lookup["enginetype"]
 	self.RequiresFuel = Lookup["requiresfuel"]
+	self.SoundPitch = Lookup["pitch"] or 1
 	self.SpecialHealth = true
 	
 	--calculate boosted peak kw

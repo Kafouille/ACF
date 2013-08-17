@@ -19,3 +19,7 @@ r416
 
 *r427
 --Rebalanced CVTs; small and medium nerfed, large buffed
+
+*r428
+--Added 2 new special engines: 1.0L I4 and 2.6L Wankel
+--Small buff to 13L V12 special
