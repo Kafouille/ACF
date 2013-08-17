@@ -14,7 +14,7 @@ ACF_DefineGearbox( "8Gear-L-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 240,
+	maxtq = 340,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,

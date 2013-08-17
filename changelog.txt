@@ -23,3 +23,6 @@ r416
 *r428
 --Added 2 new special engines: 1.0L I4 and 2.6L Wankel
 --Small buff to 13L V12 special
+
+*r429
+--Fixed torque rating on small inline 8 speed gearbox
