@@ -1,9 +1,17 @@
 
 -- 8-Speed Gearboxes
 
+-- Weight
 local Gear8SW = 100
 local Gear8MW = 200
 local Gear8LW = 400
+local StWB = 0.75 --straight weight bonus mulitplier
+
+-- Torque Rating
+local Gear8ST = 340
+local Gear8MT = 1000
+local Gear8LT = 10000
+local StTB = 1.25 --straight torque bonus multiplier
 
 -- Inline
 
@@ -14,7 +22,7 @@ ACF_DefineGearbox( "8Gear-L-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 340,
+	maxtq = Gear8ST,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -37,7 +45,7 @@ ACF_DefineGearbox( "8Gear-L-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1000,
+	maxtq = Gear8MT,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -60,7 +68,7 @@ ACF_DefineGearbox( "8Gear-L-L", {
 	category = "8-Speed",
 	weight = Gear8LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear8LT,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -85,7 +93,7 @@ ACF_DefineGearbox( "8Gear-LD-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 340,
+	maxtq = Gear8ST,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -109,7 +117,7 @@ ACF_DefineGearbox( "8Gear-LD-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1000,
+	maxtq = Gear8MT,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -133,7 +141,7 @@ ACF_DefineGearbox( "8Gear-LD-L", {
 	category = "8-Speed",
 	weight = Gear8LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear8LT,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -159,7 +167,7 @@ ACF_DefineGearbox( "8Gear-T-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 340,
+	maxtq = Gear8ST,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -182,7 +190,7 @@ ACF_DefineGearbox( "8Gear-T-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1000,
+	maxtq = Gear8MT,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -205,7 +213,7 @@ ACF_DefineGearbox( "8Gear-T-L", {
 	category = "8-Speed",
 	weight = Gear8LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear8LT,
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -230,7 +238,7 @@ ACF_DefineGearbox( "8Gear-TD-S", {
 	category = "8-Speed",
 	weight = Gear8SW,
 	switch = 0.15,
-	maxtq = 340,
+	maxtq = Gear8ST,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -254,7 +262,7 @@ ACF_DefineGearbox( "8Gear-TD-M", {
 	category = "8-Speed",
 	weight = Gear8MW,
 	switch = 0.2,
-	maxtq = 1000,
+	maxtq = Gear8MT,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -278,7 +286,7 @@ ACF_DefineGearbox( "8Gear-TD-L", {
 	category = "8-Speed",
 	weight = Gear8LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear8LT,
 	gears = 8,
 	doubleclutch = true,
 	geartable = {
@@ -302,9 +310,9 @@ ACF_DefineGearbox( "8Gear-ST-S", {
 	desc = "A small and light 8 speed straight-through gearbox.",
 	model = "models/engines/t5small.mdl",
 	category = "8-Speed",
-	weight = Gear8SW,
+	weight = math.floor(Gear8SW * StWB),
 	switch = 0.15,
-	maxtq = 340,
+	maxtq = math.floor(Gear8ST * StTB),
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -325,9 +333,9 @@ ACF_DefineGearbox( "8Gear-ST-M", {
 	desc = "A medium 8 speed straight-through gearbox.",
 	model = "models/engines/t5med.mdl",
 	category = "8-Speed",
-	weight = Gear8MW,
+	weight = math.floor(Gear8MW * StWB),
 	switch = 0.2,
-	maxtq = 1000,
+	maxtq = math.floor(Gear8MT * StTB),
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,
@@ -348,9 +356,9 @@ ACF_DefineGearbox( "8Gear-ST-L", {
 	desc = "A large 8 speed straight-through gearbox.",
 	model = "models/engines/t5large.mdl",
 	category = "8-Speed",
-	weight = Gear8LW,
+	weight = math.floor(Gear8LW * StWB),
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = math.floor(Gear8LT * StTB),
 	gears = 8,
 	geartable = {
 		[ 0 ] = 0,

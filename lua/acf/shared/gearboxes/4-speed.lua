@@ -1,9 +1,17 @@
 
 -- 4-Speed gearboxes
 
+-- Weight
 local Gear4SW = 60
 local Gear4MW = 120
 local Gear4LW = 240
+local StWB = 0.75 --straight weight bonus mulitplier
+
+-- Torque Rating
+local Gear4ST = 540
+local Gear4MT = 1700
+local Gear4LT = 10000
+local StTB = 1.25 --straight torque bonus multiplier
 
 -- Inline
 
@@ -14,7 +22,7 @@ ACF_DefineGearbox( "4Gear-L-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 540,
+	maxtq = Gear4ST,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -33,7 +41,7 @@ ACF_DefineGearbox( "4Gear-L-M", {
 	category = "4-Speed",
 	weight = Gear4MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = Gear4MT,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -52,7 +60,7 @@ ACF_DefineGearbox( "4Gear-L-L", {
 	category = "4-Speed",
 	weight = Gear4LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear4LT,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -73,7 +81,7 @@ ACF_DefineGearbox( "4Gear-LD-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 540,
+	maxtq = Gear4ST,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -93,7 +101,7 @@ ACF_DefineGearbox( "4Gear-LD-M", {
 	category = "4-Speed",
 	weight = Gear4MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = Gear4MT,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -113,7 +121,7 @@ ACF_DefineGearbox( "4Gear-LD-L", {
 	category = "4-Speed",
 	weight = Gear4LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear4LT,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -135,7 +143,7 @@ ACF_DefineGearbox( "4Gear-T-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 540,
+	maxtq = Gear4ST,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -154,7 +162,7 @@ ACF_DefineGearbox( "4Gear-T-M", {
 	category = "4-Speed",
 	weight = Gear4MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = Gear4MT,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -173,7 +181,7 @@ ACF_DefineGearbox( "4Gear-T-L", {
 	category = "4-Speed",
 	weight = Gear4LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear4LT,
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -194,7 +202,7 @@ ACF_DefineGearbox( "4Gear-TD-S", {
 	category = "4-Speed",
 	weight = Gear4SW,
 	switch = 0.15,
-	maxtq = 540,
+	maxtq = Gear4ST,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -214,7 +222,7 @@ ACF_DefineGearbox( "4Gear-TD-M", {
 	category = "4-Speed",
 	weight = Gear4MW,
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = Gear4MT,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -234,7 +242,7 @@ ACF_DefineGearbox( "4Gear-TD-L", {
 	category = "4-Speed",
 	weight = Gear4LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear4LT,
 	gears = 4,
 	doubleclutch = true,
 	geartable = {
@@ -254,9 +262,9 @@ ACF_DefineGearbox( "4Gear-ST-S", {
 	desc = "A small straight-through gearbox",
 	model = "models/engines/t5small.mdl",
 	category = "4-Speed",
-	weight = Gear4SW,
+	weight = math.floor(Gear4SW * StWB),
 	switch = 0.15,
-	maxtq = 540,
+	maxtq = math.floor(Gear4ST * StTB),
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -273,9 +281,9 @@ ACF_DefineGearbox( "4Gear-ST-M", {
 	desc = "A medium sized, 4 speed straight-through gearbox.",
 	model = "models/engines/t5med.mdl",
 	category = "4-Speed",
-	weight = Gear4MW,
+	weight = math.floor(Gear4MW * StWB),
 	switch = 0.2,
-	maxtq = 1700,
+	maxtq = math.floor(Gear4MT * StTB),
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,
@@ -292,9 +300,9 @@ ACF_DefineGearbox( "4Gear-ST-L", {
 	desc = "A large sized, 4 speed straight-through gearbox.",
 	model = "models/engines/t5large.mdl",
 	category = "4-Speed",
-	weight = Gear4LW,
+	weight = math.floor(Gear4LW * StWB),
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = math.floor(Gear4LT * StTB),
 	gears = 4,
 	geartable = {
 		[ 0 ] = 0,

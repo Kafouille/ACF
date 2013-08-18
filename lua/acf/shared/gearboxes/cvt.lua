@@ -5,11 +5,13 @@
 local GearCVTSW = 65
 local GearCVTMW = 180
 local GearCVTLW = 500
+local StWB = 0.75 --straight weight bonus mulitplier
 
 -- Torque Rating
 local GearCVTST = 175
 local GearCVTMT = 650 
 local GearCVTLT = 3400
+local StTB = 1.25 --straight torque bonus multiplier
 
 -- general description
 local CVTDesc = "\n\nA CVT will adjust the ratio its first gear to keep an engine within a target rpm range, allowing constant peak performance. However, this comes at the cost of increased weight and limited torque ratings."
@@ -275,9 +277,9 @@ ACF_DefineGearbox( "CVT-ST-S", {
 	desc = "A light duty straight-through CVT."..CVTDesc,
 	model = "models/engines/t5small.mdl",
 	category = "CVT",
-	weight = GearCVTSW,
+	weight = math.floor(GearCVTSW * StWB),
 	switch = 0.15,
-	maxtq = GearCVTST,
+	maxtq = math.floor(GearCVTST * StTB),
 	gears = 2,
 	cvt = true,
 	geartable = {
@@ -295,9 +297,9 @@ ACF_DefineGearbox( "CVT-ST-M", {
 	desc = "A medium straight-through CVT."..CVTDesc,
 	model = "models/engines/t5med.mdl",
 	category = "CVT",
-	weight = GearCVTMW,
+	weight = math.floor(GearCVTMW * StWB),
 	switch = 0.2,
-	maxtq = GearCVTMT,
+	maxtq = math.floor(GearCVTMT * StTB),
 	gears = 2,
 	cvt = true,
 	geartable = {
@@ -315,9 +317,9 @@ ACF_DefineGearbox( "CVT-ST-L", {
 	desc = "A massive straight-through CVT designed for high torque applications."..CVTDesc,
 	model = "models/engines/t5large.mdl",
 	category = "CVT",
-	weight = GearCVTLW,
+	weight = math.floor(GearCVTLW * StWB),
 	switch = 0.3,
-	maxtq = GearCVTLT,
+	maxtq = math.floor(GearCVTLT * StTB),
 	gears = 2,
 	cvt = true,
 	geartable = {

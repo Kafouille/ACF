@@ -1,9 +1,17 @@
 
 -- 6-Speed gearboxes
 
+-- Weight
 local Gear6SW = 80
 local Gear6MW = 160
 local Gear6LW = 320
+local StWB = 0.75 --straight weight bonus mulitplier
+
+-- Torque Rating
+local Gear6ST = 440
+local Gear6MT = 1360
+local Gear6LT = 10000
+local StTB = 1.25 --straight torque bonus multiplier
 
 -- Inline
 
@@ -14,7 +22,7 @@ ACF_DefineGearbox( "6Gear-L-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 440,
+	maxtq = Gear6ST,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -35,7 +43,7 @@ ACF_DefineGearbox( "6Gear-L-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1360,
+	maxtq = Gear6MT,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -56,7 +64,7 @@ ACF_DefineGearbox( "6Gear-L-L", {
 	category = "6-Speed",
 	weight = Gear6LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear6LT,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -79,7 +87,7 @@ ACF_DefineGearbox( "6Gear-LD-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 440,
+	maxtq = Gear6ST,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -101,7 +109,7 @@ ACF_DefineGearbox( "6Gear-LD-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1360,
+	maxtq = Gear6MT,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -123,7 +131,7 @@ ACF_DefineGearbox( "6Gear-LD-L", {
 	category = "6-Speed",
 	weight = Gear6LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear6LT,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -147,7 +155,7 @@ ACF_DefineGearbox( "6Gear-T-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 440,
+	maxtq = Gear6ST,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -168,7 +176,7 @@ ACF_DefineGearbox( "6Gear-T-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1360,
+	maxtq = Gear6MT,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -189,7 +197,7 @@ ACF_DefineGearbox( "6Gear-T-L", {
 	category = "6-Speed",
 	weight = Gear6LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear6LT,
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -212,7 +220,7 @@ ACF_DefineGearbox( "6Gear-TD-S", {
 	category = "6-Speed",
 	weight = Gear6SW,
 	switch = 0.15,
-	maxtq = 440,
+	maxtq = Gear6ST,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -234,7 +242,7 @@ ACF_DefineGearbox( "6Gear-TD-M", {
 	category = "6-Speed",
 	weight = Gear6MW,
 	switch = 0.2,
-	maxtq = 1360,
+	maxtq = Gear6MT,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -256,7 +264,7 @@ ACF_DefineGearbox( "6Gear-TD-L", {
 	category = "6-Speed",
 	weight = Gear6LW,
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = Gear6LT,
 	gears = 6,
 	doubleclutch = true,
 	geartable = {
@@ -278,9 +286,9 @@ ACF_DefineGearbox( "6Gear-ST-S", {
 	desc = "A small and light 6 speed straight-through gearbox.",
 	model = "models/engines/t5small.mdl",
 	category = "6-Speed",
-	weight = Gear6SW,
+	weight = math.floor(Gear6SW * StWB),
 	switch = 0.15,
-	maxtq = 440,
+	maxtq = math.floor(Gear6ST * StTB),
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -299,9 +307,9 @@ ACF_DefineGearbox( "6Gear-ST-M", {
 	desc = "A medium 6 speed straight-through gearbox.",
 	model = "models/engines/t5med.mdl",
 	category = "6-Speed",
-	weight = Gear6MW,
+	weight = math.floor(Gear6MW * StWB),
 	switch = 0.2,
-	maxtq = 1360,
+	maxtq = math.floor(Gear6MT * StTB),
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
@@ -320,9 +328,9 @@ ACF_DefineGearbox( "6Gear-ST-L", {
 	desc = "A large 6 speed straight-through gearbox.",
 	model = "models/engines/t5large.mdl",
 	category = "6-Speed",
-	weight = Gear6LW,
+	weight = math.floor(Gear6LW * StWB),
 	switch = 0.3,
-	maxtq = 10000,
+	maxtq = math.floor(Gear6LT * StTB),
 	gears = 6,
 	geartable = {
 		[ 0 ] = 0,
