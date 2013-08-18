@@ -333,27 +333,24 @@ function ENT:CheckRopes()
 	
 	for WheelKey,Ent in pairs(self.WheelLink) do
 		local Constraints = constraint.FindConstraints(Ent, "Rope")
+		local Clean = false
+		local Roped = false
 		if Constraints then
-		
-			local Clean = false
 			for Key,Rope in pairs(Constraints) do
 				if Rope.Ent1 == self or Rope.Ent2 == self then
 					if Rope.length + Rope.addlength < self.WheelRopeL[WheelKey]*1.5 then
-						Clean = true
+						Roped = true
 					end
 				end
 			end
-			
-			if not Clean then
-				self:Unlink( Ent )
-			end
-			
-		else
-			self:Unlink( Ent )
 		end
 		
 		local DrvAngle = (self:LocalToWorld(self.WheelOutput[WheelKey]) - Ent:GetPos()):GetNormalized():DotProduct( (self:GetRight()*self.WheelOutput[WheelKey].y):GetNormalized() )
-		if ( DrvAngle < 0.7 ) then
+		if ( DrvAngle >= 0.7 ) then
+			Clean = true
+		end
+			
+		if not (Clean and Roped) then
 			self:Unlink( Ent )
 		end
 	end
@@ -563,7 +560,7 @@ function ENT:Link( Target )
 	table.insert( self.WheelAxis, Target:WorldToLocal( self:GetRight() + TargetPos ) )
 	
 	local RopeL = ( self:LocalToWorld( LinkPos ) - TargetPos ):Length()
-	constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal( TargetPos ), RopeL, RopeL * 0.2, 0, 1, "cable/cable2", false )
+	constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal( TargetPos ), RopeL, RopeL * 0.2, 5000, 1, "cable/cable2", false )
 	table.insert( self.WheelRopeL, RopeL )
 	table.insert( self.WheelOutput, LinkPos )
 	

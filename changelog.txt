@@ -29,3 +29,6 @@ r416
 
 *r430
 --Buffed straight-through gearboxes. They have +25% torque capacity and -25% weight, compared to inline/transaxial versions.
+
+*r431
+--Made link ropes on gearboxes force-breakable.  Most users shouldn't notice much difference.
