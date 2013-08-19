@@ -254,7 +254,7 @@ function ENT:Update( ArgsTable )
 		phys:SetMass( self.Weight ) 
 	end
 	
-	Engine:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNetworkedString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	
 	ACF_Activate( self, 1 )
