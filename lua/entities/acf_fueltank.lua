@@ -20,29 +20,9 @@ if CLIENT then
 		end
 		
 		local Tanks = list.Get("ACFEnts").FuelTanks
-		--table.sort(Tanks, function(a,b) return a.name < b.name end )
-		--table.sort(Tanks, function(a,b) return (a.dims[1]*a.dims[2]*a.dims[3]) < (b.dims[1]*b.dims[2]*b.dims[3]) end )
-
-		--because table.sort was uncooperative
 		local SortedTanks = {}
-		local I = 1
-		for k,v in pairs(Tanks) do
-			SortedTanks[I] = k
-			I = I+1
-		end
-		
-		for I=1,#SortedTanks do
-			for J=I+1,#SortedTanks do
-				local a = Tanks[SortedTanks[I]].dims
-				local b = Tanks[SortedTanks[J]].dims
-				if b[1]*b[2]*b[3] < a[1]*a[2]*a[3] then -- volume J < volume I
-					local temp = SortedTanks[I]
-					SortedTanks[I] = SortedTanks[J]
-					SortedTanks[J] = temp
-				end
-			end
-		end
-		--it's not the most elegant solution, but it does the job
+		for n in pairs(Tanks) do table.insert(SortedTanks,n) end
+		table.sort(SortedTanks)
 		
 		acfmenupanel:CPanelText("Name", Table.name)
 		acfmenupanel:CPanelText("Desc", Table.desc)
@@ -50,9 +30,7 @@ if CLIENT then
 		-- tank size dropbox
 		acfmenupanel.CData.TankSizeSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.TankSizeSelect:SetSize(100, 30)
-			for I=1, #SortedTanks do
-				acfmenupanel.CData.TankSizeSelect:AddChoice( SortedTanks[I] )
-			end
+			for k,v in ipairs(SortedTanks) do acfmenupanel.CData.TankSizeSelect:AddChoice( v ) end
 			acfmenupanel.CData.TankSizeSelect.OnSelect = function( index, value, data )
 				RunConsoleCommand( "acfmenu_data1", data )
 				acfmenupanel.FuelTankData.Id = data

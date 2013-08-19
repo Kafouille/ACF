@@ -32,3 +32,6 @@ r416
 
 *r431
 --Made link ropes on gearboxes force-breakable.  Most users shouldn't notice much difference.
+
+*r434
+--Changed how fuel tank are sorted in size selection.
