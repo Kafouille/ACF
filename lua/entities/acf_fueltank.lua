@@ -1,10 +1,143 @@
-AddCSLuaFile( "shared.lua" )
-AddCSLuaFile( "cl_init.lua" )
 
-include('shared.lua')
+AddCSLuaFile()
+
+DEFINE_BASECLASS( "base_wire_entity" )
+
+ENT.PrintName = "ACF Fuel Tank"
+ENT.WireDebugName = "ACF Fuel Tank"
 
 --don't forget:
 --armored tanks
+
+if CLIENT then
+	
+	function ACFFuelTankGUICreate( Table )
+		if not acfmenupanel.CustomDisplay then return end
+		if not acfmenupanel.FuelTankData then
+			acfmenupanel.FuelTankData = {}
+			acfmenupanel.FuelTankData.Id = "Tank_4x4x2"
+			acfmenupanel.FuelTankData.FuelID = "Petrol"
+		end
+		
+		local Tanks = list.Get("ACFEnts").FuelTanks
+		--table.sort(Tanks, function(a,b) return a.name < b.name end )
+		--table.sort(Tanks, function(a,b) return (a.dims[1]*a.dims[2]*a.dims[3]) < (b.dims[1]*b.dims[2]*b.dims[3]) end )
+
+		--because table.sort was uncooperative
+		local SortedTanks = {}
+		local I = 1
+		for k,v in pairs(Tanks) do
+			SortedTanks[I] = k
+			I = I+1
+		end
+		
+		for I=1,#SortedTanks do
+			for J=I+1,#SortedTanks do
+				local a = Tanks[SortedTanks[I]].dims
+				local b = Tanks[SortedTanks[J]].dims
+				if b[1]*b[2]*b[3] < a[1]*a[2]*a[3] then -- volume J < volume I
+					local temp = SortedTanks[I]
+					SortedTanks[I] = SortedTanks[J]
+					SortedTanks[J] = temp
+				end
+			end
+		end
+		--it's not the most elegant solution, but it does the job
+		
+		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanel:CPanelText("Desc", Table.desc)
+		
+		-- tank size dropbox
+		acfmenupanel.CData.TankSizeSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )
+			acfmenupanel.CData.TankSizeSelect:SetSize(100, 30)
+			for I=1, #SortedTanks do
+				acfmenupanel.CData.TankSizeSelect:AddChoice( SortedTanks[I] )
+			end
+			acfmenupanel.CData.TankSizeSelect.OnSelect = function( index, value, data )
+				RunConsoleCommand( "acfmenu_data1", data )
+				acfmenupanel.FuelTankData.Id = data
+				ACFFuelTankGUIUpdate( Table )
+			end
+			acfmenupanel.CData.TankSizeSelect:SetText(acfmenupanel.FuelTankData.Id)
+			RunConsoleCommand( "acfmenu_data1", acfmenupanel.FuelTankData.Id )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.TankSizeSelect )
+		
+		-- fuel type dropbox
+		acfmenupanel.CData.FuelSelect = vgui.Create( "DComboBox", acfmenupanel.CustomDisplay )
+			acfmenupanel.CData.FuelSelect:SetSize(100, 30)
+			for Key, Value in pairs( ACF.FuelDensity ) do
+				acfmenupanel.CData.FuelSelect:AddChoice( Key )
+			end
+			acfmenupanel.CData.FuelSelect.OnSelect = function( index, value, data )
+				RunConsoleCommand( "acfmenu_data2", data )
+				acfmenupanel.FuelTankData.FuelID = data
+				ACFFuelTankGUIUpdate( Table )
+			end
+			acfmenupanel.CData.FuelSelect:SetText(acfmenupanel.FuelTankData.FuelID)
+			RunConsoleCommand( "acfmenu_data2", acfmenupanel.FuelTankData.FuelID )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.FuelSelect )
+		
+		ACFFuelTankGUIUpdate( Table )
+		
+		acfmenupanel.CustomDisplay:PerformLayout()
+		
+	end
+
+	function ACFFuelTankGUIUpdate( Table )
+
+		if not acfmenupanel.CustomDisplay then return end
+		
+		local Tanks = list.Get("ACFEnts").FuelTanks
+		
+		local TankID = acfmenupanel.FuelTankData.Id
+		local FuelID = acfmenupanel.FuelTankData.FuelID
+		local Dims = Tanks[TankID].dims
+		
+		local Wall = 0.1 --wall thickness in inches
+		local Size = math.floor(Dims[1] * Dims[2] * Dims[3])
+		local Volume = math.floor((Dims[1] - Wall) * (Dims[2] - Wall) * (Dims[3] - Wall))
+		local Capacity = Volume * ACF.CuIToLiter * ACF.TankVolumeMul * 0.125
+		local EmptyMass = ((Size - Volume)*16.387)*7.9/1000
+		local Mass = EmptyMass + Capacity * ACF.FuelDensity[FuelID]
+			
+		--fuel and tank info
+		if FuelID == "Electric" then
+			local kwh = Capacity * ACF.LiIonED
+			acfmenupanel:CPanelText("TankName", Tanks[TankID].name .. " Li-Ion Battery")
+			acfmenupanel:CPanelText("TankDesc", Tanks[TankID].desc .. "\n")
+			acfmenupanel:CPanelText("Cap", "Charge: " ..math.Round(kwh,1).. " kW hours / " ..math.Round(kwh*3.6,1).. " MJ")
+			acfmenupanel:CPanelText("Mass", "Mass: " ..math.Round(Mass,1).. " kg")
+		else 
+			acfmenupanel:CPanelText("TankName", Tanks[TankID].name .. " fuel tank")
+			acfmenupanel:CPanelText("TankDesc", Tanks[TankID].desc .. "\n")
+			acfmenupanel:CPanelText("Cap", "Capacity: " ..math.Round(Capacity,1).. " liters / " ..math.Round(Capacity*0.264172,1).. " gallons")
+			acfmenupanel:CPanelText("Mass", "Full mass: " ..math.Round(Mass,1).. " kg, Empty mass: " ..math.Round(EmptyMass,1).. " kg")
+		end
+
+		local text = "\n"
+		if Tanks[TankID].nolinks then
+			text = "\nThis fuel tank won\'t link to engines. It's intended to resupply fuel to other fuel tanks."
+		end
+		acfmenupanel:CPanelText("Links", text)
+		
+		--fuel tank model display
+		if not acfmenupanel.CData.DisplayModel then
+			acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
+				acfmenupanel.CData.DisplayModel:SetModel( Tanks[TankID].model )
+				acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 200 ) )
+				acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+				acfmenupanel.CData.DisplayModel:SetFOV( 10 )
+				acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
+				acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		end
+		acfmenupanel.CData.DisplayModel:SetModel( Tanks[TankID].model )
+		
+	end
+	
+	return
+	
+end
 
 function ENT:Initialize()
 	
@@ -25,7 +158,6 @@ function ENT:Initialize()
 	self.SupplyFuel = false
 	self.Leaking = 0
 	
-	self.WireDebugName = "Fuel Tank"
 	self.Inputs = Wire_CreateInputs( self, { "Active", "Refuel Duty" } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self,
 		{ "Fuel", "Capacity", "Leaking", "Entity" }, 
@@ -73,9 +205,9 @@ function ENT:ACF_Activate( Recalc )
 	
 end
 
-function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This function needs to return HitRes
+function ENT:ACF_OnDamage( Entity, Energy, FrAera, Angle, Inflictor )	--This function needs to return HitRes
 
-	local HitRes = ACF_PropDamage( Entity , Energy , FrAera , Angle , Inflictor )	--Calling the standard damage prop function
+	local HitRes = ACF_PropDamage( Entity, Energy, FrAera, Angle, Inflictor )	--Calling the standard damage prop function
 	
 	if self.Exploding or not self.IsExplosive then return HitRes end
 	
@@ -103,6 +235,7 @@ function ENT:ACF_OnDamage( Entity , Energy , FrAera , Angle , Inflictor )	--This
 	end
 	
 	return HitRes
+	
 end
 
 function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
@@ -110,8 +243,8 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local SId = Data1
-	local Tanks = list.Get("ACFEnts")["FuelTanks"]
-	if not Tanks[SId]["model"] then return false end --SId = "Tank_4x4x2" end
+	local Tanks = list.Get("ACFEnts").FuelTanks
+	if not Tanks[SId].model then return false end --SId = "Tank_4x4x2" end
 	
 	local Tank = ents.Create("acf_fueltank")
 	if not Tank:IsValid() then return false end
@@ -123,7 +256,7 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	
 	Tank.Id = Id
 	Tank.SizeId = SId
-	Tank.Model = Tanks[Tank.SizeId]["model"]
+	Tank.Model = Tanks[Tank.SizeId].model
 	Tank:SetModel( Tank.Model )	
 	
 	Tank:PhysicsInit( SOLID_VPHYSICS )      	
@@ -138,13 +271,14 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	table.insert(ACF.FuelTanks, Tank)
 	
 	return Tank
+	
 end
-list.Set( "ACFCvars", "acf_fueltank" , {"id", "data1", "data2"} )
+list.Set( "ACFCvars", "acf_fueltank", {"id", "data1", "data2"} )
 duplicator.RegisterEntityClass("acf_fueltank", MakeACF_FuelTank, "Pos", "Angle", "Id", "SizeId", "FuelType" )
 
 function ENT:UpdateFuelTank(Id, Data1, Data2)
 
-	local lookup = list.Get("ACFEnts")["FuelTanks"]
+	local lookup = list.Get("ACFEnts").FuelTanks
 	local Size = self:OBBMaxs() - self:OBBMins() --outer dimensions of tank
 	local Wall = 0.1 --wall thickness in inches
 	local pct = 1 --how full is the tank?
@@ -155,8 +289,8 @@ function ENT:UpdateFuelTank(Id, Data1, Data2)
 	self.Capacity = self.Volume * ACF.CuIToLiter * ACF.TankVolumeMul * 0.125 --internal volume available for fuel in liters
 	self.EmptyMass = ((self.Size - self.Volume)*16.387)*7.9/1000  -- total wall volume * cu in to cc * density of steel (kg/cc)
 	self.FuelType = Data2
-	self.IsExplosive = self.FuelType ~= "Electric" and lookup[Data1]["explosive"] ~= false
-	self.NoLinks = lookup[Data1]["nolinks"] == true
+	self.IsExplosive = self.FuelType ~= "Electric" and lookup[Data1].explosive ~= false
+	self.NoLinks = lookup[Data1].nolinks == true
 	
 	if self.FuelType == "Electric" then
 		self.Liters = self.Capacity --batteries capacity is different from internal volume
@@ -169,8 +303,22 @@ function ENT:UpdateFuelTank(Id, Data1, Data2)
 	self:UpdateFuelMass()
 	
 	Wire_TriggerOutput( self, "Capacity", math.Round(self.Capacity,2) )
-	self:SetNetworkedString("FuelType",self.FuelType)
-	self:SetNetworkedFloat("FuelLevel",math.Round(self.Fuel,1))
+	self:UpdateOverlayText()
+	
+end
+
+function ENT:UpdateOverlayText()
+	
+	local text = "Fuel Type: " .. self.FuelType
+	
+	if self.FuelType == "Electric" then
+		text = text .. "\nCharge Level: " .. math.Round( self.Fuel, 1 ) .. " kWh / " .. math.Round( self.Fuel * 3.6, 1 ) .. " MJ"
+	else
+		text = text .. "\nFuel Remaining: " .. math.Round( self.Fuel, 1 ) .. " liters / " .. math.Round( self.Fuel * 0.264172, 1 ) .. " gallons"
+	end
+	
+	self:SetOverlayText( text )
+	
 end
 
 function ENT:UpdateFuelMass()
@@ -187,7 +335,8 @@ function ENT:UpdateFuelMass()
 		phys:SetMass( self.Mass ) 
 	end
 	
-	self:SetNetworkedFloat("FuelLevel",math.Round(self.Fuel,1))
+	self:UpdateOverlayText()
+	
 end
 
 function ENT:Update( ArgsTable )
@@ -212,7 +361,7 @@ function ENT:Update( ArgsTable )
 	return true, "Fuel tank successfully updated."..Feedback
 end
 
-function ENT:TriggerInput( iname , value )
+function ENT:TriggerInput( iname, value )
 
 	if (iname == "Active") then
 		if not (value == 0) then
@@ -253,9 +402,9 @@ function ENT:Think()
 						self.Fuel = self.Fuel - exchange
 						Tank.Fuel = Tank.Fuel + exchange
 						if Tank.FuelType == "Electric" then
-							Tank:EmitSound( "ambient/energy/newspark04.wav" , 500, 100 )
+							Tank:EmitSound( "ambient/energy/newspark04.wav", 500, 100 )
 						else
-							Tank:EmitSound( "vehicles/jetski/jetski_no_gas_start.wav" , 500, 120 )
+							Tank:EmitSound( "vehicles/jetski/jetski_no_gas_start.wav", 500, 120 )
 						end
 					end
 				end
@@ -274,34 +423,19 @@ function ENT:Think()
 end
 
 function ENT:OnRemove()
+
 	for Key,Value in pairs(self.Master) do
-		if self.Master[Key] and self.Master[Key]:IsValid() then
+		if IsValid( self.Master[Key] ) then
 			self.Master[Key]:Unlink( self )
 		end
 	end
-	if #ACF.FuelTanks then
+	
+	if #ACF.FuelTanks > 0 then
 		for k,v in pairs(ACF.FuelTanks) do
 			if v == self then
 				table.remove(ACF.FuelTanks,k)
 			end
 		end
 	end
-	Wire_Remove(self)
-end
-
-function ENT:OnRestore()
-    Wire_Restored(self)
-end
-
-function ENT:PreEntityCopy() --Wire dupe info
-	local DupeInfo = WireLib.BuildDupeInfo(self)
-	if(DupeInfo) then
-		duplicator.StoreEntityModifier(self,"WireDupeInfo",DupeInfo)
-	end
-end
-
-function ENT:PostEntityPaste(Player,Ent,CreatedEntities) --Wire dupe info
-	if(Ent.EntityMods and Ent.EntityMods.WireDupeInfo) then
-		WireLib.ApplyDupeInfo(Player, Ent, Ent.EntityMods.WireDupeInfo, function(id) return CreatedEntities[id] end)
-	end
+	
 end
