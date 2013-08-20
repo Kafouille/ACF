@@ -390,14 +390,18 @@ function ENT:Think()
 
 	local Time = CurTime()
 	
-	if self.LegalThink < Time and self.LastActive+2 > Time then
-		self:CheckRopes()
+	if self.LegalThink < Time then
+		if self.LastActive + 2 > Time then
+			self:CheckRopes()
+		end
+		
 		if self:GetPhysicsObject():GetMass() < self.Mass or IsValid( self:GetParent() ) then
 			self.Legal = false
 		else 
 			self.Legal = true
 		end
-		self.LegalThink = Time + (math.random(5,10))
+		
+		self.LegalThink = Time + math.random( 5, 10 )
 	end
 	
 	self:NextThink(Time+0.2)
@@ -416,13 +420,19 @@ function ENT:CheckRopes()
 			self:Unlink( Ent )
 		continue end
 		
+		local OutPos = self:LocalToWorld( Link.Output )
+		local InPos = Ent:GetPos()
+		if Ent.IsGeartrain then
+			InPos = Ent:LocalToWorld( Ent.In )
+		end
+		
 		-- make sure it is not stretched too far
-		if Link.Rope.length + Link.Rope.addlength > Link.RopeLen * 1.5 then
+		if OutPos:Distance( InPos ) > Link.RopeLen * 1.5 then
 			self:Unlink( Ent )
 		continue end
 		
 		-- make sure the angle is not excessive
-		local DrvAngle = ( self:LocalToWorld( Link.Output ) - Ent:GetPos() ):GetNormalized():DotProduct( ( self:GetRight() * Link.Output.y ):GetNormalized() )
+		local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( ( self:GetRight() * Link.Output.y ):GetNormalized() )
 		if DrvAngle < 0.7 then
 			self:Unlink( Ent )
 		end
@@ -605,38 +615,36 @@ function ENT:Link( Target )
 			return false, "That is already linked to this gearbox!"
 		end
 	end
-		
-	local TargetPos = Target:GetPos()
+	
+	-- make sure the angle is not excessive
+	local InPos = Vector( 0, 0, 0 )
 	if Target.IsGeartrain then
-		TargetPos = Target:LocalToWorld( Target.In )
+		InPos = Target.In
 	end
+	local InPosWorld = Target:LocalToWorld( InPos )
 	
-	local LinkPos = Vector( 0, 0, 0 )
-	local Side = 0
-	if self:WorldToLocal( TargetPos ).y < 0 then
-		LinkPos = self.OutL
+	local OutPos = self.OutR
+	local Side = 1
+	if self:WorldToLocal( InPosWorld ).y < 0 then
+		OutPos = self.OutL
 		Side = 0
-	else
-		LinkPos = self.OutR
-		Side = 1
 	end
+	local OutPosWorld = self:LocalToWorld( OutPos )
 	
-	local DrvAngle = ( self:LocalToWorld( LinkPos ) - TargetPos ):GetNormalized():DotProduct( ( self:GetRight() * LinkPos.y ):GetNormalized() )
+	local DrvAngle = ( OutPosWorld - InPosWorld ):GetNormalized():DotProduct( ( self:GetRight() * OutPos.y ):GetNormalized() )
 	if DrvAngle < 0.7 then
 		return false, "Cannot link due to excessive driveshaft angle!"
 	end
 	
-	local RopeLen = ( self:LocalToWorld( LinkPos ) - TargetPos ):Length()
-	local Rope = constraint.Rope( self, Target, 0, 0, LinkPos, Target:WorldToLocal( TargetPos ), RopeLen, RopeLen * 0.2, 5000, 1, "cable/cable2", false )
-	Rope.Type = "ACF Link" -- This prevents it from being recognized as a rope by the duplicator and rope tool
+	local Rope = constraint.CreateKeyframeRope( OutPosWorld, 1, "cable/cable2", nil, self, OutPos, 0, Target, InPos, 0 )
 	
 	local Link = {
 		Ent = Target,
 		Side = Side,
-		Axis = Target:WorldToLocal( self:GetRight() + TargetPos ),
+		Axis = Target:WorldToLocal( self:GetRight() + InPosWorld ),
 		Rope = Rope,
-		RopeLen = RopeLen,
-		Output = LinkPos,
+		RopeLen = ( OutPosWorld - InPosWorld ):Length(),
+		Output = OutPos,
 		ReqTq = 0,
 		Vel = 0
 	}
@@ -652,11 +660,18 @@ function ENT:Unlink( Target )
 		
 		if Link.Ent == Target then
 			
+			-- Remove any old physical ropes leftover from dupes
+			for Key, Rope in pairs( constraint.FindConstraints( Link.Ent, "Rope" ) ) do
+				if Rope.Ent1 == self or Rope.Ent2 == self then
+					Rope.Constraint:Remove()
+				end
+			end
+			
 			if IsValid( Link.Rope ) then
 				Link.Rope:Remove()
 			end
 			
-			table.remove(self.WheelLink,Key)
+			table.remove( self.WheelLink, Key )
 			
 			return true, "Unlink successful!"
 			

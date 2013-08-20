@@ -79,8 +79,7 @@ function ENT:Initialize()
 	self.Throttle = 0
 	self.Active = false
 	self.IsMaster = true
-	self.GearLink = {}
-	self.GearRope = {}
+	self.GearLink = {} -- a "Link" has these components: Ent, Rope, RopeLen, ReqTq
 	self.FuelLink = {}
 
 	self.LastCheck = 0
@@ -495,26 +494,34 @@ function ENT:CalcRPM()
 	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	local Boxes = table.Count( self.GearLink )
 	
-	local MaxTqTable = {}
-	local MaxTq = 0
-	for Key, Gearbox in pairs(self.GearLink) do
-		-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
-		MaxTqTable[Key] = Gearbox:Calc( self.FlyRPM, self.Inertia )
-		MaxTq = MaxTq + MaxTqTable[Key]
+	local TotalReqTq = 0
+	
+	-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
+	for Key, Link in pairs( self.GearLink ) do
+	
+		if not Link.Ent.Legal then continue end
+		
+		Link.ReqTq = Link.Ent:Calc( self.FlyRPM, self.Inertia )
+		TotalReqTq = TotalReqTq + Link.ReqTq
+		
 	end
 
-	-- This is the presently avaliable torque from the engine
+	-- This is the presently available torque from the engine
 	local TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
 	
 	-- Calculate the ratio of total requested torque versus what's avaliable
-	local AvailTq = math.min( TorqueDiff / MaxTq / Boxes, 1 )
-
-	for Key, Gearbox in pairs(self.GearLink) do
-		-- Split the torque fairly between the gearboxes who need it
-		Gearbox:Act( MaxTqTable[Key] * AvailTq * self.MassRatio, DeltaTime )
+	local AvailRatio = math.min( TorqueDiff / TotalReqTq / Boxes, 1 )
+	
+	-- Split the torque fairly between the gearboxes who need it
+	for Key, Link in pairs( self.GearLink ) do
+		
+		if not Link.Ent.Legal then continue end
+		
+		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime )
+		
 	end
 
-	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
+	self.FlyRPM = self.FlyRPM - math.min( TorqueDiff, TotalReqTq ) / self.Inertia
 
 	-- Then we calc a smoothed RPM value for the sound effects
 	table.remove( self.RPM, 10 )
@@ -539,37 +546,35 @@ function ENT:CalcRPM()
 end
 
 function ENT:CheckRopes()
-
-	for GearboxKey,Ent in pairs(self.GearLink) do
-		local Constraints = constraint.FindConstraints(Ent, "Rope")
-		if Constraints then
-
-			local Clean = false
-			for Key,Rope in pairs(Constraints) do
-				if Rope.Ent1 == self or Rope.Ent2 == self then
-					if Rope.length + Rope.addlength < self.GearRope[GearboxKey]*1.5 then
-						Clean = true
-					end
-				end
-			end
-
-			if not Clean then
-				self:Unlink( Ent )
-			end
-
-		else
+	
+	for Key, Link in pairs( self.GearLink ) do
+		
+		local Ent = Link.Ent
+		
+		-- make sure the rope is still there
+		if not IsValid( Link.Rope ) then 
 			self:Unlink( Ent )
-		end
-
+		continue end
+		
+		local OutPos = self:LocalToWorld( self.Out )
+		local InPos = Ent:LocalToWorld( Ent.In )
+		
+		-- make sure it is not stretched too far
+		if OutPos:Distance( InPos ) > Link.RopeLen * 1.5 then
+			self:Unlink( Ent )
+		continue end
+		
+		-- make sure the angle is not excessive
 		local Direction
 		if self.IsTrans then Direction = -self:GetRight() else Direction = self:GetForward() end
-		local DrvAngle = (self:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct((Direction))
-		if ( DrvAngle < 0.7 ) then
+		
+		local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( Direction )
+		if DrvAngle < 0.7 then
 			self:Unlink( Ent )
 		end
-
+		
 	end
-
+	
 end
 
 --unlink fuel tanks out of range
@@ -588,99 +593,118 @@ function ENT:Link( Target )
 	if not IsValid( Target ) or (Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_fueltank") then
 		return false, "Can only link to gearboxes or fuel tanks!"
 	end
-
-	if Target:GetClass() == "acf_gearbox" then
-		-- Check if target is already linked
-		for Key, Value in pairs( self.GearLink ) do
-			if Value == Target then
-				return false, "That is already linked to this engine!"
-			end
-		end
-
-		local InPos = Target:LocalToWorld(Target.In)
-		local OutPos = self:LocalToWorld(self.Out)
-		local Direction
-		if self.IsTrans then Direction = -self:GetRight() else Direction = self:GetForward() end
-		local DrvAngle = (OutPos - InPos):GetNormalized():DotProduct((Direction))
-		if DrvAngle < 0.7 then
-			return false, "Cannot link due to excessive driveshaft angle!"
-		end
-
-		table.insert( self.GearLink, Target )
-		table.insert( Target.Master, self )
-		local RopeL = ( OutPos-InPos ):Length()
-		constraint.Rope( self, Target, 0, 0, self.Out, Target.In, RopeL, RopeL * 0.2, 0, 1, "cable/cable2", false )
-		table.insert( self.GearRope, RopeL )
-	else
-		--fuel tank linking
-		if not (self.FuelType == "Any" and not (Target.FuelType == "Electric")) then
-			if not (self.FuelType == Target.FuelType) then
-				return false, "Cannot link because fuel type is incompatible."
-			end
-		end
-		
-		if Target.NoLinks then
-			return false, "This fuel tank doesn\'t allow linking."
-		end
-		
-		local Duplicate = false
-		for Key,Value in pairs(self.FuelLink) do
-			if Value == Target then Duplicate = true break end
-		end
-		
-		if not Duplicate then
-			if self:GetPos():Distance(Target:GetPos()) < 512 then
-				table.insert(self.FuelLink,Target)
-				table.insert(Target.Master,self)
-			else
-				return false, "Fuel tank is too far away."
-			end
-		else
+	
+	if Target:GetClass() == "acf_fueltank" then 
+		return self:LinkFuel( Target )
+	end
+	
+	-- Check if target is already linked
+	for Key, Link in pairs( self.GearLink ) do
+		if Link.Ent == Target then
 			return false, "That is already linked to this engine!"
 		end
 	end
+	
+	-- make sure the angle is not excessive
+	local InPos = Target:LocalToWorld( Target.In )
+	local OutPos = self:LocalToWorld( self.Out )
+	
+	local Direction
+	if self.IsTrans then Direction = -self:GetRight() else Direction = self:GetForward() end
+	
+	local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( Direction )
+	if DrvAngle < 0.7 then
+		return false, "Cannot link due to excessive driveshaft angle!"
+	end
+	
+	local Rope = constraint.CreateKeyframeRope( OutPos, 1, "cable/cable2", nil, self, self.Out, 0, Target, Target.In, 0 )
+	
+	local Link = {
+		Ent = Target,
+		Rope = Rope,
+		RopeLen = ( OutPos - InPos ):Length(),
+		ReqTq = 0
+	}
+	
+	table.insert( self.GearLink, Link )
+	table.insert( Target.Master, self )
 	
 	return true, "Link successful!"
 end
 
 function ENT:Unlink( Target )
 
-	local Success = false
+	if Target:GetClass() == "acf_fueltank" then
+		return self:UnlinkFuel( Target )
+	end
 	
-	if Target:GetClass() == "acf_gearbox" then
-		for Key,Value in pairs(self.GearLink) do
-			if Value == Target then
-
-				local Constraints = constraint.FindConstraints(Value, "Rope")
-				if Constraints then
-					for Key,Rope in pairs(Constraints) do
-						if Rope.Ent1 == self or Rope.Ent2 == self then
-							Rope.Constraint:Remove()
-						end
-					end
-				end
-
-				table.remove(self.GearLink,Key)
-				table.remove(self.GearRope,Key)
-				Success = true
-			end
-		end
-	else
-		for Key,Value in pairs(self.FuelLink) do
-			if Value == Target then
-				table.remove(self.FuelLink,Key)
-				--need to remove from tank master?
-				Success = true
-			end
-		end
-	end
+	for Key, Link in pairs( self.GearLink ) do
 		
-	if Success then
-		return true, "Unlink successful!"
-	else
-		return false, "That is not linked to this engine!"
+		if Link.Ent == Target then
+			
+			-- Remove any old physical ropes leftover from dupes
+			for Key, Rope in pairs( constraint.FindConstraints( Link.Ent, "Rope" ) ) do
+				if Rope.Ent1 == self or Rope.Ent2 == self then
+					Rope.Constraint:Remove()
+				end
+			end
+			
+			if IsValid( Link.Rope ) then
+				Link.Rope:Remove()
+			end
+			
+			table.remove( self.GearLink,Key )
+			
+			return true, "Unlink successful!"
+			
+		end
+		
 	end
+	
+	return false, "That gearbox is not linked to this engine!"
+	
+end
 
+function ENT:LinkFuel( Target )
+	
+	if not (self.FuelType == "Any" and not (Target.FuelType == "Electric")) then
+		if self.FuelType ~= Target.FuelType then
+			return false, "Cannot link because fuel type is incompatible."
+		end
+	end
+	
+	if Target.NoLinks then
+		return false, "This fuel tank doesn\'t allow linking."
+	end
+	
+	for Key,Value in pairs(self.FuelLink) do
+		if Value == Target then 
+			return false, "That fuel tank is already linked to this engine!"
+		end
+	end
+	
+	if self:GetPos():Distance( Target:GetPos() ) > 512 then
+		return false, "Fuel tank is too far away."
+	end
+	
+	table.insert( self.FuelLink, Target )
+	table.insert( Target.Master, self )
+	
+	return true, "Link successful!"
+	
+end
+
+function ENT:UnlinkFuel( Target )
+	
+	for Key, Value in pairs( self.FuelLink ) do
+		if Value == Target then
+			table.remove( self.FuelLink, Key )
+			return true, "Unlink successful!"
+		end
+	end
+	
+	return false, "That fuel tank is not linked to this engine!"
+	
 end
 
 function ENT:PreEntityCopy()
@@ -688,13 +712,13 @@ function ENT:PreEntityCopy()
 	//Link Saving
 	local info = {}
 	local entids = {}
-	for Key, Value in pairs(self.GearLink) do					--First clean the table of any invalid entities
-		if not Value:IsValid() then
-			table.remove(self.GearLink, Value)
+	for Key, Link in pairs( self.GearLink ) do					--First clean the table of any invalid entities
+		if not IsValid( Link.Ent ) then
+			table.remove( self.GearLink, Key )
 		end
 	end
-	for Key, Value in pairs(self.GearLink) do					--Then save it
-		table.insert(entids, Value:EntIndex())
+	for Key, Link in pairs( self.GearLink ) do					--Then save it
+		table.insert( entids, Link.Ent:EntIndex() )
 	end
 
 	info.entities = entids
@@ -730,12 +754,14 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 	if (Ent.EntityMods) and (Ent.EntityMods.GearLink) and (Ent.EntityMods.GearLink.entities) then
 		local GearLink = Ent.EntityMods.GearLink
 		if GearLink.entities and table.Count(GearLink.entities) > 0 then
-			for _,ID in pairs(GearLink.entities) do
-				local Linked = CreatedEntities[ ID ]
-				if Linked and Linked:IsValid() then
-					self:Link( Linked )
+			timer.Simple( 0, function() -- this timer is a workaround for an ad2/makespherical issue https://github.com/nrlulz/ACF/issues/14#issuecomment-22844064
+				for _,ID in pairs(GearLink.entities) do
+					local Linked = CreatedEntities[ ID ]
+					if IsValid( Linked ) then
+						self:Link( Linked )
+					end
 				end
-			end
+			end )
 		end
 		Ent.EntityMods.GearLink = nil
 	end
@@ -746,7 +772,7 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		if FuelLink.entities and table.Count(FuelLink.entities) > 0 then
 			for _,ID in pairs(FuelLink.entities) do
 				local Linked = CreatedEntities[ ID ]
-				if Linked and Linked:IsValid() then
+				if IsValid( Linked ) then
 					self:Link( Linked )
 				end
 			end
