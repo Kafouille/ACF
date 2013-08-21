@@ -387,25 +387,39 @@ function ENT:TriggerInput( iname, value )
 end
 
 function ENT:Think()
-
+	
 	local Time = CurTime()
 	
-	if self.LegalThink < Time then
-		if self.LastActive + 2 > Time then
-			self:CheckRopes()
-		end
-		
-		if self:GetPhysicsObject():GetMass() < self.Mass or IsValid( self:GetParent() ) then
-			self.Legal = false
-		else 
-			self.Legal = true
-		end
-		
-		self.LegalThink = Time + math.random( 5, 10 )
+	if self.LastActive + 2 > Time then
+		self:CheckRopes()
 	end
 	
-	self:NextThink(Time+0.2)
+	self.Legal = self:CheckLegal()
+	
+	self:NextThink( Time + math.random( 5, 10 ) )
 	return true
+	
+end
+
+function ENT:CheckLegal()
+	
+	-- make sure weight is not below stock
+	if self:GetPhysicsObject():GetMass() < self.Mass then return false end
+	
+	-- if it's not parented we're fine
+	if not IsValid( self:GetParent() ) then return true end
+	
+	-- but not if it's parented to a parented prop
+	if IsValid( self:GetParent():GetParent() ) then return false end
+	
+	-- parenting is only legal if it's also welded
+	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
+		
+		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
+		
+	end
+	
+	return false
 	
 end
 
@@ -502,6 +516,7 @@ function ENT:Calc( InputRPM, InputInertia )
 	
 		Link.ReqTq = 0
 		if Link.Ent.IsGeartrain then
+			if not Link.Ent.Legal then continue end
 			local Inertia = 0
 			if self.GearRatio ~= 0 then Inertia = InputInertia / self.GearRatio end
 			Link.ReqTq = math.min( Clutch, math.abs( Link.Ent:Calc( InputRPM * self.GearRatio, Inertia ) * self.GearRatio ) )

@@ -375,11 +375,7 @@ function ENT:Think()
 			self:CheckRopes()
 			self:CheckFuel()
 			self:CalcMassRatio()
-			if self:GetPhysicsObject():GetMass() < self.Weight or self:GetParent():IsValid() then
-				self.Legal = false
-			else 
-				self.Legal = true
-			end
+			self.Legal = self:CheckLegal()
 
 			self.LastCheck = Time + math.Rand(5, 10)
 		end
@@ -389,6 +385,28 @@ function ENT:Think()
 	self:NextThink( Time )
 	return true
 
+end
+
+function ENT:CheckLegal()
+	
+	-- make sure weight is not below stock
+	if self:GetPhysicsObject():GetMass() < self.Weight then return false end
+	
+	-- if it's not parented we're fine
+	if not IsValid( self:GetParent() ) then return true end
+	
+	-- but not if it's parented to a parented prop
+	if IsValid( self:GetParent():GetParent() ) then return false end
+	
+	-- parenting is only legal if it's also welded
+	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
+		
+		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
+		
+	end
+	
+	return false
+	
 end
 
 function ENT:CalcMassRatio()
