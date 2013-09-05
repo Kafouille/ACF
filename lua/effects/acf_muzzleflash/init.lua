@@ -19,8 +19,8 @@
 			local SoundPressure = (Propellant*1000)^0.5
 			sound.Play( Sound, Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
 			sound.Play( Sound, Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
-			sound.Play( ACF.Classes["GunClass"][Class]["soundDistance"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
-			sound.Play( ACF.Classes["GunClass"][Class]["soundNormal"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			--sound.Play( ACF.Classes["GunClass"][Class]["soundDistance"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
+			--sound.Play( ACF.Classes["GunClass"][Class]["soundNormal"], Gun:GetPos() , math.Clamp(SoundPressure,75,255), math.Clamp(100,15,255))
 			
 			local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( "muzzle" ) ) or { Pos = Gun:GetPos(), Ang = Gun:GetAngles() }
 			ParticleEffect( ACF.Classes["GunClass"][Class]["muzzleflash"], Muzzle.Pos, Muzzle.Ang, Gun )
