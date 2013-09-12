@@ -1021,7 +1021,7 @@ local Machinegun = {}
 	Machinegun.muzzleflash = "50cal_muzzleflash_noscale"
 	Machinegun.rofmod = 0.9
 	Machinegun.soundNormal = "weapons/ACF_Gun/mg_fire4.wav"
-	Machinegun.sound = " "
+	Machinegun.sound = "weapons/ACF_Gun/mg_fire4.wav"
 	Machinegun.soundDistance = " "
 GunClass["MG"] = Machinegun	
 	

@@ -40,4 +40,7 @@ r416
 --Reworked link system, non-physical driveshafts
 
 *r437
---removed some legacy code causing clientside lag when firing weapons.
+--Removed some legacy code causing clientside lag when firing weapons.
+
+*r438
+--Fixed MG sound; made RAC sound a bit less stuttery.
