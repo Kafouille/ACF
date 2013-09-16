@@ -350,7 +350,7 @@ end
 -- prevent people from changing bodygroup
 function ENT:CanProperty( ply, property )
 
-	return property ~= "bodygroups
+	return property ~= "bodygroups"
 	
 end
 
