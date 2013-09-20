@@ -44,3 +44,9 @@ r416
 
 *r438
 --Fixed MG sound; made RAC sound a bit less stuttery.
+
+*r439
+--Fixed C-menu functions not working on gearbox
+
+*r442
+--Fixed ammunition with HE content.  Previously, the explosion could have been upwards of 500 units from the intended location, based on the velocity of the round.
