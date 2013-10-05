@@ -153,6 +153,8 @@ __e2setcost( 20 )
 
 e2function array entity:acfLinks()
 	
+	if not IsValid(this) then return {} end
+	
 	local enttype = this:GetClass()
 	
 	if not linkTables[enttype] then
