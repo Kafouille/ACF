@@ -100,6 +100,72 @@ e2function void entity:acfActive( number on )
 end
 
 
+
+
+local linkTables =
+{ -- link resources within each ent type.  should point to an ent: true if adding link.Ent, false to add link itself
+	acf_engine 		= {GearLink = true, FuelLink = false},
+	acf_gearbox		= {WheelLink = true, Master = false},
+	acf_fueltank	= {Master = false},
+	acf_gun			= {AmmoLink = false},
+	acf_ammo		= {Master = false}
+}
+
+
+local function getLinks(ent, enttype)
+	
+	local ret = {}
+	-- find the link resources available for this ent type
+	for entry, mode in pairs(linkTables[enttype]) do
+		if not ent[entry] then error("Couldn't find link resource " .. entry .. " for entity " .. tostring(ent)) return end
+		
+		-- find all the links inside the resources
+		for _, link in pairs(ent[entry]) do
+			ret[#ret+1] = mode and link.Ent or link
+		end
+	end
+	
+	return ret
+end
+
+
+local function searchForGearboxLinks(ent)
+	local boxes = ents.FindByClass("acf_gearbox")
+	
+	local ret = {}
+	
+	for _, box in pairs(boxes) do
+		if IsValid(box) then
+			for _, link in pairs(box.WheelLink) do
+				if link.Ent == ent then
+					ret[#ret+1] = box
+					break
+				end
+			end
+		end
+	end
+	
+	return ret
+end
+
+
+__e2setcost( 20 )
+
+e2function array entity:acfLinks()
+	
+	local enttype = this:GetClass()
+	
+	if not linkTables[enttype] then
+		return searchForGearboxLinks(this)
+	end
+	
+	return getLinks(this, enttype)
+	
+end
+
+
+
+
 __e2setcost( 2 )
 
 -- Returns the full name of an ACF entity

@@ -10,6 +10,7 @@ E2Helper.Descriptions["acfName"] = "Returns the full name of an ACF entity."
 E2Helper.Descriptions["acfType"] = "Returns the type of ACF entity."
 E2Helper.Descriptions["acfCapacity"] = "Returns the capacity of an ACF ammo crate or fuel tank."
 E2Helper.Descriptions["acfInfoRestricted"] = "Returns 1 if functions returning sensitive info are restricted to owned props."
+E2Helper.Descriptions["acfLinks"] = "Returns all the entities which are linked to this entity through ACF."
 
 --engine
 E2Helper.Descriptions["acfMaxTorque"] = "Returns the maximum torque (in N/m) of an ACF engine."
