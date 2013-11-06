@@ -921,7 +921,7 @@ local MO120mm = {}
 	end
 GunTable["120mmM"] = MO120mm
 	
---[[
+
 --150mmM--
 local MO150mm = {}
 	MO150mm.id = "150mmM"
@@ -932,18 +932,18 @@ local MO150mm = {}
 	MO150mm.model = "models/mortar/mortar_150mm.mdl"
 	MO150mm.caliber = 15.0
 	MO150mm.gunclass = "MO"
-	MO150mm.weight = 1745
+	MO150mm.weight = 1255
 	MO150mm.year = 1945
 		MO150mm.round = {}
 		MO150mm.round.id = "150mmM"
-		MO150mm.round.maxlength = 63
-		MO150mm.round.propweight = 0.255 
+		MO150mm.round.maxlength = 58
+		MO150mm.round.propweight = 0.235 
 	if ( CLIENT ) then
 		MO150mm.guicreate = (function( Panel, Table ) ACFGunGUICreate( Table ) end or nil)
 		MO150mm.guiupdate = function() return end
 	end
 GunTable["150mmM"] = MO150mm
---]]	
+
 local MO200mm = {}
 	MO200mm.id = "200mmM"
 	MO200mm.ent = "acf_gun"

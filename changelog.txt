@@ -50,3 +50,13 @@ r416
 
 *r442
 --Fixed ammunition with HE content.  Previously, the explosion could have been upwards of 500 units from the intended location, based on the velocity of the round.
+
+*r445
+--Added e2 function that returns entities linked via acf to the specified entity.
+
+*r452
+--Added Looterz' ammo/gearbox copy tool.
+--Added Scotty's double diff (tank turning) diffs.
+
+*r453
+--Added fixed 150mm mortar.
