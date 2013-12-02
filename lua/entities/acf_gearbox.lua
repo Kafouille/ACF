@@ -289,6 +289,11 @@ function ENT:Update( ArgsTable )
 			table.insert(OutputTypes,"NORMAL")
 		end
 		
+		local phys = self:GetPhysicsObject()    
+		if IsValid( phys ) then 
+			phys:SetMass( self.Mass ) 
+		end
+		
 		self.Inputs = Wire_CreateInputs( self, Inputs )
         self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputTypes )
         Wire_TriggerOutput( self, "Entity", self )
