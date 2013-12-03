@@ -557,7 +557,7 @@ function ENT:CalcRPM()
 	
 	if self.Sound then
 		self.Sound:ChangePitch( math.min( 20 + (SmoothRPM * self.SoundPitch) / 50, 255 ), 0 )
-		self.Sound:ChangeVolume( 0.25 + self.Throttle / 1.5, 0 )
+		self.Sound:ChangeVolume( 0.25 + (0.1 + 0.9 * ((SmoothRPM / self.LimitRPM) ^ 1.5)) * self.Throttle / 1.5, 0 )
 	end
 	
 	return RPM

@@ -60,3 +60,12 @@ r416
 
 *r453
 --Added fixed 150mm mortar.
+
+*r456
+--Change to double differentials, bogs down engine less on in place turns.
+
+*r457
+--Fixed gearboxes breaking after updating
+
+*r458
+--Changed engine volume behavior; volume now ramps up with rpm in addition to throttle.
