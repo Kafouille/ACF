@@ -69,3 +69,6 @@ r416
 
 *r458
 --Changed engine volume behavior; volume now ramps up with rpm in addition to throttle.
+
+*r459
+--Scaled recoil and HE shove based upon the physical mass of the contraption rather than the total mass. Kinetic impacts remain unchanged.

@@ -124,7 +124,12 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 			else
 				local phys = Tar:GetPhysicsObject() 
 				if (phys:IsValid()) then 
-					phys:ApplyForceOffset( Table.Vec * PowerFraction * 100 ,  Hitpos )	--Assuming about a tenth of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 10)
+					if(!Tar.acflastupdatemass) or (Tar.acflastupdatemass < (CurTime() + 10)) then
+						ACF_CalcMassRatio(Tar)
+					end
+					local scalepush = GetConVarNumber("acf_hepush") or 1
+					local physratio = (Tar.acfphystotal / Tar.acftotal) * scalepush
+					phys:ApplyForceOffset( Table.Vec * PowerFraction * 100 * physratio ,  Hitpos )	--Assuming about a tenth of the energy goes to propelling the target prop (Power in KJ * 1000 to get J then divided by 10)
 				end
 			end
 			

@@ -523,7 +523,15 @@ function ENT:FireShell()
 		
 			local Gun = self:GetPhysicsObject()  	
 			if (Gun:IsValid()) then 	
-				Gun:ApplyForceCenter( self:GetForward() * -(self.BulletData.ProjMass * self.BulletData.MuzzleVel * 39.37 + self.BulletData.PropMass * 3000 * 39.37))			
+				if(!self.acflastupdatemass) or (self.acflastupdatemass < (CurTime() + 10)) then
+					ACF_CalcMassRatio( self )
+				end
+				local pushscale = GetConVarNumber("acf_recoilpush") or 1
+				local physratio = 1 * pushscale
+				if(self.acfphystotal) and (self.acftotal) then
+					physratio = self.acfphystotal / self.acftotal
+				end
+				Gun:ApplyForceCenter( self:GetForward() * -(self.BulletData.ProjMass * self.BulletData.MuzzleVel * 39.37 + self.BulletData.PropMass * 3000 * 39.37) * physratio)			
 			end
 			
 			self.Ready = false

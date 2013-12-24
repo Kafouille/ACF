@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 458 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 459 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Threshold = 225	--Health Divisor
@@ -171,6 +171,49 @@ function ACF_Kinetic( Speed , Mass, LimitVel )
 	
 	return Energy
 end
+
+-- Global Ratio Setting Function
+function ACF_CalcMassRatio( obj )
+	local Mass = 0
+	local PhysMass = 0
+	
+	-- get the shit that is physically attached to the vehicle
+	local PhysEnts = ACF_GetAllPhysicalConstraints( obj )
+	
+	-- add any parented but not constrained props you sneaky bastards
+	local AllEnts = table.Copy( PhysEnts )
+	for k, v in pairs( PhysEnts ) do
+		
+		table.Merge( AllEnts, ACF_GetAllChildren( v ) )
+	
+	end
+	
+	for k, v in pairs( AllEnts ) do
+		
+		if not IsValid( v ) then continue end
+		
+		local phys = v:GetPhysicsObject()
+		if not IsValid( phys ) then continue end
+		
+		Mass = Mass + phys:GetMass()
+		
+		if PhysEnts[ v ] then
+			PhysMass = PhysMass + phys:GetMass()
+		end
+		
+	end
+	
+	for k, v in pairs( AllEnts ) do
+		v.acfphystotal = PhysMass
+		v.acftotal = Mass
+		v.acflastupdatemass = CurTime()
+	end
+	
+end
+
+-- Cvars for recoil/he push
+CreateConVar("acf_hepush", 1)
+CreateConVar("acf_recoilpush", 1)
 
 -- New healthmod/armormod/ammomod cvars
 CreateConVar("acf_healthmod", 1)
