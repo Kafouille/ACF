@@ -1,4 +1,3 @@
-
 AddCSLuaFile()
 
 DEFINE_BASECLASS( "base_wire_entity" )
@@ -218,14 +217,14 @@ end
 
 function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
 
-	if not Owner:CheckLimit("_acf_misc") then return false end
+	if IsValid(Owner) and not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local SId = Data1
 	local Tanks = list.Get("ACFEnts").FuelTanks
 	if not Tanks[SId].model then return false end --SId = "Tank_4x4x2" end
 	
 	local Tank = ents.Create("acf_fueltank")
-	if not Tank:IsValid() then return false end
+	if not IsValid(Tank) then return false end
 	Tank:SetAngles(Angle)
 	Tank:SetPos(Pos)
 	Tank:Spawn()
@@ -243,8 +242,10 @@ function MakeACF_FuelTank(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 
 	Tank:UpdateFuelTank(Id, SId, Data2)
 	
-	Owner:AddCount( "_acf_fueltank", Tank )
-	Owner:AddCleanup( "acfmenu", Tank )
+	if IsValid(Owner) then
+		Owner:AddCount( "_acf_fueltank", Tank )
+		Owner:AddCleanup( "acfmenu", Tank )
+	end
 	
 	table.insert(ACF.FuelTanks, Tank)
 	
