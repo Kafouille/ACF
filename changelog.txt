@@ -72,3 +72,6 @@ r416
 
 *r459
 --Scaled recoil and HE shove based upon the physical mass of the contraption rather than the total mass. Kinetic impacts remain unchanged.
+
+*r462
+--Fuel tanks can now be persisted.
