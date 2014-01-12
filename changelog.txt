@@ -75,3 +75,6 @@ r416
 
 *r462
 --Fuel tanks can now be persisted.
+
+*r463
+--Added clientside function acf_cl_particlemul to reduce particle counts clientside for HE/HEAT explosions.
