@@ -3,7 +3,7 @@ AddCSLuaFile( "acf/shared/rounds/roundfunctions.lua" )
 function ACF_RoundBaseGunpowder( PlayerData, Data, ServerData, GUIData )
 
 	local BulletMax = ACF.Weapons["Guns"][PlayerData["Id"]]["round"]
-	GUIData["MaxTotalLength"] = BulletMax["maxlength"]
+	GUIData["MaxTotalLength"] = BulletMax["maxlength"] * (GUIData["LengthAdj"] or 1)
 		
 	Data["Caliber"] = ACF.Weapons["Guns"][PlayerData["Id"]]["caliber"]
 	Data["FrAera"] = 3.1416 * (Data["Caliber"]/2)^2

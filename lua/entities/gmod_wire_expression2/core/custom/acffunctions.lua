@@ -488,10 +488,15 @@ e2function number entity:acfMagSize()
 	return this.MagSize or 1
 end
 
--- Returns the spread for an ACF gun
+-- Returns the spread for an ACF gun or flechette ammo
 e2function number entity:acfSpread()
-	if not isGun(this) then return 0 end
-	return this.Inaccuracy or 0
+	if not (isGun(this) or isAmmo(this)) then return 0 end
+	local Spread = this.Inaccuracy or 0
+	if this.BulletData["Type"] == "FL" then
+		if restrictInfo(self, this) then return Spread end
+		return Spread + (this.BulletData["FlechetteSpread"] or 0)
+	end
+	return Spread
 end
 
 -- Returns 1 if an ACF gun is reloading
@@ -617,6 +622,30 @@ e2function number entity:acfProjectileMass()
 	return math.Round(this.BulletData["ProjMass"] or 0,3)
 end
 
+-- Returns the number of projectiles in a flechette round
+e2function number entity:acfFLSpikes()
+	if not (isAmmo(this) or isGun(this)) then return 0 end
+	if restrictInfo(self, this) then return 0 end
+	if not this.BulletData["Type"] == "FL" then return 0 end
+	return this.BulletData["Flechettes"] or 0
+end
+
+-- Returns the mass of a single spike in a FL round in a crate or gun
+e2function number entity:acfFLSpikeMass()
+	if not (isAmmo(this) or isGun(this)) then return 0 end
+	if restrictInfo(self, this) then return 0 end
+	if not this.BulletData["Type"] == "FL" then return 0 end
+	return math.Round(this.BulletData["FlechetteMass"] or 0, 3)
+end
+
+-- Returns the radius of the spikes in a flechette round in mm
+e2function number entity:acfFLSpikeRadius()
+	if not (isAmmo(this) or isGun(this)) then return 0 end
+	if restrictInfo(self, this) then return 0 end
+	if not this.BulletData["Type"] == "FL" then return 0 end
+	return math.Round((this.BulletData["FlechetteRadius"] or 0) * 10, 3)
+end
+
 __e2setcost( 5 )
 
 -- Returns the penetration of an AP, APHE, or HEAT round
@@ -631,6 +660,9 @@ e2function number entity:acfPenetration()
 	elseif Type == "HEAT" then
 		Energy = ACF_Kinetic(this.BulletData["SlugMV"]*39.37, this.BulletData["SlugMass"], 9999999 )
 		return math.Round((Energy.Penetration/this.BulletData["SlugPenAera"])*ACF.KEtoRHA,3)
+	elseif Type == "FL" then
+		Energy = ACF_Kinetic(this.BulletData["MuzzleVel"]*39.37 , this.BulletData["FlechetteMass"], this.BulletData["LimitVel"] )
+		return math.Round((Energy.Penetration/this.BulletData["FlechettePenArea"])*ACF.KEtoRHA, 3)
 	end
 	return 0
 end

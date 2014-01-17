@@ -66,7 +66,10 @@ E2Helper.Descriptions["acfAmmoType"] = "Returns the type of ammo in an ACF ammo 
 E2Helper.Descriptions["acfRoundType"] = "Returns the type of weapon the ammo in an ACF ammo crate loads into."
 E2Helper.Descriptions["acfMuzzleVel"] = "Returns the muzzle velocity of the ammo in an ACF ammo crate or weapon."
 E2Helper.Descriptions["acfProjectileMass"] = "Returns the mass of the projectile in an ACF ammo crate or weapon."
-E2Helper.Descriptions["acfPenetration"] = "Returns the penetration of an AP, APHE, or HEAT round in an ACF ammo crate or weapon."
+E2Helper.Descriptions["acfFLSpikes"] = "Returns the number of projectiles in a flechette round."
+E2Helper.Descriptions["acfFLSpikeRadius"] = "Returns the radius (in mm) of the spikes in a flechette round."
+E2Helper.Descriptions["acfFLSpikeMass"] = "Returns the mass of a single spike in a FL round in a crate or gun."
+E2Helper.Descriptions["acfPenetration"] = "Returns the penetration of an AP, APHE, HEAT or FL round in an ACF ammo crate or weapon."
 E2Helper.Descriptions["acfBlastRadius"] = "Returns the blast radius of an HE, APHE, or HEAT round in an ACF ammo crate or weapon."
 
 --armor

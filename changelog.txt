@@ -1,74 +1,5 @@
-r416
---Minor updates to e2 fuel functions
-
-*r417
---Fixed errors on gearbox when networked data hasn't been received
-
-*r419
---Updated several sounds with fixed versions, courtesy of Switchblade
-
-*r420
---Temporarily reverted ductility behaviour until armour tool gets properly fixed
---Armour tool should now apply intended amount of armor
-
-*r422
---New armor properties tool
-
-*r425
---Fixed total mass calc
-
-*r427
---Rebalanced CVTs; small and medium nerfed, large buffed
-
-*r428
---Added 2 new special engines: 1.0L I4 and 2.6L Wankel
---Small buff to 13L V12 special
-
-*r429
---Fixed torque rating on small inline 8 speed gearbox
-
-*r430
---Buffed straight-through gearboxes. They have +25% torque capacity and -25% weight, compared to inline/transaxial versions.
-
-*r431
---Made link ropes on gearboxes force-breakable.  Most users shouldn't notice much difference.
-
-*r434
---Changed how fuel tank are sorted in size selection.
-
-*r435
---Reworked link system, non-physical driveshafts
-
-*r437
---Removed some legacy code causing clientside lag when firing weapons.
-
-*r438
---Fixed MG sound; made RAC sound a bit less stuttery.
-
-*r439
---Fixed C-menu functions not working on gearbox
-
-*r442
---Fixed ammunition with HE content.  Previously, the explosion could have been upwards of 500 units from the intended location, based on the velocity of the round.
-
-*r445
---Added e2 function that returns entities linked via acf to the specified entity.
-
-*r452
---Added Looterz' ammo/gearbox copy tool.
---Added Scotty's double diff (tank turning) diffs.
-
-*r453
---Added fixed 150mm mortar.
-
-*r456
---Change to double differentials, bogs down engine less on in place turns.
-
-*r457
---Fixed gearboxes breaking after updating
-
-*r458
---Changed engine volume behavior; volume now ramps up with rpm in addition to throttle.
+r458
+--For an extended version history, please visit the github changelog.  https://github.com/nrlulz/ACF/commits/master
 
 *r459
 --Scaled recoil and HE shove based upon the physical mass of the contraption rather than the total mass. Kinetic impacts remain unchanged.
@@ -78,3 +9,6 @@ r416
 
 *r463
 --Added clientside function acf_cl_particlemul to reduce particle counts clientside for HE/HEAT explosions.
+
+*r464
+--Added Flechette ammo.  See ammo description for more detail.
