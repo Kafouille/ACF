@@ -4,6 +4,8 @@ AddCSLuaFile()
 local RoundTypes = list.Get( "ACFRoundTypes" )
 local Round = RoundTypes.AP -- inherit from AP
 
+ACF.AmmoBlacklist.HP = ACF.AmmoBlacklist.AP
+
 Round.type = "Ammo" --Tells the spawn menu what entity to spawn
 Round.name = "Hollow Point (HP)" --Human readable name
 Round.model = "models/munitions/round_100mm_shot.mdl" --Shell flight model
@@ -86,7 +88,7 @@ end
 
 function Round.guicreate( Panel, Table )
 	
-	acfmenupanel:AmmoSelect()
+	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist.HP )
 	
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)

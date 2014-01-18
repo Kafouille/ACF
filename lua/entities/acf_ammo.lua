@@ -322,6 +322,7 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	local Efficiency = 0.11 * ACF.AmmoMod			--This is the part of space that's actually useful, the rest is wasted on interround gaps, loading systems ..
 	self.Volume = math.floor(Size.x * Size.y * Size.z)*Efficiency
 	self.Capacity = math.floor(self.Volume*16.38/self.BulletData.RoundVolume)
+	self.Caliber = list.Get("ACFEnts").Guns[self.RoundId].caliber
 	
 	self:SetNetworkedString( "Ammo", self.Ammo )
 	self:SetNetworkedString( "WireName", self.RoundId .. " Ammo" )

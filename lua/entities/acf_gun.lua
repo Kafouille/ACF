@@ -142,6 +142,8 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun.MagSize = 1
 	if(List.Guns[Id].magsize) then
 		Gun.MagSize = math.max(Gun.MagSize, List.Guns[Id].magsize)
+	else
+		Gun.Inputs = Wire_AdjustInputs( Gun, { "Fire", "Unload" } )
 	end
 	Gun.MagReload = 0
 	if(List.Guns[Id].magreload) then
@@ -310,6 +312,7 @@ end
 local WireTable = { "gmod_wire_adv_pod", "gmod_wire_pod", "gmod_wire_keyboard", "gmod_wire_joystick", "gmod_wire_joystick_multi" }
 
 function ENT:GetUser( inp )
+	if not inp then return nil end
 	if inp:GetClass() == "gmod_wire_adv_pod" then
 		if inp.Pod then
 			return inp.Pod:GetDriver()
@@ -353,7 +356,7 @@ function ENT:TriggerInput( iname, value )
 		self:UnloadAmmo()
 	elseif ( iname == "Fire" and value > 0 and ACF.GunfireEnabled ) then
 		if self.NextFire < CurTime() then
-			self.User = self:GetUser(self.Inputs.Fire.Src)
+			self.User = self:GetUser(self.Inputs.Fire.Src) or self.Owner
 			if not IsValid(self.User) then self.User = self.Owner end
 			self:FireShell()
 			self:Think()
@@ -421,6 +424,7 @@ function ENT:Think()
 			self:FireShell()	
 		elseif self.Reloading then
 			self:ReloadMag()
+			self.Reloading = false
 		end
 	end
 

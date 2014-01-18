@@ -12,3 +12,11 @@ r458
 
 *r464
 --Added Flechette ammo.  See ammo description for more detail.
+
+*r465
+--HP and SM rounds no longer show blacklisted weapon types in the setup menu.
+--Gun reload no longer continually triggers.
+--Gun reload input no longer appears for guns without clips.
+--[E2]  ENT:acfFire(state) no longer causes errors, but can only attribute kills to gun owner. Use wire inputs on gun to properly attribute kills.
+--[E2]  Added ENT:acfCaliber()  which returns the caliber of a weapon or ammo.
+--[E2]  ENT:acfReload() optimized, op cost reduced.

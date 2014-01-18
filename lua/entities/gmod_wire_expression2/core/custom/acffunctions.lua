@@ -538,15 +538,11 @@ e2function void entity:acfUnload()
 	this:UnloadAmmo()
 end
 
-__e2setcost( 10 )
-
 -- Causes an ACF weapon to reload
 e2function void entity:acfReload()
 	if not isGun(this) then return end
 	if not isOwner(self, this) then return end
-	this:TriggerInput("Reload", 1)
-	--this:TriggerInput("Reload", 0) --turns off input too fast, overrides the input to turn on
-	timer.Simple( 0.1, function() this:TriggerInput("Reload", 0) end ) --wrap in function to avoid error
+	this.Reloading = true
 end
 
 __e2setcost( 20 )
@@ -606,6 +602,13 @@ e2function string entity:acfAmmoType()
 	if not (isAmmo(this) or isGun(this)) then return "" end
 	if restrictInfo(self, this) then return "" end
 	return this.BulletData["Type"] or ""
+end
+
+-- Returns the caliber of an ammo or gun
+e2function number entity:acfCaliber()
+	if not (isAmmo(this) or isGun(this)) then return 0 end
+	if restrictInfo(self, this) then return 0 end
+	return (this.Caliber or 0) * 10
 end
 
 -- Returns the muzzle velocity of the ammo in a crate or gun
