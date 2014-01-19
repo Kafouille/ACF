@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 465 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 466 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Threshold = 225	--Health Divisor
@@ -29,6 +29,7 @@ ACF.DragDiv = 40		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
 -- local PhysEnv = physenv.GetPerformanceSettings()
 ACF.PhysMaxVel = 4000
+ACF.SmokeWind = 5 + math.random()*35 --affects the ability of smoke to be used for screening effect
 
 ACF.PBase = 1050		--1KG of propellant produces this much KE at the muzzle, in kj
 ACF.PScale = 1	--Gun Propellant power expotential
@@ -307,6 +308,60 @@ cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
+
+-- smoke-wind cvar handling
+if SERVER then
+	local function msgtoconsole(hud, msg)
+			print(msg)
+	end
+
+	util.AddNetworkString("acf_smokewind")
+	concommand.Add( "acf_smokewind", function(ply, cmd, args, str)
+			local validply = IsValid(ply)
+			local printmsg = validply and function(hud, msg) ply:PrintMessage(hud, msg) end or msgtoconsole
+			
+			if not args[1] then printmsg(HUD_PRINTCONSOLE,
+					"Set the wind intensity upon all smoke munitions." ..
+					"\n   This affects the ability of smoke to be used for screening effect." ..
+					"\n   Example; acf_smokewind 300")
+					return false
+			end
+			
+			if validply and not ply:IsAdmin() then
+					printmsg(HUD_PRINTCONSOLE, "You can't use this because you are not an admin.")
+					return false
+					
+			else
+					local wind = tonumber(args[1])
+
+					if not wind then
+							printmsg(HUD_PRINTCONSOLE, "Command unsuccessful: that wind value could not be interpreted as a number!")
+							return false
+					end
+					
+					ACF.SmokeWind = wind
+					
+					net.Start("acf_smokewind")
+							net.WriteFloat(wind)
+					net.Broadcast()
+					
+					printmsg(HUD_PRINTCONSOLE, "Command SUCCESSFUL: set smoke-wind to " .. wind .. "!")
+					return true        
+			end
+	end)
+
+	local function sendSmokeWind(ply)
+			net.Start("acf_smokewind")
+					net.WriteFloat(ACF.SmokeWind)
+			net.Send(ply)
+	end
+	hook.Add( "PlayerInitialSpawn", "ACF_SendSmokeWind", sendSmokeWind )
+else
+	local function recvSmokeWind(len)
+		ACF.SmokeWind = net.ReadFloat()
+	end
+	net.Receive("acf_smokewind", recvSmokeWind)
+end
 
 /*
 ONE HUGE HACK to get good killicons.

@@ -20,3 +20,8 @@ r458
 --[E2]  ENT:acfFire(state) no longer causes errors, but can only attribute kills to gun owner. Use wire inputs on gun to properly attribute kills.
 --[E2]  Added ENT:acfCaliber()  which returns the caliber of a weapon or ammo.
 --[E2]  ENT:acfReload() optimized, op cost reduced.
+
+*r466
+--Replaced the old ACF smoke effect with the XCF smoke effect, which is thicker, colorable, and affected by wind.
+--Also included the convar acf_smokewind which adjusts how powerful the wind effect is.
+
