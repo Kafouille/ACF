@@ -67,6 +67,8 @@ ACF.TorqueScale = 1/4
 ACF.SpreadScale = 4
 ACF.EngineHPMult = 1/8
 
+ACF.EnableDefaultDP = true -- Enable the inbuilt damage protection system.
+
 
 CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
@@ -78,6 +80,11 @@ AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 AddCSLuaFile( "acf/client/cl_acfrender.lua" )
 
+if SERVER and ACF.EnableDefaultDP then
+	AddCSLuaFile( "acf/client/cl_acfpermission.lua" )
+	AddCSLuaFile( "acf/client/gui/cl_acfsetpermission.lua" )
+end
+
 if SERVER then
 
 	util.AddNetworkString( "ACF_KilledByACF" )
@@ -87,11 +94,20 @@ if SERVER then
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
+	
+	if ACF.EnableDefaultDP then
+		include("acf/server/sv_acfpermission.lua")
+	end
 
 elseif CLIENT then
 
 	include("acf/client/cl_acfballistics.lua")
 	include("acf/client/cl_acfrender.lua")
+	
+	if ACF.EnableDefaultDP then
+		include("acf/client/cl_acfpermission.lua")
+		include("acf/client/gui/cl_acfsetpermission.lua")
+	end
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 200, 200, 48, 255 ) )
