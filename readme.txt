@@ -66,3 +66,24 @@ ACF_FuelExplode( Tank )
 	
 ACF_CanRefill( Refill, Ammo )
 	Return false to prevent ammo crate from being refilled (not yet implemented)
+	
+	
+	
+Damage Protection hooks:
+
+ACF_PlayerChangedZone
+	This hook is called whenever a player moves between the battlefield and a safezone, or between safezones.
+	This hook is called regardless of damage protection mode e.g. during build mode where safezones are irrelevant.
+Args;
+	ply		Player:	The player who has just transitioned from one zone to another.
+	zone	String:	The name of the zone which the player has moved into (or nil if moved into battlefield)
+	oldzone	String:	The name of the zone which the player has exited (or nil if exited battlefield)
+
+
+ACF_ProtectionModeChanged
+	This hook is called whenever the damage protection mode is altered.
+	This hook is also called once at startup, when the damage protection mode is initialized to "default" (oldmode = nil during this run).
+Args;
+	mode	String:	The name of the newly activated damage protection mode.
+	oldmode	String:	The name of the damage protection mode which has just been deactivated.
+	
