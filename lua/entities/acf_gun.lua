@@ -340,8 +340,10 @@ function ENT:GetUser( inp )
 			return self:GetUser(inp.Inputs.Shoot.Src) 
 		elseif inp.Inputs then
 			for _,v in pairs(inp.Inputs) do
-				if table.HasValue(WireTable, v.Src:GetClass()) then
-					return self:GetUser(v.Src) 
+				if v.Src then
+					if table.HasValue(WireTable, v.Src:GetClass()) then
+						return self:GetUser(v.Src) 
+					end
 				end
 			end
 		end

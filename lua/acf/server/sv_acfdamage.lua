@@ -256,10 +256,18 @@ end
 
 function ACF_KEShove(Target, Pos, Vec, KE )
 	
-	local phys = Target:GetPhysicsObject() 
-	if (Target:GetParent():IsValid()) then
-		phys = Target:GetParent():GetPhysicsObject() 
+	local phys = Target:GetPhysicsObject()
+	local parent = Target:GetParent()
+	local depth = 0
+	
+	if parent:IsValid() then
+		while parent:GetParent():IsValid() and depth<5 do
+			depth = depth + 1
+			parent = parent:GetParent()
+		end
+		phys = parent:GetPhysicsObject()
 	end
+	
 	if (phys:IsValid()) then	
 		phys:ApplyForceOffset( Vec:GetNormal() * KE, Pos )
 	end
