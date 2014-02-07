@@ -297,6 +297,9 @@ function ACF_HEKill( Entity , HitVector , Energy )
 		mass = obj:GetMass()
 	end
 	constraint.RemoveAll( Entity )
+	
+	local entClass = Entity:GetClass()
+	
 	Entity:Remove()
 	
 	if(Entity:BoundingRadius() < ACF.DebrisScale) then
@@ -310,7 +313,7 @@ function ACF_HEKill( Entity , HitVector , Energy )
 		Debris:SetMaterial("models/props_wasteland/metal_tram001a")
 		Debris:Spawn()
 		
-		if ACF.IgniteDebris[Entity:GetClass()] then
+		if ACF.IgniteDebris[entClass] then
 			Debris:Ignite(60,0)
 		end
 		
