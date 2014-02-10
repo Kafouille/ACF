@@ -13,10 +13,10 @@ AddCSLuaFile()
 
 
 
--- Some example settings are below.  They enable damage protection, change smoke wind, and make fuel more powerful.
+-- Some example settings are below.  They enable damage protection, double gun accuracy, and make shots more likely to be accurate.
 -- There are more settings like this.  Find them all in lua/autorun/shared/acf_globals.lua
 
 
 ACF.EnableDefaultDP = true 	-- Enable the inbuilt damage protection system.
-ACF.SmokeWind = 30			-- Affects the ability of smoke to be used for screening effect
-ACF.TorqueBoost = 2			-- Torque multiplier from using fuel
+ACF.GunInaccuracyScale = 0.5  -- Make guns 2x more accurate by halving the spread scale.
+ACF.GunInaccuracyBias = 1.2  -- Shots are more likely to be accurate with bias < 2

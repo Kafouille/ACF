@@ -1014,9 +1014,10 @@ GunTable["40mmSL"] = SL40mm
 list.Set( "ACFEnts", "Guns", GunTable )
 
 local GunClass = {}	--Start gun classes listing
---sound is used for the loudass sounds, soundDistance uses a script for a distance shot, soundNormal is for machineguns so they're not superloud
+-- sound is used for the loudass sounds, soundDistance uses a script for a distance shot, soundNormal is for machineguns so they're not superloud
+-- weapon spread is now expressed in degrees as cone radius (therefore half of total spread).
 local Machinegun = {}
-	Machinegun.spread = 1
+	Machinegun.spread = 0.16
 	Machinegun.name = "Machinegun"
 	Machinegun.muzzleflash = "50cal_muzzleflash_noscale"
 	Machinegun.rofmod = 0.9
@@ -1026,7 +1027,7 @@ local Machinegun = {}
 GunClass["MG"] = Machinegun	
 	
 local Autocannon = {}
-	Autocannon.spread = 1
+	Autocannon.spread = 0.16
 	Autocannon.name = "Autocannon"
 	Autocannon.muzzleflash = "30mm_muzzleflash_noscale"
 	Autocannon.rofmod = 0.35
@@ -1037,7 +1038,7 @@ local Autocannon = {}
 GunClass["AC"] = Autocannon
 
 local Semiautomatic = {}
-	Semiautomatic.spread = 0.5
+	Semiautomatic.spread = 0.08
 	Semiautomatic.name = "Semiautomatic Cannon"
 	Semiautomatic.muzzleflash = "30mm_muzzleflash_noscale"
 	Semiautomatic.rofmod = 0.5
@@ -1048,7 +1049,7 @@ local Semiautomatic = {}
 GunClass["SA"] = Semiautomatic
 
 local HeavyMachinegun = {}
-	HeavyMachinegun.spread = 2
+	HeavyMachinegun.spread = 0.32
 	HeavyMachinegun.name = "Heavy Machinegun"
 	HeavyMachinegun.muzzleflash = "50cal_muzzleflash_noscale"
 	HeavyMachinegun.rofmod = 0.29
@@ -1058,7 +1059,7 @@ local HeavyMachinegun = {}
 GunClass["HMG"] = HeavyMachinegun
 
 local Gatling = {}
-	Gatling.spread = 3
+	Gatling.spread = 0.48
 	Gatling.name = "Rotary Autocannon"
 	Gatling.muzzleflash = "50cal_muzzleflash_noscale"
 	Gatling.rofmod = 0.07
@@ -1068,7 +1069,7 @@ local Gatling = {}
 GunClass["RAC"] = Gatling
 	
 local Cannon = {}
-	Cannon.spread = 0.7
+	Cannon.spread = 0.12
 	Cannon.name = "Cannon"
 	Cannon.muzzleflash = "120mm_muzzleflash_noscale"
 	Cannon.rofmod = 1.5
@@ -1078,7 +1079,7 @@ local Cannon = {}
 GunClass["C"] = Cannon	
 
 local  Autoloader= {}
-	Autoloader.spread = 0.7
+	Autoloader.spread = 0.12
 	Autoloader.name = "Autoloader"
 	Autoloader.muzzleflash = "120mm_muzzleflash_noscale"
 	Autoloader.rofmod = 0.8
@@ -1088,7 +1089,7 @@ local  Autoloader= {}
 GunClass["AL"] = Autoloader
 	
 local Howitzer = {}
-	Howitzer.spread = 0.5
+	Howitzer.spread = 0.08
 	Howitzer.name = "Howitzer"
 	Howitzer.muzzleflash = "120mm_muzzleflash_noscale"
 	Howitzer.rofmod = 1.3
@@ -1098,7 +1099,7 @@ local Howitzer = {}
 GunClass["HW"] = Howitzer
 	
 local Mortar = {}
-	Mortar.spread = 4
+	Mortar.spread = 0.64
 	Mortar.name = "Mortar"
 	Mortar.muzzleflash = "40mm_muzzleflash_noscale"
 	Mortar.rofmod = 2
@@ -1108,7 +1109,7 @@ local Mortar = {}
 GunClass["MO"] = Mortar	
 
 local GLauncher = {}
-	GLauncher.spread = 2
+	GLauncher.spread = 0.32
 	GLauncher.name = "Grenade Launcher"
 	GLauncher.muzzleflash = "40mm_muzzleflash_noscale"
 	GLauncher.rofmod = 1
@@ -1118,7 +1119,7 @@ local GLauncher = {}
 GunClass["GL"] = GLauncher	
 
 local SmokeLauncher = {}
-	SmokeLauncher.spread = 2
+	SmokeLauncher.spread = 0.32
 	SmokeLauncher.name = "Smoke Launcher"
 	SmokeLauncher.muzzleflash = "40mm_muzzleflash_noscale"
 	SmokeLauncher.rofmod =  60 --60

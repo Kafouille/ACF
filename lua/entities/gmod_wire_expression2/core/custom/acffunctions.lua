@@ -491,7 +491,7 @@ end
 -- Returns the spread for an ACF gun or flechette ammo
 e2function number entity:acfSpread()
 	if not (isGun(this) or isAmmo(this)) then return 0 end
-	local Spread = this.Inaccuracy or 0
+	local Spread = this.GetInaccuracy and this:GetInaccuracy() or this.Inaccuracy or 0
 	if this.BulletData["Type"] == "FL" then
 		if restrictInfo(self, this) then return Spread end
 		return Spread + (this.BulletData["FlechetteSpread"] or 0)

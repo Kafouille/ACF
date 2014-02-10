@@ -338,6 +338,24 @@ function ENT:AmmoMass() --Returns what the ammo mass would be if the crate was f
 	return math.floor( (self.BulletData.ProjMass + self.BulletData.PropMass) * self.Capacity * 2 )
 end
 
+
+
+function ENT:GetInaccuracy()
+	local SpreadScale = ACF.SpreadScale
+	local inaccuracy = 0
+	local Gun = list.Get("ACFEnts").Guns[self.RoundId]
+	
+	if Gun then
+		local Classes = list.Get("ACFClasses")
+		inaccuracy = (Classes.GunClass[Gun.gunclass] or {spread = 0}).spread
+	end
+	
+	local coneAng = math.tan(math.rad(inaccuracy)) * ACF.GunInaccuracyScale
+	return coneAng
+end
+
+
+
 function ENT:TriggerInput( iname, value )
 
 	if (iname == "Active") then
