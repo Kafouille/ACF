@@ -659,7 +659,7 @@ end
 
 function ENT:Link( Target )
 
-	if not IsValid( Target ) or ( Target:GetClass() ~= "prop_physics" and Target:GetClass() ~= "acf_gearbox" ) then
+	if not IsValid( Target ) or not table.HasValue( { "prop_physics", "acf_gearbox", "tire" }, Target:GetClass() ) then
 		return false, "Can only link props or gearboxes!"
 	end
 	
