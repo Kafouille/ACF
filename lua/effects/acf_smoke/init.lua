@@ -65,38 +65,59 @@ function EFFECT:Core()
         
 end
 
+
+local smokes =
+{
+	"particle/smokesprites_0001",
+	"particle/smokesprites_0002",
+	"particle/smokesprites_0003",
+	"particle/smokesprites_0004",
+	"particle/smokesprites_0005",
+	"particle/smokesprites_0006",
+	"particle/smokesprites_0008"
+}
+
+local function smokePuff(self, Ground, ShootVector, Radius, RadiusMod, Density, i, wind, SmokeColor, Angle)
+	--local Smoke = self.Emitter:Add( "particle/smokesprites_000"..math.random(1,9), Ground.HitPos )
+	local Smoke = self.Emitter:Add( smokes[math.random(1, #smokes)], Ground.HitPos )
+	if (Smoke) then
+			--Smoke:SetPos(Ground.HitPos + Vector(math.random(), math.random(), math.random()) * Radius / 3)
+			Smoke:SetVelocity( (ShootVector + Vector(0, 0, 0.2)) * (Radius * RadiusMod) * 1.8 ) --+ Vector(math.random(), math.random(), math.abs(math.random()))
+			Smoke:SetLifeTime( 0 )
+			Smoke:SetDieTime( math.Clamp(Radius/5, 30, 60) )
+			Smoke:SetStartAlpha( math.Rand( 200, 255 ) )
+			Smoke:SetEndAlpha( 0 )
+			Smoke:SetStartSize( Angle and (Radius * RadiusMod)/1.5 or math.Clamp((Radius * RadiusMod)/4, 50, 1000) )
+			Smoke:SetEndSize( math.Clamp((Radius * RadiusMod), 1000, 4000) )
+			Smoke:SetRoll( math.Rand(0, 360) )
+			Smoke:SetRollDelta( math.Rand(-0.2, 0.2) )                        
+			Smoke:SetAirResistance( 130 )                          
+			Smoke:SetGravity( Vector( math.Rand( -10 , 10 ) + wind * 0.5 + (wind * i/Density), math.Rand( -10 , 10 ), math.Rand( 7 , 20 ) ) )                        
+			Smoke:SetColor( SmokeColor.x,SmokeColor.y,SmokeColor.z )
+			--Smoke:SetColor( 255, 255, 255 )
+	end        
+end
+
+
 function EFFECT:Shockwave( Ground, SmokeColor )
 
-        local Mat = Ground.MatType
         local Radius = self.Radius
-        local Density = Radius/20
+        local Density = Radius/25
         local Angle
         local wind = ACF.SmokeWind or 0
         --print(Density, SmokeColor, wind)
-        for i=0, Density do        
-                
-                local ShootVector = Angle and Angle:Up() or Ground.HitNormal * 0.5
-                local Smoke = self.Emitter:Add( "particle/smokesprites_000"..math.random(1,9), Ground.HitPos )
-                if (Smoke) then
-                        --Smoke:SetPos(Ground.HitPos + Vector(math.random(), math.random(), math.random()) * Radius / 3)
-                        Smoke:SetVelocity( (ShootVector + Vector(0, 0, 0.2)) * Radius * 0.6 ) --+ Vector(math.random(), math.random(), math.abs(math.random()))
-                        Smoke:SetLifeTime( 0 )
-                        Smoke:SetDieTime( math.Clamp(Radius/5, 30, 60) )
-                        Smoke:SetStartAlpha( math.Rand( 200, 255 ) )
-                        Smoke:SetEndAlpha( 0 )
-                        Smoke:SetStartSize( Angle and Radius/2 or math.Clamp(Radius/6, 50, 1000) )
-                        Smoke:SetEndSize( math.Clamp(Radius, 1000, 4000) )
-                        Smoke:SetRoll( math.Rand(0, 360) )
-                        Smoke:SetRollDelta( math.Rand(-0.2, 0.2) )                        
-                        Smoke:SetAirResistance( 60 )                          
-                        Smoke:SetGravity( Vector( math.Rand( -10 , 10 ) + wind * 0.5 + (wind * 0.5 * i/Density), math.Rand( -10 , 10 ), math.Rand( 7 , 20 ) ) )                        
-                        Smoke:SetColor( SmokeColor.x,SmokeColor.y,SmokeColor.z )
-                end        
-                if Angle then 
-                        Angle:RotateAroundAxis(Angle:Forward(), (360/Density))
-                else
-                        Angle = Ground.HitNormal:Angle()
-                end
+		
+		smokePuff(self, Ground, Vector(0, 0, 0.3), Radius, 2, Density, 0, wind, SmokeColor, Angle)
+		
+        for i=0, Density do  
+			local ShootVector = Angle and Angle:Up() or Ground.HitNormal * 0.5
+            smokePuff(self, Ground, ShootVector, Radius, 1, Density, i, wind, SmokeColor, Angle)
+			
+			if Angle then 
+				Angle:RotateAroundAxis(Angle:Forward(), (360/Density))
+			else
+				Angle = Ground.HitNormal:Angle()
+			end
         end
 
 end
