@@ -131,12 +131,7 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	local Armour = Entity.ACF.Armour/math.abs( math.cos(math.rad(Angle)) ) --Calculate Line Of Sight thickness of the armour
 	local Structure = Entity.ACF.Density --Structural strengh of the material, derived from prop density, denser stuff is more vulnerable (Density is different than armour, calculated off real volume)
 	
-	print(tostring(Entity), FrAera, Angle)
-	
-	pbn(Energy)
-	
 	local MaxPenetration = (Energy.Penetration / FrAera) * ACF.KEtoRHA							--Let's see how deep the projectile penetrates ( Energy = Kinetic Energy, FrAera = Frontal aera in cm2 )
-	print("MPen", MaxPenetration)
 	local Penetration = math.min( MaxPenetration , Armour )			--Clamp penetration to the armour thickness
 	
 	local HitRes = {}
@@ -161,11 +156,8 @@ function ACF_CalcDamage( Entity , Energy , FrAera , Angle )
 	end
 	
 	HitRes.Damage = var * dmul * (Penetration/Armour)^2 * FrAera	-- This is the volume of the hole caused by our projectile 
-	--print("ACF_CalcDamage Damage "..HitRes.Damage)
 	HitRes.Overkill = (MaxPenetration - Penetration)
 	HitRes.Loss = Penetration/MaxPenetration
-	
-	pbn(HitRes)
 	
 	return HitRes
 end
