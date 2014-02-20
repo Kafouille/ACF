@@ -48,12 +48,21 @@ function Round.convert( Crate, PlayerData )
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		local Energy = ACF_Kinetic( Data.MuzzleVel*39.37 , Data.ProjMass, Data.LimitVel )
-		GUIData.MaxPen = (Energy.Penetration/Data.PenAera)*ACF.KEtoRHA
+		GUIData = table.Merge(GUIData, Round.getDisplayData(Data))
 		return table.Merge(Data,GUIData)
 	end
 	
 end
+
+
+function Round.getDisplayData(Data)
+	local GUIData = {}
+	local Energy = ACF_Kinetic( Data.MuzzleVel*39.37 , Data.ProjMass, Data.LimitVel )
+	GUIData.MaxPen = (Energy.Penetration/Data.PenAera)*ACF.KEtoRHA
+	return GUIData
+end
+
+
 
 function Round.network( Crate, BulletData )
 	
@@ -70,10 +79,35 @@ end
 
 function Round.cratetxt( BulletData )
 	
-	local ProjMass = math.Round( BulletData.ProjMass * 1000, 2 )
-	local PropMass = math.Round( BulletData.PropMass * 1000, 2 )
+	--local FrAera = BulletData.FrAera
+	local DData = Round.getDisplayData(BulletData)
 	
-	return "Round Mass: " .. ProjMass .. " g\nPropellant: " .. PropMass .. " g"
+	--fakeent.ACF.Armour = DData.MaxPen or 0
+	--fakepen.Penetration = (DData.MaxPen * FrAera) / ACF.KEtoRHA	
+	--local fakepen = ACF_Kinetic( BulletData.SlugMV*39.37 , BulletData.SlugMass, 9999999 )
+	--local MaxHP = ACF_CalcDamage( fakeent , fakepen , FrAera , 0 )
+	
+	--[[
+	local TotalMass = BulletData.ProjMass + BulletData.PropMass
+	local MassUnit
+	
+	if TotalMass < 0.1 then
+		TotalMass = TotalMass * 1000
+		MassUnit = " g"
+	else
+		MassUnit = " kg"
+	end
+	]]--
+	
+	local str = 
+	{
+		--"Cartridge Mass: ", math.Round(TotalMass, 2), MassUnit, "\n",
+		"Muzzle Velocity: ", math.Round(BulletData.MuzzleVel, 1), " m/s\n",
+		"Max Penetration: ", math.floor(DData.MaxPen), " mm"
+		--"Max Pen. Damage: ", math.Round(MaxHP.Damage, 1), " HP\n",
+	}
+	
+	return table.concat(str)
 	
 end
 

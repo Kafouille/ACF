@@ -93,6 +93,7 @@ function ENT:Initialize()
 	self.Reloading = nil
 	self.NextFire = 0
 	self.LastSend = 0
+	self.LastLoadDuration = 0
 	self.Owner = self
 	
 	self.IsMaster = true
@@ -224,19 +225,31 @@ duplicator.RegisterEntityClass("acf_gun", MakeACF_Gun, "Pos", "Angle", "Id")
 
 function ENT:UpdateOverlayText()
 	
-	local text = "Ammo: " .. ( self.Ammo or 0 )
-	text = text .. "\nRound Type: " .. self.BulletData.Type
+	local roundType = self.BulletData.Type
 	
-	if self.BulletData.Tracer and self.BulletData.Tracer > 0 then
-		text = text .. "-T"
+	if self.BulletData.Tracer and self.BulletData.Tracer > 0 then 
+		roundType = roundType .. "-T"
 	end
 	
+	local isEmpty = self.BulletData.Type == "Empty"
+	
+	local clipLeft = isEmpty and 0 or (self.MagSize - self.CurrentShot)
+	local ammoLeft = (self.Ammo or 0) + clipLeft
+	local isReloading = not isEmpty and CurTime() < self.NextFire and (self.MagSize == 1 or (self.LastLoadDuration > self.ReloadTime))
+	local gunStatus = isReloading and "reloading" or (clipLeft .. " in gun")
+	
+	--print(self.MagSize or "nil", isEmpty, clipLeft, self.CurrentShot)
+	
+	--print(self.LastLoadDuration, self.ReloadTime, self.LastLoadDuration > self.ReloadTime, gunStatus)
+	
+	local text = roundType .. " - " .. ammoLeft .. (ammoLeft == 1 and " shot left" or " shots left ( " .. gunStatus .. " )")
+	/*
 	local RoundData = ACF.RoundTypes[ self.BulletData.Type ]
 	
 	if RoundData and RoundData.cratetxt then
 		text = text .. "\n" .. RoundData.cratetxt( self.BulletData )
 	end
-	
+	//*/
 	text = text .. "\nRounds Per Minute: " .. math.Round( self.RateOfFire or 0, 2 )
 	
 	self:SetOverlayText( text )
@@ -422,6 +435,11 @@ function ENT:Think()
 	if self.NextFire <= Time then
 		self.Ready = true
 		Wire_TriggerOutput(self, "Ready", 1)
+		
+		if self.MagSize and self.MagSize == 1 then
+			self.CurrentShot = 0
+		end
+		
 		if self.Firing then
 			self:FireShell()	
 		elseif self.Reloading then
@@ -490,7 +508,7 @@ function ENT:GetInaccuracy()
 		IaccMult = math.Clamp(((1 - SpreadScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, 1, SpreadScale)
 	end
 	
-	local coneAng = (math.tan(math.rad(self.Inaccuracy)) * IaccMult) * ACF.GunInaccuracyScale
+	local coneAng = self.Inaccuracy * ACF.GunInaccuracyScale * IaccMult
 	
 	return coneAng
 end
@@ -529,7 +547,7 @@ function ENT:FireShell()
 			local MuzzlePos = self:LocalToWorld(self.Muzzle)
 			local MuzzleVec = self:GetForward()
 			
-			local coneAng = self:GetInaccuracy()
+			local coneAng = math.tan(math.rad(self:GetInaccuracy())) 
 			local randUnitSquare = (self:GetUp() * (2 * math.random() - 1) + self:GetRight() * (2 * math.random() - 1))
 			local spread = randUnitSquare:GetNormalized() * coneAng * (math.random() ^ (1 / math.Clamp(ACF.GunInaccuracyBias, 0.5, 4)))
 			local ShootVec = (MuzzleVec + spread):GetNormalized()
@@ -606,6 +624,7 @@ end
 function ENT:LoadAmmo( AddTime, Reload )
 
 	local AmmoEnt = self:FindNextCrate()
+	local curTime = CurTime()
 	
 	if AmmoEnt then
 		AmmoEnt.Ammo = AmmoEnt.Ammo - 1
@@ -620,13 +639,19 @@ function ENT:LoadAmmo( AddTime, Reload )
 		Wire_TriggerOutput(self, "Muzzle Weight", math.floor(self.BulletData.ProjMass*1000) )
 		Wire_TriggerOutput(self, "Muzzle Velocity", math.floor(self.BulletData.MuzzleVel*ACF.VelScale) )
 		
-		self.NextFire = CurTime() + self.ReloadTime
+		self.NextFire = curTime + self.ReloadTime
+		local reloadTime = self.ReloadTime
+		
 		if AddTime then
-			self.NextFire = CurTime() + self.ReloadTime + AddTime
+			reloadTime = reloadTime + AddTime
 		end
 		if Reload then
 			self:ReloadEffect()
 		end
+		
+		self.NextFire = curTime + reloadTime
+		self.LastLoadDuration = reloadTime
+		
 		self:Think()
 		return true	
 	else
@@ -638,7 +663,7 @@ function ENT:LoadAmmo( AddTime, Reload )
 		self:EmitSound("weapons/pistol/pistol_empty.wav",500,100)
 		Wire_TriggerOutput(self, "Loaded", "Empty")
 				
-		self.NextFire = CurTime()+0.5
+		self.NextFire = curTime + 0.5
 		self:Think()
 	end
 	return false

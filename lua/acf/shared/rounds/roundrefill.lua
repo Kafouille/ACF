@@ -28,6 +28,12 @@ function Round.convert( Crate, PlayerData )
 	
 end
 
+
+function Round.getDisplayData(Data)
+	return {}
+end
+
+
 function Round.network( Crate, BulletData )
 	
 	Crate:SetNetworkedString( "AmmoType", "Refill" )

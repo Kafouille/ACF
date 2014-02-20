@@ -66,6 +66,8 @@ function Round.convert( Crate, PlayerData )
 	if not PlayerData["Data10"] then PlayerData["Data10"] = 0 end --tracer
 	PlayerData, Data, ServerData, GUIData = ACF_RoundBaseGunpowder( PlayerData, Data, ServerData, GUIData )
 
+	--pbn(Data)
+	
 	Data["Flechettes"] = math.floor(PlayerData["Data5"])  --number of flechettes
 	Data["FlechetteSpread"] = PlayerData["Data6"]
 	local PenAdj = 0.8 --higher means lower pen, but more structure (hp) damage (old: 2.35, 2.85)
@@ -96,25 +98,33 @@ function Round.convert( Crate, PlayerData )
 	end
 
 	if CLIENT then --Only the GUI needs this part
-		local GunClass = ACF.Weapons["Guns"][PlayerData["Id"]]["gunclass"]
-		if GunClass == "SA" then
-			GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*3-4.5),1,32)
-		elseif GunClass == "MO" then
-			GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-12,1,32)
-		elseif GunClass == "HW" then
-			GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-10,1,32)
-		else
-			GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-8,1,32)
-		end
-		GUIData["MinFlechettes"] = math.min(6,GUIData["MaxFlechettes"]) --force bigger guns to have higher min count
-		GUIData["MinSpread"] = 1
-		GUIData["MaxSpread"] = 30
-		local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["FlechetteMass"], Data["LimitVel"] )
-		GUIData["MaxPen"] = (Energy.Penetration/Data["FlechettePenArea"])*ACF.KEtoRHA
+		GUIData = table.Merge(GUIData, Round.getDisplayData(Data, PlayerData))
 		return table.Merge(Data,GUIData)
 	end
 
 end
+
+
+function Round.getDisplayData(Data, PlayerData)
+	local GUIData = {}
+	local GunClass = ACF.Weapons["Guns"][(Data["Id"] or PlayerData["Id"])]["gunclass"]
+	if GunClass == "SA" then
+		GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*3-4.5),1,32)
+	elseif GunClass == "MO" then
+		GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-12,1,32)
+	elseif GunClass == "HW" then
+		GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-10,1,32)
+	else
+		GUIData["MaxFlechettes"] = math.Clamp(math.floor(Data["Caliber"]*4)-8,1,32)
+	end
+	GUIData["MinFlechettes"] = math.min(6,GUIData["MaxFlechettes"]) --force bigger guns to have higher min count
+	GUIData["MinSpread"] = 1
+	GUIData["MaxSpread"] = 30
+	local Energy = ACF_Kinetic( Data["MuzzleVel"]*39.37 , Data["FlechetteMass"], Data["LimitVel"] )
+	GUIData["MaxPen"] = (Energy.Penetration/Data["FlechettePenArea"])*ACF.KEtoRHA
+	return GUIData
+end
+
 
 function Round.network( Crate, BulletData )
 
@@ -135,10 +145,26 @@ end
 
 function Round.cratetxt( BulletData )
 
-	local ProjMass = math.Round( BulletData.ProjMass * 1000, 2 )
-	local PropMass = math.Round( BulletData.PropMass * 1000, 2 )
+	local DData = Round.getDisplayData(BulletData)
 	
-	return "Round Mass : "..ProjMass.." g\nPropellant : "..PropMass.." g"
+	local inaccuracy = 0
+	local Gun = list.Get("ACFEnts").Guns[BulletData.Id]
+	
+	if Gun then
+		local Classes = list.Get("ACFClasses")
+		inaccuracy = (Classes.GunClass[Gun.gunclass] or {spread = 0}).spread
+	end
+	
+	local coneAng = inaccuracy * ACF.GunInaccuracyScale
+	
+	local str = 
+	{
+		"Muzzle Velocity: ", math.Round(BulletData.MuzzleVel, 1), " m/s\n",
+		"Max Penetration: ", math.floor(DData.MaxPen), " mm\n",
+		"Max Spread: ", math.ceil((BulletData.FlechetteSpread + coneAng) * 10) / 10, " deg"
+	}
+	
+	return table.concat(str)
 	
 end
 

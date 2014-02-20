@@ -273,12 +273,14 @@ end
 
 function ENT:UpdateOverlayText()
 	
-	local text = "Rounds: " .. self.Ammo .. " / " .. self.Capacity
-	text = text .. "\nRound Type: " .. self.RoundType
+	local roundType = self.RoundType
 	
 	if self.BulletData.Tracer and self.BulletData.Tracer > 0 then 
-		text = text .. "-T"
+		roundType = roundType .. "-T"
 	end
+	
+	local text = roundType .. " - " .. self.Ammo .. " / " .. self.Capacity
+	--text = text .. "\nRound Type: " .. self.RoundType
 	
 	local RoundData = ACF.RoundTypes[ self.RoundType ]
 	
@@ -324,8 +326,10 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 	self.Capacity = math.floor(self.Volume*16.38/self.BulletData.RoundVolume)
 	self.Caliber = list.Get("ACFEnts").Guns[self.RoundId].caliber
 	
+	local List = list.Get("ACFEnts")
+	
 	self:SetNetworkedString( "Ammo", self.Ammo )
-	self:SetNetworkedString( "WireName", self.RoundId .. " Ammo" )
+	self:SetNetworkedString( "WireName", List.Guns[self.RoundId].name .. " Ammo" )
 	
 	self.NetworkData = ACF.RoundTypes[self.RoundType].network
 	self:NetworkData( self.BulletData )
@@ -350,7 +354,7 @@ function ENT:GetInaccuracy()
 		inaccuracy = (Classes.GunClass[Gun.gunclass] or {spread = 0}).spread
 	end
 	
-	local coneAng = math.tan(math.rad(inaccuracy)) * ACF.GunInaccuracyScale
+	local coneAng = inaccuracy * ACF.GunInaccuracyScale
 	return coneAng
 end
 

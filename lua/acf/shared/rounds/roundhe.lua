@@ -60,15 +60,23 @@ function Round.convert( Crate, PlayerData )
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		GUIData.BlastRadius = Data.FillerMass^0.33*5*10	
-		local FragMass = Data.ProjMass - Data.FillerMass
-		GUIData.Fragments = math.max(math.floor((Data.FillerMass/FragMass)*ACF.HEFrag),2)
-		GUIData.FragMass = FragMass/GUIData.Fragments
-		GUIData.FragVel = (Data.FillerMass*ACF.HEPower*1000/GUIData.FragMass/GUIData.Fragments)^0.5
+		GUIData = table.Merge(GUIData, Round.getDisplayData(Data))
 		return table.Merge(Data,GUIData)
 	end
 	
 end
+
+
+function Round.getDisplayData(Data)
+	local GUIData = {}
+	GUIData.BlastRadius = (Data.FillerMass)^0.33*8
+	local FragMass = Data.ProjMass - Data.FillerMass
+	GUIData.Fragments = math.max(math.floor((Data.FillerMass/FragMass)*ACF.HEFrag),2)
+	GUIData.FragMass = FragMass/GUIData.Fragments
+	GUIData.FragVel = (Data.FillerMass*ACF.HEPower*1000/GUIData.FragMass/GUIData.Fragments)^0.5
+	return GUIData
+end
+
 
 function Round.network( Crate, BulletData )
 
@@ -86,11 +94,16 @@ end
 
 function Round.cratetxt( BulletData )
 	
-	local ProjMass = math.Round( BulletData.ProjMass * 1000, 2 )
-	local PropMass = math.Round( BulletData.ProjMass * 1000, 2 )
-	local FillMass = math.Round( BulletData.FillerMass * 1000, 2 )
+	local DData = Round.getDisplayData(BulletData)
 	
-	return "Round Mass: " .. ProjMass .. " g\nPropellant: " .. PropMass .. " g\nHE Content: " .. FillMass .. " g"
+	local str = 
+	{
+		"Muzzle Velocity: ", math.Round(BulletData.MuzzleVel, 1), " m/s\n",
+		"Blast Radius: ", math.Round(DData.BlastRadius, 1), " m\n",
+		"Blast Energy: ", math.floor((BulletData.FillerMass / 2) * ACF.HEPower), " KJ"
+	}
+	
+	return table.concat(str)
 	
 end
 

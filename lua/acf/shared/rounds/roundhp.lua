@@ -55,12 +55,21 @@ function Round.convert( Crate, PlayerData )
 	end
 	
 	if CLIENT then --Only tthe GUI needs this part
-		GUIData.MaxKETransfert = Energy.Kinetic*Data.ShovePower
-		GUIData.MaxPen = (Energy.Penetration/Data.PenAera)*ACF.KEtoRHA
+		GUIData = table.Merge(GUIData, Round.getDisplayData(Data))
 		return table.Merge(Data,GUIData)
 	end
 	
 end
+
+
+function Round.getDisplayData(Data)
+	local GUIData = {}
+	local Energy = ACF_Kinetic( Data.MuzzleVel*39.37 , Data.ProjMass, Data.LimitVel )
+	GUIData.MaxKETransfert = Energy.Kinetic*Data.ShovePower
+	GUIData.MaxPen = (Energy.Penetration/Data.PenAera)*ACF.KEtoRHA
+	return GUIData
+end
+
 
 function Round.network( Crate, BulletData )
 
@@ -78,11 +87,17 @@ end
 
 function Round.cratetxt( BulletData )
 
-	local ProjMass = math.Round( BulletData.ProjMass * 1000, 2 )
-	local PropMass = math.Round( BulletData.PropMass * 1000, 2 )
-	local ExpCaliber = math.Round( BulletData.ExpCaliber * 10, 2 )
+	local DData = Round.getDisplayData(BulletData)
 	
-	return "Round Mass: " .. ProjMass .. " g\nPropellant: " .. PropMass .. " g\nExpanded Caliber: " .. ExpCaliber .. " mm"
+	local str = 
+	{
+		"Muzzle Velocity: ", math.Round(BulletData.MuzzleVel, 1), " m/s\n",
+		"Max Penetration: ", math.floor(DData.MaxPen), " mm\n",
+		"Expanded Caliber: ", math.floor(BulletData.ExpCaliber * 10), " mm\n",
+		"Imparted Energy: ", math.floor(DData.MaxKETransfert), " KJ"
+	}
+	
+	return table.concat(str)
 	
 end
 

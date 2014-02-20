@@ -1,4 +1,4 @@
-AddCSLuaFile("autorun/aaa_foldergen.lua")
+AddCSLuaFile("autorun/aaa_autoincludes.lua")
 
 aaa_debug = false
 
