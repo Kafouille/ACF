@@ -8,6 +8,8 @@ ENT.WireDebugName = "ACF Gun"
 
 if CLIENT then
 
+	local ACF_GunInfoWhileSeated = CreateClientConVar("ACF_GunInfoWhileSeated", 0, true, false)
+
 	function ENT:Initialize()
 		
 		self.BaseClass.Initialize( self )
@@ -19,6 +21,22 @@ if CLIENT then
 		self.RateScale = 1
 		self.FireAnim = self:LookupSequence( "shoot" )
 		self.CloseAnim = self:LookupSequence( "load" )
+		
+	end
+	
+	-- copied from base_wire_entity: DoNormalDraw's notip arg isn't accessible from ENT:Draw defined there.
+	function ENT:Draw()
+	
+		local lply = LocalPlayer()
+		local hideBubble = not ACF_GunInfoWhileSeated:GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
 		
 	end
 	
