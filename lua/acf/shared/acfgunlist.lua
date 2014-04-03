@@ -1638,4 +1638,3 @@ local Ammo4x8x8 = {}
 AmmoTable["Ammo4x8x8"] = Ammo4x8x8
 	
 list.Set( "ACFEnts", "Ammo", AmmoTable )	--end ammo containers listing
-This ad is supporting your extension Sexy Undo: More info | Privacy Policy | Hide on this page
