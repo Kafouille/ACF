@@ -28,3 +28,12 @@ r458
 *r467
 --Fixed guns failing to fire from a chip with unwired inputs
 --Fixed bullet impact failing to apply force in some circumstances
+
+*r486
+--New cannon and short cannon models
+--Short cannons added, which trade penetration and accuracy for size and light weight
+--37mm cannon added
+--Large b6, v8, v12 engines buffed
+--Small v12, v12 special slightly buffed
+--New multifuel v6 special added
+--Turbines have much more power, but now require fuel
