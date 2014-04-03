@@ -40,3 +40,6 @@ r458
 
 *r487
 --fixed something in cannon models
+
+*r489
+-- Short-barrel cannons adjusted: gun weight decreased a bit to account for heavier shells, RoF changed slightly.
