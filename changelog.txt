@@ -42,4 +42,12 @@ r458
 --fixed something in cannon models
 
 *r489
--- Short-barrel cannons adjusted: gun weight decreased a bit to account for heavier shells, RoF changed slightly.
+--Short-barrel cannons adjusted: gun weight decreased a bit to account for heavier shells, RoF changed slightly.
+
+*r490
+--Cannon and short-barrel cannon models are now skinnier
+--CoH sounds fixed
+--Small v12 petrol/diesel and medium v8 diesel weight slightly increased
+--Large CVT torque rating increased from 3400 to 6000
+--37mm cannon name fixed
+--37mm short-barrel cannon rof adjusted
