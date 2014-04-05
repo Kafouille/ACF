@@ -51,3 +51,6 @@ r458
 --Large CVT torque rating increased from 3400 to 6000
 --37mm cannon name fixed
 --37mm short-barrel cannon rof adjusted
+
+*r491
+--New tank engine and misc sounds
