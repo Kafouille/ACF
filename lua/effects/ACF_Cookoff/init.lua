@@ -13,6 +13,7 @@ function EFFECT:Init( data )
 	self.Entity:SetMoveType( MOVETYPE_VPHYSICS )
 	self.Entity:SetSolid( SOLID_VPHYSICS )
 	self.Entity:SetColor( Color(0,0,0,0 ))
+	self.Entity:SetRenderMode(RENDERMODE_TRANSALPHA)
 	--Msg("Effect Spawned/n")
 	
 	self.LifeTime = RealTime() + math.random(1, 2)
@@ -43,7 +44,7 @@ function EFFECT:Think()
 		Smoke:SetRollDelta( math.Rand(-0.2, 0.2) )			
 		Smoke:SetAirResistance( 50 ) 			 
 		Smoke:SetGravity( Vector( math.Rand(0, 0)*self.Scale, math.Rand(0, 0)*self.Scale, 0 ) ) 			
-		Smoke:SetColor( Color(90,90,90 ))
+		Smoke:SetColor( 90,90,90 )
 	end
 	
 	local Fire = self.Emitter:Add( "particles/flamelet"..math.random(1,5), self.Entity:GetPos())
@@ -59,7 +60,7 @@ function EFFECT:Think()
 		Fire:SetRollDelta( math.Rand(-0.2, 0.2) )			
 		Fire:SetAirResistance( 100 ) 			 
 		Fire:SetGravity( VectorRand()*self.Scale ) 			
-		Fire:SetColor( Color(255,255,255 ))
+		Fire:SetColor( 255,255,255 )
 	end
 	
 	return self.LifeTime > RealTime()

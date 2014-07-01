@@ -20,7 +20,7 @@ function EFFECT:Think( )
 
 	for i=0, 2*self.Radius do
 	
-		local Light = self.Emitter:Add( "sprites\light_glow02_add.vmt", self.Origin )
+		local Light = self.Emitter:Add( "sprites/light_glow02_add.vmt", self.Origin )
 		if (Light) then
 			Light:SetVelocity( Normal * math.random( 40,60*self.Radius) + VectorRand() * math.random( 25,50*self.Radius) )
 			Light:SetLifeTime( 0 )
@@ -33,7 +33,7 @@ function EFFECT:Think( )
 			Light:SetRollDelta( math.Rand(-2, 2) )			
 			Light:SetAirResistance( 100 ) 			 
 			Light:SetGravity( Vector( math.random(-10,10)*self.Radius, math.random(-10,10)*self.Radius, 250 ) ) 			
-			Light:SetColor( Color(170,140,90 ))
+			Light:SetColor( 170,140,90 )
 		end
 	
 	end
