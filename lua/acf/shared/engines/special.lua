@@ -110,36 +110,3 @@ ACF_DefineEngine( "7.2-V8", {
 	limitrpm = 8500
 } )
 
-ACF_DefineEngine( "13.0-V12", {
-	name = "13.0L V12 Petrol",
-	desc = "Thirsty gasoline v12, good torque and power for medium applications.",
-	model = "models/engines/v12m.mdl",
-	sound = "acf_engines/v12_special.wav",
-	category = "Special",
-	fuel = "Petrol",
-	enginetype = "GenericPetrol",
-	weight = 520,
-	torque = 660,
-	flywheelmass = 1,
-	idlerpm = 700,
-	peakminrpm = 2500,
-	peakmaxrpm = 4000,
-	limitrpm = 4250
-} )
-
-ACF_DefineEngine( "5.2-V6", {
-	name = "5.2L V6 Diesel",
-	desc = "Light AFV-grade two-stroke multifuel, high output but heavy",
-	model = "models/engines/v6med.mdl",
-	sound = "acf_engines/i5_dieselmedium.wav",
-	category = "Special",
-	fuel = "Any",
-	enginetype = "GenericDiesel",
-	weight = 500,
-	torque = 490,
-	flywheelmass = 0.8,
-	idlerpm = 650,
-	peakminrpm = 1800,
-	peakmaxrpm = 4200,
-	limitrpm = 4300
-} )
