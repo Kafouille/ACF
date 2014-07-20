@@ -29,7 +29,7 @@ ACF_DefineEngine( "7.0-V12", {
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
 	weight = 360,
-	torque = 420,
+	torque = 500,
 	flywheelmass = 0.45,
 	idlerpm = 800,
 	peakminrpm = 3600,

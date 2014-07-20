@@ -49,3 +49,7 @@ r400
 -Fix for guns firing all ammo at once in certain circumstances. Ty Sestze
 -Moved 13L v12 and 5.2L v6 from special to v12 and v6 category, respectively.  Dupes are unaffected
 -75mm AL weight lowered from 2420 to 2125
+
+*r502
+-Added i5 and v10 engines, and a v10 special. Thanks to Beckett for the models.
+-Buffed 7.0 v12
