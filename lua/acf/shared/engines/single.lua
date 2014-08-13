@@ -4,7 +4,7 @@
 ACF_DefineEngine( "0.25-I1", {
 	name = "250cc Single",
 	desc = "Tiny bike engine",
-	model = "models/engines/1cylsmall.mdl",
+	model = "models/engines/1cylsml.mdl",
 	sound = "acf_engines/i1_small.wav",
 	category = "Single",
 	fuel = "Petrol",

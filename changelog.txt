@@ -69,3 +69,8 @@ r400
 -Added 3.0L v12 special
 -Added gamerpaddy's new single, vtwin, and standalone electric models
 -Added Lazermaniac's new MG and HMG models
+
+*r504
+-Updated emotor standalone and single cylinder model bodygroups
+-Fixed 7.62mm MG model size
+-Fixed 20mm AC firing too fast
