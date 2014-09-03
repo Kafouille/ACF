@@ -74,3 +74,12 @@ r400
 -Updated emotor standalone and single cylinder model bodygroups
 -Fixed 7.62mm MG model size
 -Fixed 20mm AC firing too fast
+
+*r506
+-Added per-bullet callbacks OnPenetrated, OnRicochet, OnEndFlight, PreCalcFlight, PostCalcFlight.
+-HandlesOwnIteration bullet key to disable bullet iteration.
+-Battle DP mode can now optionally disable noclip.
+
+*r507
+-Fixed v10 model physbox
+-Added i3 engines
