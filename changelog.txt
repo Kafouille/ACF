@@ -83,3 +83,10 @@ r400
 *r507
 -Fixed v10 model physbox
 -Added i3 engines
+
+*r508
+-Fuel is now drained from all active tanks, instead of sequentially
+-Slightly nerfed 4.1L i5 diesel torque
+-Dropped 40mm HMG weight from 960 to 600, increased mag size from 30 to 35
+-MG/HMG recoloring fixed
+-Removed a few redundant sounds

@@ -492,14 +492,20 @@ function ENT:CalcRPM()
 	-- local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)
 	--local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
 	
-	--find first active tank with fuel
+	--find next active tank with fuel
 	local Tank = nil
 	local boost = 1
-	for _,fueltank in pairs(self.FuelLink) do
-		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
-	end
-	if (not Tank) and self.RequiresFuel then  --make sure we've got a tank with fuel if needed
-		self:TriggerInput( "Active", 0 ) return self.FlyRPM
+	local i = 0
+	local MaxTanks = #self.FuelLink
+	
+	while i <= MaxTanks  and not (Tank and Tank:IsValid() and Tank.Fuel > 0) do
+		self.FuelTank = self.FuelTank % MaxTanks + 1
+		Tank = self.FuelLink[self.FuelTank]
+		if Tank and Tank:IsValid() and Tank.Fuel > 0 and Tank.Active then
+			break --return Tank
+		end
+		Tank = nil
+		i = i + 1
 	end
 	
 	--calculate fuel usage
