@@ -90,3 +90,6 @@ r400
 -Dropped 40mm HMG weight from 960 to 600, increased mag size from 30 to 35
 -MG/HMG recoloring fixed
 -Removed a few redundant sounds
+
+*r509
+-Fixed engine bug in r508

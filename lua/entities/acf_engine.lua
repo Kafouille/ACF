@@ -85,6 +85,7 @@ function ENT:Initialize()
 	self.LastCheck = 0
 	self.LastThink = 0
 	self.MassRatio = 1
+	self.FuelTank = 1
 	self.Legal = true
 	self.CanUpdate = true
 	self.RequiresFuel = false
@@ -237,6 +238,7 @@ function ENT:Update( ArgsTable )
 	self.SpecialHealth = true
 	self.SpecialDamage = true
 	self.TorqueMult = self.TorqueMult or 1
+	self.FuelTank = 1
 	
 	if self.EngineType == "GenericDiesel" then
 		self.TorqueScale = ACF.DieselTorqueScale
