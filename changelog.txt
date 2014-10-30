@@ -93,3 +93,8 @@ r400
 
 *r509
 -Fixed engine bug in r508
+
+*r514
+-ACF E2 funcs ported to starfall, courtesy of EpicG
+-Fixed acfRPM() not reporting 0 rpm on inactive engine
+-Fixed acfActive() not reporting the correct value for ammo
