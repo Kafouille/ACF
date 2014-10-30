@@ -88,7 +88,11 @@ end
 e2function number entity:acfActive()
 	if not (isEngine(this) or isAmmo(this) or isFuel(this)) then return 0 end
 	if restrictInfo(self, this) then return 0 end
-	if (this.Active) then return 1 end
+	if not isAmmo(this) then
+		if (this.Active) then return 1 end
+	else
+		if (this.Load) then return 1 end
+	end
 	return 0
 end
 

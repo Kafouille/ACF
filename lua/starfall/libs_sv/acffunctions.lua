@@ -1,11 +1,8 @@
 -- [ To Do ] --
 
 -- #general
--- acfGetActive does not work with ammo (this.Active nil?)
 
 -- #engine
--- this.FlyRPM does not become 0 after engine is turned off, it remains at its previous value
--- acfInPowerband is effected by FlyRPM, when off it can return invalid results
 
 -- #gearbox
 
@@ -95,7 +92,11 @@ function ents_methods:acfGetActive( )
 
 	if not ( isEngine( this ) or isAmmo( this ) or isFuel( this ) ) then return false end
 	if restrictInfo( SF.instance.player, this ) then return false end
-	if this.Active then return true end
+	if not isAmmo( this ) then
+		if this.Active then return true end
+	else
+		if this.Load then return true end
+	end
 	return false
 end
 
