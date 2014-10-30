@@ -314,6 +314,7 @@ function ENT:TriggerInput( iname, value )
 			end
 		elseif (value <= 0 and self.Active) then
 			self.Active = false
+			self.FlyRPM = 0
 			self.RPM = {}
 			self.RPM[1] = self.IdleRPM
 			if self.Sound then
