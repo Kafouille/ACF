@@ -1,3 +1,4 @@
+CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 -- [ To Do ] --
 
 -- #general
@@ -26,12 +27,6 @@ local ents_methods = SF.Entities.Methods
 local ents_metatable = SF.Entities.Metatable
 local wrap, unwrap = SF.Entities.Wrap, SF.Entities.Unwrap
 
--- Register privileges
-do
-	local P = SF.Permissions
-	P.registerPrivilege( "acf.access", "Access", "If granted, the user does not have to be the owner of the prop to get ACF information" )
-end
-
 local function isEngine( ent )
 	if not validPhysics( ent ) then return false end
 	if ( ent:GetClass( ) == "acf_engine" ) then return true else return false end
@@ -58,7 +53,10 @@ local function isFuel( ent )
 end
 
 local function restrictInfo( ent )
-	if not SF.Permissions.check( SF.instance.player, ent, "acf.access" ) then return true else return false end
+	if GetConVar("sbox_acf_sfrestrictinfo"):GetInt() != 0 then
+		if not ent:GetOwner() == SF.instance.player then return true else return false end
+	end
+	return false
 end
 
 -- [General Functions ] --
