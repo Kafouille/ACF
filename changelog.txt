@@ -114,3 +114,7 @@ r400
 -HE now applies force to all props, not just physical props
 -HE shove is less potent
 -AP shove now takes parented mass into account
+
+*r521
+-Added Looter's ACF tools subcategory (off by default)
+-Fixed starfall permissions
