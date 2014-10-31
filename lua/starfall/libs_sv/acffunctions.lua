@@ -1,4 +1,4 @@
-CreateConVar("sbox_acf_sfrestrictinfo", 1) -- 0=any, 1=owned
+CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 -- [ To Do ] --
 
 -- #general

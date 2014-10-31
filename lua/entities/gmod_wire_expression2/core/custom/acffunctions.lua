@@ -1,5 +1,5 @@
 E2Lib.RegisterExtension("acf", true)
-CreateConVar("sbox_acf_e2restrictinfo", 1) -- 0=any, 1=owned
+CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 -- [ To Do ] --
 
 -- #general
