@@ -118,3 +118,6 @@ r400
 *r521
 -Added Looter's ACF tools subcategory (off by default)
 -Fixed starfall permissions
+
+*r522
+-Fixed issue caused by permissions change in r521
