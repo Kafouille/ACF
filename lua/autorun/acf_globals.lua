@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 523 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 525 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
@@ -84,6 +84,7 @@ CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 CreateConVar('acf_meshvalue', 1)
+CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 
 AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
