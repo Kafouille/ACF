@@ -121,3 +121,7 @@ r400
 
 *r522
 -Fixed issue caused by permissions change in r521
+
+*r525
+-Fixed issue caused by permissions change in r521 again
+-Added function acfInfoRestricted() to starfall library

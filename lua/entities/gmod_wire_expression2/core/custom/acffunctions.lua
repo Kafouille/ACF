@@ -1,5 +1,4 @@
 E2Lib.RegisterExtension("acf", true)
-CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 -- [ To Do ] --
 
 -- #general
@@ -64,7 +63,7 @@ __e2setcost( 1 )
 
 -- Returns 1 if functions returning sensitive info are restricted to owned props
 e2function number acfInfoRestricted()
-	return GetConVar("sbox_acf_e2restrictinfo"):GetInt() or 0
+	return GetConVar("sbox_acf_restrictinfo"):GetInt() or 0
 end
 
 -- Returns the short name of an ACF entity

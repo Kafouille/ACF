@@ -1,4 +1,3 @@
-CreateConVar("sbox_acf_restrictinfo", 1) -- 0=any, 1=owned
 -- [ To Do ] --
 
 -- #general
@@ -53,13 +52,18 @@ local function isFuel( ent )
 end
 
 local function restrictInfo( ent )
-	if GetConVar("sbox_acf_sfrestrictinfo"):GetInt() != 0 then
+	if GetConVar("sbox_acf_restrictinfo"):GetInt() != 0 then
 		if not ent:GetOwner() == SF.instance.player then return true else return false end
 	end
 	return false
 end
 
 -- [General Functions ] --
+
+-- Returns true if functions returning sensitive info are restricted to owned props
+function ents_methods:acfInfoRestricted()
+	return GetConVar("sbox_acf_restrictinfo"):GetInt() ~= 0
+end
 
 -- Returns the short name of an ACF entity
 function ents_methods:acfNameShort ( )
