@@ -1,58 +1,5 @@
-r400
+r500
 --For an extended version history, please visit the github changelog.  https://github.com/nrlulz/ACF/commits/master
-
-*r493
---Diesel engines now have much more hp
---Diesels can take a bit more damage before performance starts to degrade
-
-*r494
---New tracers that are a bit brighter and much easier on older systems, courtesy of Techa
---Turbine fuel consumption doubled
---Diesel fuel is no longer explosive
---Refuel sound is much quieter
-
-*r495
--HEAT rebalanced: 
---HEAT HE reduced, 22% (down from 33%) of a HE shell of same caliber.
---HE effect is correctly sized
---penetrator loses less energy on initial penetration, but loses massive amounts on successive penetrations. End effect is layered armor is much more effective at stopping penetrator.
---penetrator deals 13.2x more damage to crates, roughly equal to an AP shell of the same caliber as the HEAT shell.
---penetrator deals 6.6x more damage to engines and fuel tanks, roughly half of an AP shell.
---penetrator damage to everything else is unchanged.
--Diesel explosions can be triggered by HE or HEAT.
--HE blast radius and blast energy is now correctly displayed on the tool and overlays.
-
-*r496
--Large volume crates (2x4x4+) have bonus ammo and confer a bonus to fire rate or reload time.
--2x4x4 is +10% ammo, +2% fire rate / reload speed bonus
--4x8x8 is +50% ammo, +10% fire rate / reload speed bonus
--Guns without clips get a fire rate bonus, guns with clips have a reload speed bonus instead
--Updated gun definitions so they are defined similarly to engines -- each gun class has its own file
-
-*r497
--Built-in damage protection now won't override other hooks
-
-*r500
--Crate RoF bonus doubled (maximum 20% bonus with 4x8x8, up from 10%)
--Made 50mm cannon default gun if trying to spawn a custom gun that doesn't exist
--SC no longer compatible with smoke rounds
--SL fire rate increased 33% (now ~25 seconds reload)
--75mm AL clip increased from 6 to 8 rounds
--75mm AL reload increased from 14 to 15 seconds
--100mm AL reload increased from 18 to 21 seconds
--SA can now load HEAT rounds
--Engines now save adjusted pitch, instead of using the value currently in sound tool
--Fuel drum can now be linked to engines
--5.2l v6 special: torque slightly nerfed, fuel efficiency increased 25%
-
-*r501
--Fix for guns firing all ammo at once in certain circumstances. Ty Sestze
--Moved 13L v12 and 5.2L v6 from special to v12 and v6 category, respectively.  Dupes are unaffected
--75mm AL weight lowered from 2420 to 2125
-
-*r502
--Added i5 and v10 engines, and a v10 special. Thanks to Beckett for the models.
--Buffed 7.0 v12
 
 *r503
 -Partial workaround for HE bug; doesn't eliminate the problem, but helps catch some cases.
@@ -125,3 +72,7 @@ r400
 *r525
 -Fixed issue caused by permissions change in r521 again
 -Added function acfInfoRestricted() to starfall library
+
+*r526
+-Added _Beckett's new C/SC/AL muzzle brakes and SL tube
+-Removed some broken sounds
