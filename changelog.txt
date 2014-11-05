@@ -76,3 +76,6 @@ r500
 *r526
 -Added _Beckett's new C/SC/AL muzzle brakes and SL tube
 -Removed some broken sounds
+
+*r527
+-Fix for new muzzle brakes, added bore evacuator bodygroup
