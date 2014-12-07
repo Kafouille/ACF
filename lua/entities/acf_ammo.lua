@@ -37,7 +37,8 @@ if CLIENT then
 	end
 	
 	function ACF_DrawRefillAmmo( Table )
-		for k,v in pairs( Table ) do
+    
+		for k,v in pairs( Table ) do        
 			local St, En = v.EntFrom:LocalToWorld(v.EntFrom:OBBCenter()), v.EntTo:LocalToWorld(v.EntTo:OBBCenter())
 			local Distance = (En - St):Length()
 			local Amount = math.Clamp((Distance/50),2,100)
@@ -56,18 +57,40 @@ if CLIENT then
 				render.Model( MdlTbl )
 			end
 		end
+        
 	end
+    
+    
+    
+    function ACF_TrimInvalidRefillEffects(effectsTbl)
+        
+        local effect
+    
+        for i=1, #effectsTbl do
+            effect = effectsTbl[i]
+            
+            if not (IsValid(effect.EntFrom) and IsValid(effect.EntTo)) then 
+                effectsTbl[i] = nil
+            end
+        end
+        
+    end
+    
+    
 
 	function ENT:Draw()
 		
 		self.BaseClass.Draw( self )
 		
 		if self.RefillAmmoEffect then
+            ACF_TrimInvalidRefillEffects(self.RefillAmmoEffect)
 			ACF_DrawRefillAmmo( self.RefillAmmoEffect )
 		end
 		
 	end
 	
+    
+    
 	usermessage.Hook("ACF_RefillEffect", function( msg )
 		local EntFrom, EntTo, Weapon = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() ), msg:ReadString()
 		if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end
@@ -80,6 +103,7 @@ if CLIENT then
 	
 	usermessage.Hook("ACF_StopRefillEffect", function( msg )
 		local EntFrom, EntTo = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() )
+        //print("stop", EntFrom, EntTo)
 		if not IsValid( EntFrom ) or not IsValid( EntTo )or not EntFrom.RefillAmmoEffect then return end
 		for k,v in pairs( EntFrom.RefillAmmoEffect ) do
 			if v.EntTo == EntTo then
@@ -467,16 +491,16 @@ function ENT:Think()
 	end
 	
 	if self.SupplyingTo then
-		for k,v in pairs( self.SupplyingTo ) do
-			local Ammo = ents.GetByIndex(v)
+		for k, EntID in pairs( self.SupplyingTo ) do
+			local Ammo = ents.GetByIndex(EntID)
 			if not IsValid( Ammo ) then 
 				table.remove(self.SupplyingTo, k)
-				self:StopRefillEffect( Ammo )
+				self:StopRefillEffect( EntID )
 			else
 				local dist = self:GetPos():Distance(Ammo:GetPos())
 				if dist > ACF.RefillDistance or Ammo.Capacity <= Ammo.Ammo or self.Damaged or not self.Load then // If ammo crate is out of refill max distance or is full or our refill crate is damaged or just in-active then stop refiliing it.
 					table.remove(self.SupplyingTo, k)
-					self:StopRefillEffect( Ammo )
+					self:StopRefillEffect( EntID )
 				end
 			end
 		end
@@ -495,10 +519,10 @@ function ENT:RefillEffect( Target )
 	umsg.End()
 end
 
-function ENT:StopRefillEffect( Target )
+function ENT:StopRefillEffect( TargetID )
 	umsg.Start("ACF_StopRefillEffect")
 		umsg.Float( self:EntIndex() )
-		umsg.Float( Target:EntIndex() )
+		umsg.Float( TargetID )
 	umsg.End()
 end
 

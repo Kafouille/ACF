@@ -79,3 +79,6 @@ r500
 
 *r527
 -Fix for new muzzle brakes, added bore evacuator bodygroup
+
+*r528
+-Patched refill crates spamming the console when the recipient crate is removed.
