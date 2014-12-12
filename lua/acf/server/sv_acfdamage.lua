@@ -85,7 +85,8 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 							Table.Dist = Hitpos:Distance(Tar:GetPos())
 							Table.Vec = (Tar:GetPos() - Hitpos):GetNormal()
 							local Sphere = math.max(4 * 3.1415 * (Table.Dist*2.54 )^2,1) --Surface Aera of the sphere at the range of that prop
-							Table.Aera = math.min(Tar.ACF.Aera/Sphere,0.5)*MaxSphere --Project the aera of the prop to the aera of the shadow it projects at the explosion max radius
+							local AreaAdjusted = Tar.ACF.MaxHealth * ACF.Threshold * ( Tar.ACF.Aera / (Tar.ACF.MaxHealth * ACF.Threshold) ) ^ ACF.HEDuctAdjust --adjust how duct affects HE damage
+							Table.Aera = math.min(AreaAdjusted/Sphere,0.5)*MaxSphere --Project the aera of the prop to the aera of the shadow it projects at the explosion max radius
 						table.insert(Damage, Table)	--Add it to the Damage table so we know to damage it once we tallied everything
 						TotalAera = TotalAera + Table.Aera
 					end
@@ -101,11 +102,12 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 			local Tar = Table.Ent
 			local AeraFraction = Table.Aera/TotalAera
 			local PowerFraction = Power * AeraFraction	--How much of the total power goes to that prop
+			local AreaAdjusted = Tar.ACF.MaxHealth * ( (Tar.ACF.Aera / ACF.Threshold) / Tar.ACF.MaxHealth ) ^ ACF.HEDuctAdjust --adjust how duct affects HE damage
 			
 			local BlastRes
 			local Blast = {
 				Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05),
-				Penetration = PowerFraction^ACF.HEBlastPen*Tar.ACF.Aera/ACF.Threshold
+				Penetration = PowerFraction^ACF.HEBlastPen*AreaAdjusted
 			}
 			
 			local FragRes
@@ -157,7 +159,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 					else
 						--confirmed proper hit, apply damage
 						--print("No HE bug on "..Tar:GetClass())
-						BlastRes = ACF_Damage ( Tar , Blast , Tar.ACF.Aera / ACF.Threshold , 0 , Inflictor ,0 , Ammo, "HE" )
+						BlastRes = ACF_Damage ( Tar , Blast , AreaAdjusted , 0 , Inflictor ,0 , Ammo, "HE" )
 						FragRes = ACF_Damage ( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
 						
 						if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
@@ -169,10 +171,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 				end)
 				
 				--calculate damage that would be applied (without applying it), so HE deals correct damage to other props
-				BlastRes = ACF_CalcDamage( Tar, Blast, Tar.ACF.Aera / ACF.Threshold, 0 )
+				BlastRes = ACF_CalcDamage( Tar, Blast, AreaAdjusted, 0 )
 				--FragRes = ACF_CalcDamage( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 ) --not used for anything in this case
 			else
-				BlastRes = ACF_Damage ( Tar , Blast , Tar.ACF.Aera / ACF.Threshold , 0 , Inflictor ,0 , Ammo, "HE" )
+				BlastRes = ACF_Damage ( Tar , Blast , AreaAdjusted , 0 , Inflictor ,0 , Ammo, "HE" )
 				FragRes = ACF_Damage ( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
 			
 				if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then

@@ -82,3 +82,15 @@ r500
 
 *r528
 -Patched refill crates spamming the console when the recipient crate is removed.
+
+*r529
+-Added looter's fix for missing sound lag on guns
+-Added _Beckett's recolorable mortar models
+-Added Cre8or's fixed/updated rotor sounds
+-Added Cre8or's new sounds, including missiles, alarms, rotors, engines, +more
+-New GL and SL sounds, courtesy of Cre8or
+-Moved energy weapon sounds to acf extras folder
+-Removed some duplicate sounds
+-120mm SC weight dropped from 4.2 tons to 3.8 tons
+-140mm SC weight dropped from 7 tons to 6 tons
+-Slightly normalized HE damage with respect to ductility

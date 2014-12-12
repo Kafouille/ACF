@@ -13,6 +13,10 @@
 	
 	local Class = Gun:GetNWString( "Class" )
 	local RoundType = ACF.IdRounds[data:GetSurfaceProp()]
+	
+	if( CLIENT and not IsValidSound( Sound ) ) then
+		Sound = ACF.Classes["GunClass"][Class]["sound"]
+	end
 		
 	if Gun:IsValid() then
 		if Propellant > 0 then
