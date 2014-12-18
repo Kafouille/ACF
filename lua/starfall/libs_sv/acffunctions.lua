@@ -21,7 +21,6 @@
 
 -- [ Helper Functions ] --
 
-local acf_lib, _ = SF.Libraries.Register( "acf" )
 local ents_methods = SF.Entities.Methods
 local ents_metatable = SF.Entities.Metatable
 local wrap, unwrap = SF.Entities.Wrap, SF.Entities.Unwrap
@@ -52,7 +51,7 @@ local function isFuel( ent )
 end
 
 local function restrictInfo( ent )
-	if GetConVar("sbox_acf_restrictinfo"):GetInt() != 0 then
+	if GetConVar("sbox_acf_restrictinfo"):GetInt() ~= 0 then
 		if not ent:GetOwner() == SF.instance.player then return true else return false end
 	end
 	return false
@@ -113,7 +112,7 @@ function ents_methods:acfSetActive( on )
 end
 
 local linkTables =
-{ -- link resources within each ent type.  should point to an ent: true if adding link.Ent, false to add link itself
+{ -- link resources within each ent type. should point to an ent: true if adding link.Ent, false to add link itself
 	acf_engine 		= { GearLink = true, FuelLink = false },
 	acf_gearbox		= { WheelLink = true, Master = false },
 	acf_fueltank	= { Master = false },
@@ -129,7 +128,7 @@ local function getLinks( ent, enttype )
 		
 		-- find all the links inside the resources
 		for _, link in pairs( ent[ entry ] ) do
-			ret[ #ret + 1 ] = mode and link.Ent or link
+			ret[ #ret + 1 ] = mode and wrap( link.Ent ) or link
 		end
 	end
 	
@@ -145,7 +144,7 @@ local function searchForGearboxLinks( ent )
 		if IsValid( box ) then
 			for _, link in pairs( box.WheelLink ) do
 				if link.Ent == ent then
-					ret[ #ret + 1 ] = box
+					ret[ #ret + 1 ] = wrap( box )
 					break
 				end
 			end
@@ -329,7 +328,7 @@ function ents_methods:acfGetThrottle( )
 end
 
 -- Sets the throttle value for an ACF engine
-function ents_methods:acfSetThrottle( throttle  )
+function ents_methods:acfSetThrottle( throttle )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( throttle, "number" )
 	local this = unwrap( self )
@@ -431,7 +430,7 @@ function ents_methods:acfInGear( )
 end
 
 -- Returns the ratio for a specified gear of an ACF gearbox
-function ents_methods:acfGearRatio( gear  )
+function ents_methods:acfGearRatio( gear )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( gear, "number" )
 	
@@ -453,7 +452,7 @@ function ents_methods:acfTorqueOut( )
 end
 
 -- Sets the gear ratio of a CVT, set to 0 to use built-in algorithm
-function ents_methods:acfCVTRatio( ratio  )
+function ents_methods:acfCVTRatio( ratio )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( ratio, "number" )
 	
@@ -466,7 +465,7 @@ function ents_methods:acfCVTRatio( ratio  )
 end
 
 -- Sets the current gear for an ACF gearbox
-function ents_methods:acfShift( gear  )
+function ents_methods:acfShift( gear )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( gear, "number" )
 	local this = unwrap( self )
@@ -497,7 +496,7 @@ function ents_methods:acfShiftDown( )
 end
 
 -- Sets the brakes for an ACF gearbox
-function ents_methods:acfBrake( brake  )
+function ents_methods:acfBrake( brake )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( brake, "number" )
 	local this = unwrap( self )
@@ -508,7 +507,7 @@ function ents_methods:acfBrake( brake  )
 end
 
 -- Sets the left brakes for an ACF gearbox
-function ents_methods:acfBrakeLeft( brake  )
+function ents_methods:acfBrakeLeft( brake )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( brake, "number" )
 	local this = unwrap( self )
@@ -520,7 +519,7 @@ function ents_methods:acfBrakeLeft( brake  )
 end
 
 -- Sets the right brakes for an ACF gearbox
-function ents_methods:acfBrakeRight( brake  )
+function ents_methods:acfBrakeRight( brake )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( brake, "number" )
 	local this = unwrap( self )
@@ -532,7 +531,7 @@ function ents_methods:acfBrakeRight( brake  )
 end
 
 -- Sets the clutch for an ACF gearbox
-function ents_methods:acfClutch( clutch  )
+function ents_methods:acfClutch( clutch )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( clutch, "number" )
 	local this = unwrap( self )
@@ -543,7 +542,7 @@ function ents_methods:acfClutch( clutch  )
 end
 
 -- Sets the left clutch for an ACF gearbox
-function ents_methods:acfClutchLeft( clutch  )
+function ents_methods:acfClutchLeft( clutch )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( clutch, "number" )
 	local this = unwrap( self )
@@ -555,7 +554,7 @@ function ents_methods:acfClutchLeft( clutch  )
 end
 
 -- Sets the right clutch for an ACF gearbox
-function ents_methods:acfClutchRight( clutch  )
+function ents_methods:acfClutchRight( clutch )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( clutch, "number" )
 	local this = unwrap( self )
@@ -567,7 +566,7 @@ function ents_methods:acfClutchRight( clutch  )
 end
 
 -- Sets the steer ratio for an ACF gearbox
-function ents_methods:acfSteerRate( rate  )
+function ents_methods:acfSteerRate( rate )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( rate, "number" )
 	local this = unwrap( self )
@@ -582,7 +581,7 @@ end
 -- [ Gun Functions ] --
 
 -- Returns true if the entity is an ACF gun
-function ents_methods:acfIsGun(  )
+function ents_methods:acfIsGun( )
 	SF.CheckType( self, ents_metatable )
 	local this = unwrap( self )
 	
@@ -658,7 +657,7 @@ function ents_methods:acfMagRounds( )
 end
 
 -- Sets the firing state of an ACF weapon
-function ents_methods:acfFire( fire  )
+function ents_methods:acfFire( fire )
 	SF.CheckType( self, ents_metatable )
 	SF.CheckType( fire, "number" )
 	local this = unwrap( self )
@@ -964,8 +963,9 @@ function ents_methods:acfFuel( )
 		
 		local liters = 0
 		for _, tank in pairs( this.FuelLink ) do
-			if not validPhysics( tank ) then continue end
-			if tank.Active then liters = liters + tank.Fuel end
+			if validPhysics( tank ) and tank.Active then
+				liters = liters + tank.Fuel
+			end
 		end
 		
 		return math.Round( liters, 3 )
@@ -988,8 +988,7 @@ function ents_methods:acfFuelLevel( )
 		local liters = 0
 		local capacity = 0
 		for _, tank in pairs( this.FuelLink ) do
-			if not validPhysics( tank ) then continue end
-			if tank.Active then 
+			if validPhysics( tank ) and tank.Active then 
 				capacity = capacity + tank.Capacity
 				liters = liters + tank.Fuel
 			end
@@ -1012,8 +1011,10 @@ function ents_methods:acfFuelUse( )
 	
 	local Tank = nil
 	for _, fueltank in pairs( this.FuelLink ) do
-		if not validPhysics( fueltank ) then continue end
-		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
+		if validPhysics( fueltank ) and fueltank.Fuel > 0 and fueltank.Active then
+			Tank = fueltank
+			break
+		end
 	end
 	if not tank then return 0 end
 	
