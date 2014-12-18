@@ -94,3 +94,6 @@ r500
 -120mm SC weight dropped from 4.2 tons to 3.8 tons
 -140mm SC weight dropped from 7 tons to 6 tons
 -Slightly normalized HE damage with respect to ductility
+
+*r532
+-Starfall function fixes, courtesy of EpicG
