@@ -115,7 +115,7 @@ end
 function Round.getDisplayData(Data)
 	local GUIData = {}
 
-	local SlugEnergy = ACF_Kinetic( Data.SlugMV*39.37 , Data.SlugMass, 999999 )
+	local SlugEnergy = ACF_Kinetic( Data.MuzzleVel*39.37 + Data.SlugMV*39.37 , Data.SlugMass, 999999 )
 	GUIData.MaxPen = (SlugEnergy.Penetration/Data.SlugPenAera)*ACF.KEtoRHA
 	--GUIData.BlastRadius = (Data.FillerMass/2)^0.33*5*10
 	GUIData.BlastRadius = (Data.BoomFillerMass)^0.33*8--*39.37
@@ -359,8 +359,13 @@ function Round.guiupdate( Panel, Table )
 	acfmenupanel:CPanelText("VelocityDisplay", "Muzzle Velocity : "..math.floor(Data.MuzzleVel*ACF.VelScale).." m/s")	--Proj muzzle velocity (Name, Desc)	
 	acfmenupanel:CPanelText("BlastDisplay", "Blast Radius : "..(math.floor(Data.BlastRadius*100)/100).." m")	--Proj muzzle velocity (Name, Desc)
 	acfmenupanel:CPanelText("FragDisplay", "Fragments : "..(Data.Fragments).."\n Average Fragment Weight : "..(math.floor(Data.FragMass*10000)/10).." g \n Average Fragment Velocity : "..math.floor(Data.FragVel).." m/s")	--Proj muzzle penetration (Name, Desc)
-
-	acfmenupanel:CPanelText("SlugDisplay", "Penetrator Mass : "..(math.floor(Data.SlugMass*10000)/10).." g \n Penetrator Caliber : "..(math.floor(Data.SlugCaliber*100)/10).." mm \n Penetrator Velocity : "..math.floor(Data.SlugMV).." m/s \n Penetrator Maximum Penetration : "..math.floor(Data.MaxPen).." mm RHA\n")	--Proj muzzle penetration (Name, Desc)
+	
+	local R1V, R1P = ACF_PenRanging( Data.MuzzleVel, Data.DragCoef, Data.ProjMass, Data.PenAera, Data.LimitVel, 300 )
+	R1P = (ACF_Kinetic( (R1V + Data.SlugMV) * 39.37, Data.SlugMass, 999999 ).Penetration/Data.SlugPenAera)*ACF.KEtoRHA
+	local R2V, R2P = ACF_PenRanging( Data.MuzzleVel, Data.DragCoef, Data.ProjMass, Data.PenAera, Data.LimitVel, 800 )
+	R2P = (ACF_Kinetic( (R2V + Data.SlugMV) * 39.37, Data.SlugMass, 999999 ).Penetration/Data.SlugPenAera)*ACF.KEtoRHA
+	
+	acfmenupanel:CPanelText("SlugDisplay", "Penetrator Mass : "..(math.floor(Data.SlugMass*10000)/10).." g \n Penetrator Caliber : "..(math.floor(Data.SlugCaliber*100)/10).." mm \n Penetrator Velocity : "..math.floor(Data.MuzzleVel + Data.SlugMV).." m/s \n Penetrator Maximum Penetration : "..math.floor(Data.MaxPen).." mm RHA\n\n300m pen: "..math.Round(R1P,0).."mm @ "..math.Round(R1V,0).." m\\s\n800m pen: "..math.Round(R2P,0).."mm @ "..math.Round(R2V,0).." m\\s\n\nThe range data is an approximation and may not be entirely accurate.")	--Proj muzzle penetration (Name, Desc)
 	
 end
 

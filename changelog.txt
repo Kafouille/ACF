@@ -97,3 +97,20 @@ r500
 
 *r532
 -Starfall function fixes, courtesy of EpicG
+
+*r533
+-Added _Beckett's updated V engine models with bodygrouped airfilters and exhaust
+-Added _Beckett's updated howitzer models with bodygrouped recoil and muzzles
+-Added _Beckett's new RAC and HMG models
+-New 2x3x6 and 2x3x8 ammo crate sizes, model courtesy of _Beckett
+-New thin clutch "gearbox", model courtesy of gamerpaddy
+-Fixed standalone electric driveshaft attach point, courtesy of gamerpaddy
+-Added I2 and V4 special
+-1.0L I4 special flywheel mass reduced
+-Large I3 petrol torque lowered slightly
+-Drag halved in ballistic calculations, making long range combat more viable
+-In ACF menu tool, HEAT penetration now accounts for muzzle vel
+-In ACF menu tool, added velocity / penetration estimates at 300m and 800m for AP, APHE, HEAT, HP, and FL
+-HEAT damage increased 25% against engines, fuel, and ammo
+-MGs can no longer fire HE rounds
+-Smoke rounds no longer deal HE damage

@@ -178,6 +178,28 @@ local Ammo2x3x4 = {}
 	Ammo2x3x4.volume = 33731
 AmmoTable["Ammo2x3x4"] = Ammo2x3x4
 
+local Ammo2x3x6 = {}
+	Ammo2x3x6.id = "Ammo2x3x6"
+	Ammo2x3x6.ent = "acf_ammo"
+	Ammo2x3x6.type = "Ammo"
+	Ammo2x3x6.name = "Modular Ammo Crate"
+	Ammo2x3x6.desc = "Modular Ammo Crate 2x3x6 Size\n"
+	Ammo2x3x6.model = "models/ammocrates/ammocrate_2x3x6.mdl"
+	Ammo2x3x6.weight = 180
+	Ammo2x3x6.volume = 50262
+AmmoTable["Ammo2x3x6"] = Ammo2x3x6
+
+local Ammo2x3x8 = {}
+	Ammo2x3x8.id = "Ammo2x3x8"
+	Ammo2x3x8.ent = "acf_ammo"
+	Ammo2x3x8.type = "Ammo"
+	Ammo2x3x8.name = "Modular Ammo Crate"
+	Ammo2x3x8.desc = "Modular Ammo Crate 2x3x8 Size\n"
+	Ammo2x3x8.model = "models/ammocrates/ammocrate_2x3x8.mdl"
+	Ammo2x3x8.weight = 240
+	Ammo2x3x8.volume = 66109
+AmmoTable["Ammo2x3x8"] = Ammo2x3x8
+
 local Ammo2x4x1 = {}
 	Ammo2x4x1.id = "Ammo2x4x1"
 	Ammo2x4x1.ent = "acf_ammo"

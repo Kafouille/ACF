@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 532 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 533 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
@@ -27,8 +27,11 @@ ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
 ACF.HEDuctAdjust = 0.8	--changes how duct affects HE damage; 1.0 dealing the same damage regardless of duct, to 0 being old behavior where -duct decreased HE damage taken
 
 ACF.HEATMVScale = 0.73	--Filler KE to HEAT slug KE conversion expotential
+ACF.HEATMulAmmo = 16.5 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
+ACF.HEATMulFuel = 16.5
+ACF.HEATMulEngine = 8.25
 
-ACF.DragDiv = 40		--Drag fudge factor
+ACF.DragDiv = 80		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
 -- local PhysEnv = physenv.GetPerformanceSettings()
 ACF.PhysMaxVel = 4000

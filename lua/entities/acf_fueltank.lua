@@ -184,7 +184,7 @@ end
 
 function ENT:ACF_OnDamage( Entity, Energy, FrAera, Angle, Inflictor, Bone, Type )	--This function needs to return HitRes
 
-	local Mul = ((Type == "HEAT" and 6.6) or 1) --Heat penetrators deal bonus damage to fuel, roughly half an AP round
+	local Mul = ((Type == "HEAT" and ACF.HEATMulFuel) or 1) --Heat penetrators deal bonus damage to fuel
 	local HitRes = ACF_PropDamage( Entity, Energy, FrAera * Mul, Angle, Inflictor )	--Calling the standard damage prop function
 	
 	local NoExplode = self.FuelType == "Diesel" and not (Type == "HE" or Type == "HEAT")

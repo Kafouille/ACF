@@ -179,7 +179,7 @@ end
 
 function ENT:ACF_OnDamage( Entity, Energy, FrAera, Angle, Inflictor, Bone, Type )	--This function needs to return HitRes
 
-	local Mul = ((Type == "HEAT" and 13.2) or 1) --Heat penetrators deal bonus damage to ammo, roughly equal to an AP round
+	local Mul = ((Type == "HEAT" and ACF.HEATMulAmmo) or 1) --Heat penetrators deal bonus damage to ammo
 	local HitRes = ACF_PropDamage( Entity, Energy, FrAera * Mul, Angle, Inflictor )	--Calling the standard damage prop function
 	
 	if self.Exploding or not self.IsExplosive then return HitRes end

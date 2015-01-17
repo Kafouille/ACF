@@ -116,3 +116,17 @@ PostCalcFlight(Bullet)
 
 HandlesOwnIteration 
 	this is just a key: put it into the bullet table to prevent ACF from iterating the bullet.  You can then iterate it yourself in different places.
+
+
+---------------------
+Engine model scaling:
+
+V engines
+Large 	1.0
+Medium 	0.665
+Small 	0.532
+
+Inline engines
+Large	1.0
+Medium	0.6
+Small	0.4

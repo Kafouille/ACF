@@ -1,6 +1,8 @@
 
 AddCSLuaFile()
 
+ACF.AmmoBlacklist.HE = { "MG" }
+
 local Round = {}
 
 Round.type = "Ammo" --Tells the spawn menu what entity to spawn
