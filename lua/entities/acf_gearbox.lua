@@ -154,7 +154,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox.GearTable[7] = Data7
 		Gearbox.GearTable[8] = Data8
 		Gearbox.GearTable[9] = Data9
-		Gearbox.GearTable[0] = 0
+		Gearbox.GearTable[0] = List.Mobility[Id].geartable[0]
 		
 		Gearbox.Gear0 = Data10
 		Gearbox.Gear1 = Data1
@@ -317,7 +317,7 @@ function ENT:Update( ArgsTable )
 	self.GearTable[7] = ArgsTable[11]
 	self.GearTable[8] = ArgsTable[12]
 	self.GearTable[9] = ArgsTable[13]
-	self.GearTable[0] = 0
+	self.GearTable[0] = List.Mobility[Id].geartable[0]
 	
 	self.Gear0 = ArgsTable[14]
 	self.Gear1 = ArgsTable[5]

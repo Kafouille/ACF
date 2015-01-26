@@ -2,11 +2,13 @@
 -- Clutch
 
 -- Weight
+local CTW = 2
 local CSW = 5
 local CMW = 10
 local CLW = 20
 
 -- Torque Rating
+local CTT = 75
 local CST = 650
 local CMT = 1400 
 local CLT = 8000
@@ -15,6 +17,21 @@ local CLT = 8000
 local CDesc = "A standalone clutch for when a full size gearbox is unnecessary or too long."
 
 -- Straight-through
+
+ACF_DefineGearbox( "Clutch-S-T", {
+	name = "Clutch, Straight, Tiny",
+	desc = CDesc,
+	model = "models/engines/flywheelclutcht.mdl",
+	category = "Clutch",
+	weight = CTW,
+	switch = 0.3,
+	maxtq = CTT,
+	gears = 0,
+	geartable = {
+		[ 0 ] = 1,
+		[ -1 ] = 1
+	}
+} )
 
 ACF_DefineGearbox( "Clutch-S-S", {
 	name = "Clutch, Straight, Small",
@@ -26,7 +43,7 @@ ACF_DefineGearbox( "Clutch-S-S", {
 	maxtq = CST,
 	gears = 0,
 	geartable = {
-		[ 0 ] = 0,
+		[ 0 ] = 1,
 		[ -1 ] = 1
 	}
 } )
@@ -41,7 +58,7 @@ ACF_DefineGearbox( "Clutch-S-M", {
 	maxtq = CMT,
 	gears = 0,
 	geartable = {
-		[ 0 ] = 0,
+		[ 0 ] = 1,
 		[ -1 ] = 1
 	}
 } )
@@ -56,7 +73,7 @@ ACF_DefineGearbox( "Clutch-S-L", {
 	maxtq = CLT,
 	gears = 0,
 	geartable = {
-		[ 0 ] = 0,
+		[ 0 ] = 1,
 		[ -1 ] = 1
 	}
 } )

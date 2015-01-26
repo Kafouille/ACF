@@ -1,7 +1,7 @@
 
 AddCSLuaFile()
 
-ACF.AmmoBlacklist.HE = { "MG" }
+ACF.AmmoBlacklist.HE = {  }
 
 local Round = {}
 

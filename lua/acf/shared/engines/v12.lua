@@ -38,7 +38,7 @@ ACF_DefineEngine( "7.0-V12", {
 } )
 
 ACF_DefineEngine( "23.0-V12", {
-	name = "23.0 V12 Petrol",
+	name = "23.0L V12 Petrol",
 	desc = "A large, thirsty gasoline V12, found in early cold war tanks",
 	model = "models/engines/v12l.mdl",
 	sound = "acf_engines/v12_petrollarge.wav",
@@ -91,7 +91,7 @@ ACF_DefineEngine( "9.2-V12", {
 } )
 
 ACF_DefineEngine( "21.0-V12", {
-	name = "21.0 V12 Diesel",
+	name = "21.0L V12 Diesel",
 	desc = "AVDS-1790-2 tank engine; massively powerful, but enormous and heavy",
 	model = "models/engines/v12l.mdl",
 	sound = "acf_engines/v12_diesellarge.wav",

@@ -2,7 +2,7 @@
 ACF_defineGunClass("HW", {
 	spread = 0.12,
 	name = "Howitzer",
-	desc = "Howitzers are limited to rather mediocre muzzle velocities, but can fire extremely heavy projectiles with large usefull payload capacities.",
+	desc = "Howitzers are limited to rather mediocre muzzle velocities, but can fire extremely heavy projectiles with large useful payload capacities.",
 	muzzleflash = "120mm_muzzleflash_noscale",
 	rofmod = 1.3,
 	sound = "weapons/ACF_Gun/howitzer_new2.wav",
@@ -31,11 +31,11 @@ ACF_defineGun("105mmHW", {
 	model = "models/howitzer/howitzer_105mm.mdl",
 	gunclass = "HW",
 	caliber = 10.5,
-	weight = 1810,
+	weight = 1480,
 	year = 1900,
 	round = {
-		maxlength = 84,
-		propweight = 2.9
+		maxlength = 86,
+		propweight = 3.75
 	}
 } )
 
@@ -45,11 +45,11 @@ ACF_defineGun("122mmHW", {
 	model = "models/howitzer/howitzer_122mm.mdl",
 	gunclass = "HW",
 	caliber = 12.2,
-	weight = 3520,
+	weight = 3420,
 	year = 1900,
 	round = {
-		maxlength = 104,
-		propweight = 6
+		maxlength = 106,
+		propweight = 7
 	}
 } )
 	
