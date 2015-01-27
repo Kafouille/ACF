@@ -114,3 +114,16 @@ r500
 -HEAT damage increased 25% against engines, fuel, and ammo
 -MGs can no longer fire HE rounds
 -Smoke rounds no longer deal HE damage
+
+*r534
+-Added gamerpaddy's updated inline engine models with bodygrouped exhaust
+-Added tiny standalone clutch, model courtesy of gamerpaddy
+-Added 2 more cannon muzzle brakes, courtesy of _Beckett
+-Updated / fixed _Beckett's RAC models
+-Fixed HE filler mass not factoring into APHE penetration
+-Fixed standalone clutch not transmitting torque
+-Fixed engines that require fuel not shutting off when out of fuel
+-Fixed a few typos
+-Buffed 105mm howitzer (1810 kg -> 1480 kg, longer round, higher max propellant)
+-Buffed 122mm howitzer (3520 kg -> 3420 kg, longer round, higher max propellant)
+-Rolled back change to MG; they can now fire APHE and HE again

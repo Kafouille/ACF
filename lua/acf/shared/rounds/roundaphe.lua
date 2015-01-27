@@ -1,7 +1,7 @@
 
 AddCSLuaFile()
 
-ACF.AmmoBlacklist.APHE = { "MO", "MG" }
+ACF.AmmoBlacklist.APHE = { "MO" }
 
 local Round = {}
 
@@ -71,7 +71,7 @@ end
 
 function Round.getDisplayData(Data)
 	local GUIData = {}
-	local Energy = ACF_Kinetic( Data.MuzzleVel*39.37 , Data.ProjMass - Data.FillerMass, Data.LimitVel )
+	local Energy = ACF_Kinetic( Data.MuzzleVel*39.37 , Data.ProjMass, Data.LimitVel )
 	GUIData.MaxPen = (Energy.Penetration/Data.PenAera)*ACF.KEtoRHA
 	
 	GUIData.BlastRadius = (Data.FillerMass)^0.33*8
@@ -118,7 +118,7 @@ function Round.propimpact( Index, Bullet, Target, HitNormal, HitPos, Bone )
 	if ACF_Check( Target ) then
 	
 		local Speed = Bullet.Flight:Length() / ACF.VelScale
-		local Energy = ACF_Kinetic( Speed , Bullet.ProjMass - Bullet.FillerMass, Bullet.LimitVel )
+		local Energy = ACF_Kinetic( Speed , Bullet.ProjMass, Bullet.LimitVel )
 		local HitRes = ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bone )
 		
 		if HitRes.Overkill > 0 then
@@ -139,7 +139,7 @@ end
 
 function Round.worldimpact( Index, Bullet, HitPos, HitNormal )
 	
-	local Energy = ACF_Kinetic( Bullet.Flight:Length() / ACF.VelScale, Bullet.ProjMass - Bullet.FillerMass, Bullet.LimitVel )
+	local Energy = ACF_Kinetic( Bullet.Flight:Length() / ACF.VelScale, Bullet.ProjMass, Bullet.LimitVel )
 	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
 		return "Penetrated"
 	else

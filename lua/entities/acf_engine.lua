@@ -523,6 +523,9 @@ function ENT:CalcRPM()
 		Tank.Fuel = math.max(Tank.Fuel - Consumption,0)
 		boost = ACF.TorqueBoost
 		Wire_TriggerOutput(self, "Fuel Use", math.Round(60*Consumption/DeltaTime,3))
+	elseif self.RequiresFuel then
+		self:TriggerInput( "Active", 0 ) --shut off if no fuel and requires it
+		return 0
 	else
 		Wire_TriggerOutput(self, "Fuel Use", 0)
 	end
