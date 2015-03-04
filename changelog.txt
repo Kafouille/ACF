@@ -127,3 +127,6 @@ r500
 -Buffed 105mm howitzer (1810 kg -> 1480 kg, longer round, higher max propellant)
 -Buffed 122mm howitzer (3520 kg -> 3420 kg, longer round, higher max propellant)
 -Rolled back change to MG; they can now fire APHE and HE again
+
+*r535
+-Added double clutch funtionality to double diff gearboxes
