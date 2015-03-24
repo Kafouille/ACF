@@ -85,7 +85,9 @@ function TOOL:LeftClick( trace )
 			-- Using the Duplicator entity register to find the right factory function
 			local Ent = DupeClass.Func( ply, unpack( ArgTable ) )
 			Ent:Activate()
-			Ent:GetPhysicsObject():Wake()
+			--Ent:GetPhysicsObject():Wake()
+			Ent:DropToFloor()
+			Ent:GetPhysicsObject():EnableMotion( false )
 			
 			undo.Create( ACF.Weapons[Type][Id]["ent"] )
 				undo.AddEntity( Ent )

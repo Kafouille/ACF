@@ -205,6 +205,51 @@ function ents_methods:acfType( )
 	return ""
 end
 
+--perform ACF links
+function ents_methods:acfLinkTo(target, notify)
+	SF.CheckType( self, ents_metatable )
+	SF.CheckType( target, ents_metatable )
+	SF.CheckType( notify, "number" )
+	local this = unwrap( self )
+	local tar = unwrap( target )
+	
+	if not ((isGun(this) or isEngine(this) or isGearbox(this)) and (isOwner(self, this) and isOwner(self, tar))) then
+		if notify > 0 then
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Link(tar)
+    if notify > 0 then
+        ACF_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
+--perform ACF unlinks
+function ents_methods:acfUnlinkFrom(target, notify)
+	SF.CheckType( self, ents_metatable )
+	SF.CheckType( target, ents_metatable )
+	SF.CheckType( notify, "number" )
+	local this = unwrap( self )
+	local tar = unwrap( target )
+	
+	if not ((isGun(this) or isEngine(this) or isGearbox(this)) and (isOwner(self, this) and isOwner(self, tar))) then
+		if notify > 0 then
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Unlink(tar)
+    if notify > 0 then
+        ACF_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
+
 
 -- [ Engine Functions ] --
 
@@ -294,6 +339,26 @@ function ents_methods:acfTorque( )
 	if not isEngine( this ) then return 0 end
 	if restrictInfo( SF.instance.player, this ) then return 0 end
 	return math.floor( this.Torque or 0 )
+end
+
+-- Returns the inertia of an ACF engine's flywheel
+function ents_methods:acfFlyInertia( )
+	SF.CheckType( self, ents_metatable )
+	local this = unwrap( self )
+	
+	if not isEngine( this ) then return nil end
+	if restrictInfo( SF.instance.player, this ) then return 0 end
+	return this.Inertia or 0
+end
+
+-- Returns the mass of an ACF engine's flywheel
+function ents_methods:acfFlyMass( )
+	SF.CheckType( self, ents_metatable )
+	local this = unwrap( self )
+	
+	if not isEngine( this ) then return nil end
+	if restrictInfo( SF.instance.player, this ) then return 0 end
+	return this.Inertia / (3.1416)^2 or 0
 end
 
 -- Returns the current power of an ACF engine

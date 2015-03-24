@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 536 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 537 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
@@ -71,10 +71,14 @@ ACF.SpreadScale = 4		-- The maximum amount that damage can decrease a gun's accu
 ACF.GunInaccuracyScale = 1 -- A multiplier for gun accuracy.
 ACF.GunInaccuracyBias = 2  -- Higher numbers make shots more likely to be inaccurate.  Choose between 0.5 to 4. Default is 2 (unbiased).
 
-ACF.TorqueScale = 1/4
-ACF.DieselTorqueScale = 1/10
-ACF.EngineHPMult = 1/8
-ACF.DieselEngineHPMult = 1/2
+--how fast damage drops torque, lower loses more % torque
+ACF.TorqueScale = 0.25
+ACF.DieselTorqueScale = 0.35
+ACF.ElectricTorqueScale = 0.5
+
+ACF.EngineHPMult = 0.125
+ACF.DieselEngineHPMult = 0.5
+ACF.ElectricEngineHPMult = 0.75
 
 ACF.EnableDefaultDP = false -- Enable the inbuilt damage protection system.
 

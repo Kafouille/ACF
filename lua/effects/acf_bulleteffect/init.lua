@@ -46,27 +46,20 @@ function EFFECT:Init( data )
 		BulletData.Crate = Entity(math.Round(data:GetMagnitude()))
 		BulletData.SimFlight = data:GetStart()*10
 		BulletData.SimPos = data:GetOrigin()
-		BulletData.Caliber = BulletData.Crate:GetNetworkedInt( "Caliber" ) or 10
-		BulletData.RoundMass = BulletData.Crate:GetNetworkedInt( "ProjMass" ) or 10
-		BulletData.FillerMass = BulletData.Crate:GetNetworkedInt( "FillerMass" ) or 0
-		BulletData.DragCoef = BulletData.Crate:GetNetworkedInt( "DragCoef" ) or 1
-		BulletData.AmmoType = BulletData.Crate:GetNetworkedString( "AmmoType" )
-		if BulletData.AmmoType == "" then BulletData.AmmoType = "AP" end
+		BulletData.Caliber = BulletData.Crate:GetNWFloat( "Caliber", 10 )
+		BulletData.RoundMass = BulletData.Crate:GetNWFloat( "ProjMass", 10 )
+		BulletData.FillerMass = BulletData.Crate:GetNWFloat( "FillerMass" )
+		BulletData.WPMass = BulletData.Crate:GetNWFloat( "WPMass" )
+		BulletData.DragCoef = BulletData.Crate:GetNWFloat( "DragCoef", 1 )
+		BulletData.AmmoType = BulletData.Crate:GetNWString( "AmmoType", "AP" )
 		
-		if BulletData.Crate:GetNetworkedInt( "Tracer" ) > 0 then
+		if BulletData.Crate:GetNWFloat( "Tracer" ) > 0 then
 			BulletData.Tracer = ParticleEmitter( BulletData.SimPos )
-			local vec, col = BulletData.Crate:GetNetworkedVector( "Color" ), BulletData.Crate:GetColor()
-			if vec then
-				if vec ~= Vector( 0, 0, 0) then
-					col = Color( vec.x, vec.y, vec.z )
-				end
-			end
-			BulletData.TracerColour = Vector(col.r,col.g,col.b)
-
+			BulletData.TracerColour = BulletData.Crate:GetNWVector( "TracerColour", BulletData.Crate:GetColor() ) or Vector(255,255,255)
 		end
 		
 		
-		BulletData.Accel = BulletData.Crate:GetNetworkedVector( "Accel" ) or Vector(0,0,600*-1)
+		BulletData.Accel = BulletData.Crate:GetNWVector( "Accel", Vector(0,0,-600))
 		
 		BulletData.LastThink = CurTime()
 		BulletData.Effect = self.Entity

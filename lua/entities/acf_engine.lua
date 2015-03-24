@@ -176,7 +176,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 		phys:SetMass( Engine.Weight ) 
 	end
 
-	Engine:SetNetworkedString( "WireName", Lookup.name )
+	Engine:SetNWString( "WireName", Lookup.name )
 	Engine:UpdateOverlayText()
 	
 	Owner:AddCount("_acf_engine", Engine)
@@ -242,6 +242,8 @@ function ENT:Update( ArgsTable )
 	
 	if self.EngineType == "GenericDiesel" then
 		self.TorqueScale = ACF.DieselTorqueScale
+	elseif self.EngineType == "Electric" then
+		self.TorqueScale = ACF.ElectricTorqueScale
 	else
 		self.TorqueScale = ACF.TorqueScale
 	end
@@ -271,7 +273,7 @@ function ENT:Update( ArgsTable )
 		phys:SetMass( self.Weight ) 
 	end
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	
 	ACF_Activate( self, 1 )
@@ -280,9 +282,9 @@ function ENT:Update( ArgsTable )
 end
 
 function ENT:UpdateOverlayText()
-	
-	local text = "Power: " .. math.Round( self.peakkw ) .. " kW / " .. math.Round( self.peakkw * 1.34 ) .. " hp\n"
-	text = text .. "Torque: " .. math.Round( self.PeakTorque ) .. " Nm / " .. math.Round( self.PeakTorque * 0.73 ) .. " ft-lb\n"
+	local SpecialBoost = self.RequiresFuel and ACF.TorqueBoost or 1
+	local text = "Power: " .. math.Round( self.peakkw * SpecialBoost ) .. " kW / " .. math.Round( self.peakkw * SpecialBoost * 1.34 ) .. " hp\n"
+	text = text .. "Torque: " .. math.Round( self.PeakTorque * SpecialBoost ) .. " Nm / " .. math.Round( self.PeakTorque * SpecialBoost * 0.73 ) .. " ft-lb\n"
 	text = text .. "Powerband: " .. self.PeakMinRPM .. " - " .. self.PeakMaxRPM .. " RPM\n"
 	text = text .. "Redline: " .. self.LimitRPM .. " RPM"
 	
@@ -372,6 +374,9 @@ function ENT:ACF_Activate()
 	if self.EngineType == "GenericDiesel" then
 		Entity.ACF.Health = Health * Percent * ACF.DieselEngineHPMult
 		Entity.ACF.MaxHealth = Health * ACF.DieselEngineHPMult
+	elseif self.EngineType == "Electric" then
+		Entity.ACF.Health = Health * Percent * ACF.ElectricEngineHPMult
+		Entity.ACF.MaxHealth = Health * ACF.ElectricEngineHPMult
 	else
 		Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
 		Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
@@ -573,7 +578,7 @@ function ENT:CalcRPM()
 		
 		if not Link.Ent.Legal then continue end
 		
-		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime )
+		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio )
 		
 	end
 

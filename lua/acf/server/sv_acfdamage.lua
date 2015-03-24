@@ -52,6 +52,9 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 						Hitat = Tar:NearestPoint( Hitpos )
 					end
 					
+					--if hitpos inside hitbox of victim prop, nearest point doesn't work as intended
+					if Hitat == Hitpos then Hitat = Tar:GetPos() end
+					
 					--see if we have a clean view to victim prop
 					local Occlusion = {}
 						Occlusion.start = Hitpos
@@ -60,7 +63,9 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 						Occlusion.mask = MASK_SOLID
 					local Occ = util.TraceLine( Occlusion )	
 					
+					--[[
 					--retry for prop center if no hits at all, might have whiffed through bounding box and missed phys hull
+					--nearestpoint uses intersect of bbox from source point to origin (getpos), this is effectively just redoing the same thing
 					if ( !Occ.Hit and Hitpos != Hitat ) then
 						local Hitat = Tar:GetPos()
 						local Occlusion = {}
@@ -70,11 +75,12 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 							Occlusion.mask = MASK_SOLID
 						Occ = util.TraceLine( Occlusion )	
 					end
+					--]]
 					
-					if ( Occ.Hit and Occ.Entity:EntIndex() != Tar:EntIndex() ) then
-						--occluded, no hit
-					elseif ( !Occ.Hit and Hitpos != Hitat ) then
+					if ( !Occ.Hit ) then
 						--no hit
+					elseif ( Occ.Hit and Occ.Entity:EntIndex() != Tar:EntIndex() ) then
+						--occluded, no hit
 					else
 						Targets[i] = nil	--Remove the thing we just hit from the table so we don't hit it again in the next round
 						local Table = {}

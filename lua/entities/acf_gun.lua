@@ -96,6 +96,10 @@ if CLIENT then
 		acfmenupanel:CPanelText("Caliber", "Caliber : "..(Table.caliber*10).."mm")
 		acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 		
+		if Table.canparent then
+			acfmenupanel:CPanelText("GunParentable", "\nThis weapon can be parented.")
+		end
+		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
 	end
@@ -177,7 +181,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 		Gun.MagReload = math.max(Gun.MagReload, Lookup.magreload)
 	end
 	
-	Gun:SetNetworkedString( "WireName", Lookup.name )
+	Gun:SetNWString( "WireName", Lookup.name )
 	Gun:SetNWString( "Class", Gun.Class )
 	Gun:SetNWString( "ID", Gun.Id )
 	Gun.Muzzleflash = Classes.GunClass[Gun.Class].muzzleflash
@@ -459,12 +463,12 @@ function ENT:Think()
 			Wire_TriggerOutput(self, "Shots Left", 1)
 		end
 		
-		self:SetNetworkedBeamString("GunType",self.Id)
-		self:SetNetworkedBeamInt("Ammo",Ammo)
-		self:SetNetworkedBeamString("Type",self.BulletData.Type)
-		self:SetNetworkedBeamInt("Mass",self.BulletData.ProjMass*100)
-		self:SetNetworkedBeamInt("Propellant",self.BulletData.PropMass*1000)
-		self:SetNetworkedBeamInt("FireRate",self.RateOfFire)
+		self:SetNWString("GunType",self.Id)
+		self:SetNWInt("Ammo",Ammo)
+		self:SetNWString("Type",self.BulletData.Type)
+		self:SetNWFloat("Mass",self.BulletData.ProjMass*100)
+		self:SetNWFloat("Propellant",self.BulletData.PropMass*1000)
+		self:SetNWFloat("FireRate",self.RateOfFire)
 		
 		self.LastSend = Time
 	

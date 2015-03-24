@@ -1,7 +1,7 @@
 
 AddCSLuaFile()
 
-ACF.AmmoBlacklist.AP = { "MO" }
+ACF.AmmoBlacklist.AP = { "MO", "SL" }
 
 local Round = {}
 
@@ -66,14 +66,14 @@ end
 
 function Round.network( Crate, BulletData )
 	
-	Crate:SetNetworkedString( "AmmoType", "AP" )
-	Crate:SetNetworkedString( "AmmoID", BulletData.Id )
-	Crate:SetNetworkedInt( "Caliber", BulletData.Caliber )
-	Crate:SetNetworkedInt( "ProjMass", BulletData.ProjMass )
-	Crate:SetNetworkedInt( "PropMass", BulletData.PropMass )
-	Crate:SetNetworkedInt( "DragCoef", BulletData.DragCoef )
-	Crate:SetNetworkedInt( "MuzzleVel", BulletData.MuzzleVel )
-	Crate:SetNetworkedInt( "Tracer", BulletData.Tracer )
+	Crate:SetNWString( "AmmoType", "AP" )
+	Crate:SetNWString( "AmmoID", BulletData.Id )
+	Crate:SetNWFloat( "Caliber", BulletData.Caliber )
+	Crate:SetNWFloat( "ProjMass", BulletData.ProjMass )
+	Crate:SetNWFloat( "PropMass", BulletData.PropMass )
+	Crate:SetNWFloat( "DragCoef", BulletData.DragCoef )
+	Crate:SetNWFloat( "MuzzleVel", BulletData.MuzzleVel )
+	Crate:SetNWFloat( "Tracer", BulletData.Tracer )
 	
 end
 
@@ -196,6 +196,8 @@ function Round.guicreate( Panel, Table )
 
 	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist.AP )
 	
+	acfmenupanel:CPanelText("BonusDisplay", "")
+	
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)
 	
@@ -229,6 +231,13 @@ function Round.guiupdate( Panel, Table )
 	RunConsoleCommand( "acfmenu_data3", Data.PropLength )		--For Gun ammo, Data3 should always be Propellant
 	RunConsoleCommand( "acfmenu_data4", Data.ProjLength )		--And Data4 total round mass
 	RunConsoleCommand( "acfmenu_data10", Data.Tracer )
+	
+	local vol = ACF.Weapons.Ammo[acfmenupanel.AmmoData["Id"]].volume
+	local CapMul = (vol > 46000) and ((math.log(vol*0.00066)/math.log(2)-4)*0.125+1) or 1
+	local RoFMul = (vol > 46000) and (1-(math.log(vol*0.00066)/math.log(2)-4)*0.05) or 1
+	local Cap = math.floor(CapMul * vol * 0.11 * ACF.AmmoMod * 16.38 / Data.RoundVolume)
+	
+	acfmenupanel:CPanelText("BonusDisplay", "Crate info: +"..(math.Round((CapMul-1)*100,1)).."% capacity, +"..(math.Round((RoFMul-1)*-100,1)).."% RoF\nContains "..Cap.." rounds")
 	
 	acfmenupanel:AmmoSlider("PropLength",Data.PropLength,Data.MinPropLength,Data.MaxTotalLength,3, "Propellant Length", "Propellant Mass : "..(math.floor(Data.PropMass*1000)).." g" )	--Propellant Length Slider (Name, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",Data.ProjLength,Data.MinProjLength,Data.MaxTotalLength,3, "Projectile Length", "Projectile Mass : "..(math.floor(Data.ProjMass*1000)).." g")	--Projectile Length Slider (Name, Min, Max, Decimals, Title, Desc)

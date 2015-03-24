@@ -290,7 +290,8 @@ function ENT:Update( ArgsTable )
 	
 	self.Ammo = math.floor(self.Capacity*AmmoPercent)
 	local AmmoMass = self:AmmoMass()
-	self.Mass = math.min(self.EmptyMass, self:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1))
+	self.Mass = math.min(self.EmptyMass, self:GetPhysicsObject():GetMass() - AmmoMass) + AmmoMass*(self.Ammo/math.max(self.Capacity,1)) --min is intentional, cause think to set it appropriately
+	self:GetPhysicsObject():SetMass(self.Mass) 
 	
 	return true, msg
 	
@@ -356,8 +357,8 @@ function ENT:CreateAmmo(Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Dat
 
 	local List = list.Get("ACFEnts")
 	
-	self:SetNetworkedString( "Ammo", self.Ammo )
-	self:SetNetworkedString( "WireName", List.Guns[self.RoundId].name .. " Ammo" )
+	self:SetNWString( "Ammo", self.Ammo )
+	self:SetNWString( "WireName", List.Guns[self.RoundId].name .. " Ammo" )
 	
 	self.NetworkData = ACF.RoundTypes[self.RoundType].network
 	self:NetworkData( self.BulletData )
@@ -424,7 +425,7 @@ function ENT:Think()
 	end
 	
 	local color = self:GetColor()
-	self:SetNetworkedVector("TracerColour", Vector( color.r, color.g, color.b ) )
+	self:SetNWVector("TracerColour", Vector( color.r, color.g, color.b ) )
 	
 	local cvarGrav = GetConVar("sv_gravity")
 	local vec = Vector(0,0,cvarGrav:GetInt()*-1)
@@ -432,7 +433,7 @@ function ENT:Think()
 		vec = Vector(0, 0, 0)
 	end
 		
-	self:SetNetworkedVector("Accel", vec)
+	self:SetNWVector("Accel", vec)
 		
 	self:NextThink( CurTime() +  1 )
 	

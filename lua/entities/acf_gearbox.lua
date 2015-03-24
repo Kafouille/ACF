@@ -230,7 +230,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Gearbox:SetBodygroup(1, 0)
 	end
 	
-	Gearbox:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	Gearbox:SetNWString( "WireName", List.Mobility[Id].name )
 	Gearbox:UpdateOverlayText()
 		
 	return Gearbox
@@ -338,7 +338,7 @@ function ENT:Update( ArgsTable )
 		self:SetBodygroup(1, 0)
 	end	
 	
-	self:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	self:SetNWString( "WireName", List.Mobility[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "Gearbox updated successfully!"
@@ -587,7 +587,7 @@ function ENT:CalcWheel( Link, SelfWorld )
 	
 end
 
-function ENT:Act( Torque, DeltaTime )
+function ENT:Act( Torque, DeltaTime, MassRatio )
 	
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
@@ -606,7 +606,7 @@ function ENT:Act( Torque, DeltaTime )
 		end
 		
 		if Link.Ent.IsGeartrain then
-			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime )
+			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime, MassRatio )
 		else
 			self:ActWheel( Link, Link.ReqTq * AvailTq, Brake, DeltaTime )
 			ReactTq = ReactTq + Link.ReqTq * AvailTq
@@ -616,7 +616,7 @@ function ENT:Act( Torque, DeltaTime )
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if IsValid( BoxPhys ) and ReactTq ~= 0 then	
-		local Force = self:GetForward() * ReactTq - self:GetForward()
+		local Force = self:GetForward() * ReactTq * MassRatio - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp() * -39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp() * 39.37 )
 	end
