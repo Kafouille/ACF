@@ -7,6 +7,8 @@
  function EFFECT:Init( data ) 
 	
 	local Gun = data:GetEntity()
+	if not IsValid(Gun) then return end
+	
 	local Sound = Gun:GetNWString( "Sound" )
 	local Propellant = data:GetScale()
 	local ReloadTime = data:GetMagnitude()
