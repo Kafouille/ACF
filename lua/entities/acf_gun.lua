@@ -186,6 +186,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun:SetNWString( "ID", Gun.Id )
 	Gun.Muzzleflash = Classes.GunClass[Gun.Class].muzzleflash
 	Gun.RoFmod = Classes.GunClass[Gun.Class].rofmod
+	Gun.RateOfFire = 1 --updated when gun is linked to ammo
 	Gun.Sound = Classes.GunClass[Gun.Class].sound
 	Gun:SetNWString( "Sound", Gun.Sound )
 	Gun.Inaccuracy = Classes.GunClass[Gun.Class].spread

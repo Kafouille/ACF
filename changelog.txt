@@ -67,3 +67,7 @@ r500
 -Fixed HE detonating inside bounding box of a prop being automatic hit (unrelated to HE bug)
 -Fixed crate weight not updating if new ammo setup is lighter
 -Fixed typo in e2 func acfFuelUse() that caused it to always return 0
+
+*r542
+-Fixed some effect errors, courtesy of Python1320
+-Fixed issue with unitialized var in guns
