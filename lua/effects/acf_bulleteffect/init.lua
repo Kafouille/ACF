@@ -2,6 +2,7 @@
 function EFFECT:Init( data )
 
 	self.Index = data:GetAttachment()
+	
 	self:SetModel("models/munitions/round_100mm_shot.mdl") 
 	
 	if not ( self.Index ) then 
@@ -44,6 +45,13 @@ function EFFECT:Init( data )
 		--print("Creating Bullet Effect")
 		local BulletData = {}
 		BulletData.Crate = Entity(math.Round(data:GetMagnitude()))
+		
+		--TODO: Check if it is actually a crate
+		if not IsValid(BulletData.Crate) then
+			self:Remove() 
+			return
+		end
+		
 		BulletData.SimFlight = data:GetStart()*10
 		BulletData.SimPos = data:GetOrigin()
 		BulletData.Caliber = BulletData.Crate:GetNWFloat( "Caliber", 10 )
