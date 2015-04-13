@@ -160,6 +160,10 @@ function ACF_DoBulletsFlight( Index, Bullet )
 			if Bullet.OnPenetrated then Bullet.OnPenetrated(Index, Bullet, FlightRes) end
 			ACF_BulletClient( Index, Bullet, "Update" , 2 , FlightRes.HitPos  )
 			ACF_CalcBulletFlight( Index, Bullet, true )				--The world ain't going to move, so we say True for the backtrace override
+		elseif Retry == "Ricochet"  then
+			if Bullet.OnRicocheted then Bullet.OnRicocheted(Index, Bullet, FlightRes) end
+			ACF_BulletClient( Index, Bullet, "Update" , 3 , FlightRes.HitPos  )
+			ACF_CalcBulletFlight( Index, Bullet, true )
 		else														--If not, end of the line, boyo
 			if Bullet.OnEndFlight then Bullet.OnEndFlight(Index, Bullet, FlightRes) end
 			ACF_BulletClient( Index, Bullet, "Update" , 1 , FlightRes.HitPos  )

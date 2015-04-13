@@ -49,7 +49,7 @@ if CLIENT then
 		if Table.fuel == "Electric" then
 			local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Table.enginetype]
 			acfmenupanel:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
-		elseif Table.fuel == "Any" then
+		elseif Table.fuel == "Multifuel" then
 			local petrolcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity.Petrol)
 			local dieselcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity.Diesel)
 			acfmenupanel:CPanelText("FuelConsP", "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
@@ -728,7 +728,7 @@ end
 
 function ENT:LinkFuel( Target )
 	
-	if not (self.FuelType == "Any" and not (Target.FuelType == "Electric")) then
+	if not (self.FuelType == "Multifuel" and not (Target.FuelType == "Electric")) then
 		if self.FuelType ~= Target.FuelType then
 			return false, "Cannot link because fuel type is incompatible."
 		end

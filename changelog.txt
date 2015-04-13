@@ -71,3 +71,11 @@ r500
 *r542
 -Fixed some effect errors, courtesy of Python1320
 -Fixed issue with unitialized var in guns
+
+*r543
+-Added EA2 acf component, courtesy of FreeeFry
+-Added ability for rounds to ricochet off brushwork/displacements
+-Updated tracer effect
+-Renamed "Any" fueltype to "Multifuel"
+-Fixed bug with parented mass lookup that caused massive lag on high rof weapons
+-Fixed bug with parented weapons applying too much force

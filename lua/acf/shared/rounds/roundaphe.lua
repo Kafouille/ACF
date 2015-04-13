@@ -140,8 +140,11 @@ end
 function Round.worldimpact( Index, Bullet, HitPos, HitNormal )
 	
 	local Energy = ACF_Kinetic( Bullet.Flight:Length() / ACF.VelScale, Bullet.ProjMass, Bullet.LimitVel )
-	if ACF_PenetrateGround( Bullet, Energy, HitPos ) then
+	local HitRes = ACF_PenetrateGround( Bullet, Energy, HitPos, HitNormal )
+	if HitRes.Penetrated then
 		return "Penetrated"
+	elseif HitRes.Ricochet then
+		return "Ricochet"
 	else
 		return false
 	end

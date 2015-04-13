@@ -198,11 +198,13 @@ function Round.propimpact( Index, Bullet, Target, HitNormal, HitPos, Bone )
 end
 
 function Round.worldimpact( Index, Bullet, HitPos, HitNormal )
-
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], Bullet["LimitVel"] )
-	local Retry = ACF_PenetrateGround( Bullet, Energy, HitPos )
-	if Retry then
+	
+	local Energy = ACF_Kinetic( Bullet.Flight:Length() / ACF.VelScale, Bullet.ProjMass, Bullet.LimitVel )
+	local HitRes = ACF_PenetrateGround( Bullet, Energy, HitPos, HitNormal )
+	if HitRes.Penetrated then
 		return "Penetrated"
+	elseif HitRes.Ricochet then
+		return "Ricochet"
 	else
 		return false
 	end

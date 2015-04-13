@@ -277,41 +277,52 @@ function ACF_RoundImpact( Bullet, Speed, Energy, Target, HitPos, HitNormal , Bon
 	return HitRes
 end
 
-function ACF_PenetrateGround( Bullet, Energy, HitPos )
-
-	local MaxDig = ((Energy.Penetration/Bullet["PenAera"])*ACF.KEtoRHA/ACF.GroundtoRHA)/25.4
-	local CurDig = 0
-	local DigStep = math.min(50,MaxDig)
+function ACF_PenetrateGround( Bullet, Energy, HitPos, HitNormal )
+	Bullet.GroundRicos = Bullet.GroundRicos or 0
+	local MaxDig = ((Energy.Penetration/Bullet.PenAera)*ACF.KEtoRHA/ACF.GroundtoRHA)/25.4
+	local HitRes = {Penetrated = false, Ricochet = false}
 	
-	for i = 1,MaxDig/DigStep do
-		--Msg("Step : ")
-		--print(i)
-		CurDig = DigStep*i
-		local DigTr = { }
-			DigTr.start = HitPos + (Bullet["Flight"]):GetNormalized()*CurDig
-			DigTr.endpos = HitPos
-			DigTr.filter = Bullet["Filter"]
-			DigTr.mask = 16395
-		local DigRes = util.TraceLine(DigTr)					--Trace to see if it will hit anything
-		
-		if DigRes.Hit then
-			if DigRes.Fraction > 0.01 and DigRes.Fraction < 0.99 then 							
-				local Powerloss = (MaxDig - (CurDig - DigStep*DigRes.Fraction))/MaxDig
-				--print(Powerloss)
-				Bullet["Flight"] = Bullet["Flight"] * Powerloss
-				--Msg("Penetrated the wall\n")
-				Bullet["Pos"] = DigRes.HitPos
-				return true
-			else
-				return nil 
-			end
-		else
-			--Msg("Didn't Hit\n")
+	local DigTr = { }
+		DigTr.start = HitPos + Bullet.Flight:GetNormalized()*0.1
+		DigTr.endpos = HitPos + Bullet.Flight:GetNormalized()*(MaxDig+0.1)
+		DigTr.filter = Bullet.Filter
+		DigTr.mask = MASK_SOLID_BRUSHONLY
+	local DigRes = util.TraceLine(DigTr)
+	--print(util.GetSurfacePropName(DigRes.SurfaceProps))
+	
+	local loss = DigRes.FractionLeftSolid
+	
+	if loss == 1 or loss == 0 then --couldn't penetrate
+		local Ricochet = 0
+		local Speed = Bullet.Flight:Length() / ACF.VelScale
+		local Angle = ACF_GetHitAngle( HitNormal, Bullet.Flight )
+		local MinAngle = math.min(Bullet.Ricochet - Speed/39.37/30 + 20,89.9)	--Making the chance of a ricochet get higher as the speeds increase
+		if Angle > math.random(MinAngle,90) and Angle < 89.9 then	--Checking for ricochet
+			Ricochet = Angle/90*0.75
 		end
+		
+		if Ricochet > 0 and Bullet.GroundRicos < 2 then
+			Bullet.GroundRicos = Bullet.GroundRicos + 1
+			local Vec = Bullet.Flight:GetNormalized()
+			--bit of maths shamelessly stolen from wiremod to rotate a vector around an axis
+			local x,y,z = HitNormal[1], HitNormal[2], HitNormal[3]
+			local length = (x*x+y*y+z*z)^0.5
+			x,y,z = x/length, y/length, z/length
+			local Rotated = -Vector((-1 + (x^2)*2) * Vec[1] + (x*y*2) * Vec[2] + (x*z*2) * Vec[3],
+			(y*x*2) * Vec[1] + (-1 + (y^2)*2) * Vec[2] + (y*z*2) * Vec[3],
+			(z*x*2) * Vec[1] + (z*y*2) * Vec[2] + (-1 + (z^2)*2) * Vec[3])
+			
+			Bullet.Pos = HitPos
+			Bullet.Flight = (Rotated + VectorRand()*0.025):GetNormalized() * Speed * Ricochet
+			HitRes.Ricochet = true
+		end
+	else --penetrated
+		Bullet.Flight = Bullet.Flight * loss
+		Bullet.Pos = DigRes.StartPos --this is actually where trace left brush
+		HitRes.Penetrated = true
 	end
 	
-	return nil 
-	
+	return HitRes
 end
 
 function ACF_KEShove(Target, Pos, Vec, KE )
@@ -329,7 +340,7 @@ function ACF_KEShove(Target, Pos, Vec, KE )
 	end
 	
 	if (phys:IsValid()) then
-		if(!Target.acflastupdatemass) or (Target.acflastupdatemass < (CurTime() + 10)) then
+		if(!Target.acflastupdatemass) or ((Target.acflastupdatemass + 10) < CurTime()) then
 			ACF_CalcMassRatio(Target)
 		end
 		local physratio = Target.acfphystotal / Target.acftotal

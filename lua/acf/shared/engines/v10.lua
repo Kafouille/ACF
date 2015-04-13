@@ -40,7 +40,7 @@ ACF_DefineEngine( "22.0-V10", {
 	model = "models/engines/v10big.mdl",
 	sound = "acf_engines/v10_diesellarge.wav",
 	category = "V10",
-	fuel = "Any",
+	fuel = "Multifuel",
 	enginetype = "GenericDiesel",
 	weight = 1400,
 	torque = 2750,

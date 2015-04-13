@@ -58,7 +58,7 @@ ACF_DefineEngine( "5.2-V6", {
 	model = "models/engines/v6med.mdl",
 	sound = "acf_engines/i5_dieselmedium.wav",
 	category = "V6",
-	fuel = "Any",
+	fuel = "Multifuel",
 	enginetype = "GenericDiesel",
 	weight = 500,
 	torque = 490,
