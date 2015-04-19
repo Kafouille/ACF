@@ -65,7 +65,7 @@ ACF_DefineEngine( "4.5-V8", {
 	fuel = "Diesel",
 	enginetype = "GenericDiesel",
 	weight = 320,
-	torque = 380,
+	torque = 415,
 	flywheelmass = 0.75,
 	idlerpm = 800,
 	peakminrpm = 1000,

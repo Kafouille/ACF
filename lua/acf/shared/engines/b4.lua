@@ -51,3 +51,20 @@ ACF_DefineEngine( "3.2-B4", {
 	peakmaxrpm = 5500,
 	limitrpm = 6500
 } )
+
+ACF_DefineEngine( "2.4-B4", {
+	name = "2.4L Flat 4 Multifuel",
+	desc = "Tiny military-grade multifuel. Heavy, but grunts hard.",
+	model = "models/engines/b4med.mdl",
+	sound = "acf_extra/vehiclefx/engines/coh/ba11.wav",
+	category = "B4",
+	fuel = "Multifuel",
+	enginetype = "GenericDiesel",
+	weight = 195,
+	torque = 248,
+	flywheelmass = 0.4,
+	idlerpm = 550,
+	peakminrpm = 1250,
+	peakmaxrpm = 2650,
+	limitrpm = 2800
+} )

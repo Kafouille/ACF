@@ -73,9 +73,19 @@ r500
 -Fixed issue with unitialized var in guns
 
 *r543
--Added EA2 acf component, courtesy of FreeeFry
+-Added EA2 acf component, courtesy of FreeFry
 -Added ability for rounds to ricochet off brushwork/displacements
 -Updated tracer effect
 -Renamed "Any" fueltype to "Multifuel"
 -Fixed bug with parented mass lookup that caused massive lag on high rof weapons
 -Fixed bug with parented weapons applying too much force
+
+*r544
+-New engines and minor balancing by RedReaper
+--Added tiny electric and 2 multifuel boxers
+--Minor buffs to 5.0L B6, 4.5L V8
+--Minor nerfs to 4.3L V10, 8L V10, 22L V10
+--Adjusted 3L V12 flywheel inertia
+--Jerry can is now linkable
+--Added more fuel tank descriptions
+-Fixed issue caused by setparent function override, courtesy of thegrb93
