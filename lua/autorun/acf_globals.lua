@@ -2,7 +2,7 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 544 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 545 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
@@ -24,11 +24,12 @@ ACF.HEPower = 8000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 1500		--Mean fragment number for equal weight TNT and casing
 ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
-ACF.HEDuctAdjust = 0.8	--changes how duct affects HE damage; 1.0 dealing the same damage regardless of duct, to 0 being old behavior where -duct decreased HE damage taken
+ACF.HEDuctAdjust = 1	--changes how duct affects HE damage; 1.0 dealing the same damage regardless of duct, to 0 being old behavior where -duct decreased HE damage taken
+ACF.HEAreaExp = 0.5 	--exponent applied to area for calculating damage, helps normalize damage on large props
 
 ACF.HEATMVScale = 0.73	--Filler KE to HEAT slug KE conversion expotential
-ACF.HEATMulAmmo = 16.5 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
-ACF.HEATMulFuel = 16.5
+ACF.HEATMulAmmo = 19.8 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
+ACF.HEATMulFuel = 19.8		--previously 16.5
 ACF.HEATMulEngine = 8.25
 
 ACF.DragDiv = 80		--Drag fudge factor
@@ -55,7 +56,7 @@ ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 ACF.Efficiency = {} --how efficient various engine types are, higher is worse
 ACF.Efficiency["GenericPetrol"] = 0.304 --kg per kw hr
 ACF.Efficiency["GenericDiesel"] = 0.243 --up to 0.274
-ACF.Efficiency["Turbine"] = 0.46 -- previously 0.231
+ACF.Efficiency["Turbine"] = 0.375 -- previously 0.231
 ACF.Efficiency["Wankel"] = 0.335
 ACF.Efficiency["Radial"] = 0.4 -- 0.38 to 0.53
 ACF.Efficiency["Electric"] = 0.85 --percent efficiency converting chemical kw into mechanical kw

@@ -89,3 +89,12 @@ r500
 --Jerry can is now linkable
 --Added more fuel tank descriptions
 -Fixed issue caused by setparent function override, courtesy of thegrb93
+
+*r545
+-Fixed 2.4 B4 using wrong size model
+-Slight buff to 2.1L B4, 2.4L B4, 3.6L V6
+-Reduced turbine fuel use ~20%
+-HE damage normalized a bit on large props
+-Added distance feathering to HE damage
+-Overall HE damage reduced
+-Increased HEAT ammo/fuel damage multiplier 20%

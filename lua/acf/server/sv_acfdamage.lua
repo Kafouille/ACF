@@ -106,13 +106,14 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 		for i,Table in pairs(Damage) do
 			
 			local Tar = Table.Ent
+			local Feathering = 1-math.min(1,Table.Dist/Radius)
 			local AeraFraction = Table.Aera/TotalAera
 			local PowerFraction = Power * AeraFraction	--How much of the total power goes to that prop
-			local AreaAdjusted = Tar.ACF.MaxHealth * ( (Tar.ACF.Aera / ACF.Threshold) / Tar.ACF.MaxHealth ) ^ ACF.HEDuctAdjust --adjust how duct affects HE damage
+			local AreaAdjusted = (Tar.ACF.MaxHealth * ( (Tar.ACF.Aera / ACF.Threshold) / Tar.ACF.MaxHealth ) ^ ACF.HEDuctAdjust) ^ ACF.HEAreaExp * Feathering
 			
 			local BlastRes
 			local Blast = {
-				Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05),
+				--Momentum = PowerFraction/(math.max(1,Table.Dist/200)^0.05), --not used for anything
 				Penetration = PowerFraction^ACF.HEBlastPen*AreaAdjusted
 			}
 			
@@ -166,7 +167,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 						--confirmed proper hit, apply damage
 						--print("No HE bug on "..Tar:GetClass())
 						BlastRes = ACF_Damage ( Tar , Blast , AreaAdjusted , 0 , Inflictor ,0 , Ammo, "HE" )
-						FragRes = ACF_Damage ( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
+						FragRes = ACF_Damage ( Tar , FragKE , FragAera*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
 						
 						if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
 							local Debris = ACF_HEKill( Tar, (Tar:GetPos() - NewHitpos):GetNormal(), PowerFraction )
@@ -178,10 +179,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 				
 				--calculate damage that would be applied (without applying it), so HE deals correct damage to other props
 				BlastRes = ACF_CalcDamage( Tar, Blast, AreaAdjusted, 0 )
-				--FragRes = ACF_CalcDamage( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 ) --not used for anything in this case
+				--FragRes = ACF_CalcDamage( Tar , FragKE , FragAera*FragHit , 0 ) --not used for anything in this case
 			else
 				BlastRes = ACF_Damage ( Tar , Blast , AreaAdjusted , 0 , Inflictor ,0 , Ammo, "HE" )
-				FragRes = ACF_Damage ( Tar , FragKE , (FragWeight/7.8)^0.33*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
+				FragRes = ACF_Damage ( Tar , FragKE , FragAera*FragHit , 0 , Inflictor , 0, Ammo, "Frag" )
 			
 				if (BlastRes and BlastRes.Kill) or (FragRes and FragRes.Kill) then
 					local Debris = ACF_HEKill( Tar , Table.Vec , PowerFraction )

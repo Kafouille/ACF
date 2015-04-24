@@ -10,7 +10,7 @@ ACF_DefineEngine( "3.6-V6", {
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
 	weight = 190,
-	torque = 228,
+	torque = 253,
 	flywheelmass = 0.25,
 	idlerpm = 700,
 	peakminrpm = 2200,
