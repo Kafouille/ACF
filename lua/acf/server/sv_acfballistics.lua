@@ -94,7 +94,7 @@ function ACF_DoBulletsFlight( Index, Bullet )
 	local CanDo = hook.Run("ACF_BulletsFlight", Index, Bullet )
 	if CanDo == false then return end
 	if Bullet.FuseLength then
-		local Time = SysTime() - Bullet.IniTime
+		local Time = SysTime() - Bullet.InitTime
 		if Time > Bullet.FuseLength then
 			--print("Explode")
 			if not util.IsInWorld(Bullet.Pos) then
@@ -124,6 +124,7 @@ function ACF_DoBulletsFlight( Index, Bullet )
 			Bullet.SkyLvL = nil
 			Bullet.LifeTime = nil
 			Bullet.Pos = Bullet.NextPos
+			Bullet.SkipNextHit = true
 			return
 		end
 	end
@@ -134,7 +135,11 @@ function ACF_DoBulletsFlight( Index, Bullet )
 		FlightTr.filter = Bullet.Filter
 	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
 	
-	if FlightRes.HitNonWorld then
+	if Bullet.SkipNextHit then
+		if not FlightRes.StartSolid and not FlightRes.HitNoDraw then Bullet.SkipNextHit = nil end
+		Bullet.Pos = Bullet.NextPos
+		
+	elseif FlightRes.HitNonWorld then
 		--print("Hit entity ", tostring(FlightRes.Entity), " on ", SERVER and "server" or "client")
 		ACF_BulletPropImpact = ACF.RoundTypes[Bullet.Type]["propimpact"]		
 		local Retry = ACF_BulletPropImpact( Index, Bullet, FlightRes.Entity , FlightRes.HitNormal , FlightRes.HitPos , FlightRes.HitGroup )				--If we hit stuff then send the resolution to the damage function	

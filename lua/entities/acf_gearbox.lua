@@ -6,6 +6,24 @@ ENT.PrintName = "ACF Gearbox"
 ENT.WireDebugName = "ACF Gearbox"
 
 if CLIENT then
+
+	local ACF_GearboxInfoWhileSeated = CreateClientConVar("ACF_GearboxInfoWhileSeated", 0, true, false)
+	
+	-- copied from base_wire_entity: DoNormalDraw's notip arg isn't accessible from ENT:Draw defined there.
+	function ENT:Draw()
+	
+		local lply = LocalPlayer()
+		local hideBubble = not GetConVar("ACF_GearboxInfoWhileSeated"):GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
+		
+	end
 	
 	function ACFGearboxGUICreate( Table )
 		

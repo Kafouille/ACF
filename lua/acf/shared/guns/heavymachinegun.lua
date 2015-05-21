@@ -7,7 +7,12 @@ ACF_defineGunClass("HMG", {
 	rofmod = 0.29,
 	sound = "weapons/ACF_Gun/mg_fire3.wav",
 	soundDistance = " ",
-	soundNormal = " "
+	soundNormal = " ",
+	longbarrel = {
+		index = 2, 
+		submodel = 4, 
+		newpos = "muzzle2"
+	}
 } )
 
 --add a gun to the class

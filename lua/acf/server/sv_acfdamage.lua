@@ -5,17 +5,9 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 	local MaxSphere = (4 * 3.1415 * (Radius*2.54 )^2) 		--Surface Aera of the sphere at maximum radius
 	local Amp = math.min(Power/2000,50)
 	util.ScreenShake( Hitpos, Amp, Amp, Amp/15, Radius*10 )  
-	--local Targets = ents.FindInSphere( Hitpos, Radius )
 	--debugoverlay.Sphere(Hitpos, Radius, 15, Color(255,0,0,32), 1) --developer 1   in console to see
-
-	local Targets = ents.GetAll()
 	
-	for k,v in pairs (Targets) do
-		local epos = v:GetPos()
-		if Hitpos:Distance(epos) > Radius then
-			Targets[k] = nil
-		end
-	end
+	local Targets = ents.FindInSphere( Hitpos, Radius )
 	
 	local Fragments = math.max(math.floor((FillerMass/FragMass)*ACF.HEFrag),2)
 	local FragWeight = FragMass/Fragments
@@ -91,7 +83,7 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 							Table.Dist = Hitpos:Distance(Tar:GetPos())
 							Table.Vec = (Tar:GetPos() - Hitpos):GetNormal()
 							local Sphere = math.max(4 * 3.1415 * (Table.Dist*2.54 )^2,1) --Surface Aera of the sphere at the range of that prop
-							local AreaAdjusted = Tar.ACF.MaxHealth * ACF.Threshold * ( Tar.ACF.Aera / (Tar.ACF.MaxHealth * ACF.Threshold) ) ^ ACF.HEDuctAdjust --adjust how duct affects HE damage
+							local AreaAdjusted = Tar.ACF.Aera
 							Table.Aera = math.min(AreaAdjusted/Sphere,0.5)*MaxSphere --Project the aera of the prop to the aera of the shadow it projects at the explosion max radius
 						table.insert(Damage, Table)	--Add it to the Damage table so we know to damage it once we tallied everything
 						TotalAera = TotalAera + Table.Aera
@@ -106,10 +98,10 @@ function ACF_HE( Hitpos , HitNormal , FillerMass, FragMass , Inflictor, NoOcc, A
 		for i,Table in pairs(Damage) do
 			
 			local Tar = Table.Ent
-			local Feathering = 1-math.min(1,Table.Dist/Radius)
+			local Feathering = (1-math.min(1,Table.Dist/Radius)) ^ ACF.HEFeatherExp
 			local AeraFraction = Table.Aera/TotalAera
 			local PowerFraction = Power * AeraFraction	--How much of the total power goes to that prop
-			local AreaAdjusted = (Tar.ACF.MaxHealth * ( (Tar.ACF.Aera / ACF.Threshold) / Tar.ACF.MaxHealth ) ^ ACF.HEDuctAdjust) ^ ACF.HEAreaExp * Feathering
+			local AreaAdjusted = (Tar.ACF.Aera / ACF.Threshold) * Feathering
 			
 			local BlastRes
 			local Blast = {

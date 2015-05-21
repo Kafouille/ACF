@@ -98,3 +98,18 @@ r500
 -Added distance feathering to HE damage
 -Overall HE damage reduced
 -Increased HEAT ammo/fuel damage multiplier 20%
+
+*r546
+-Reduced prop health by 33%
+-Reduced HE damage nerf
+-HEAT pen buffed 20%
+-Clamped HEAT penetrator travel distance
+-GL now has 6 round clip with 2.5s reload
+-60mm mortar rate of fire lowered
+-Improved handling of shells re-entering through skybox
+-Separated SL spawn limit from guns (max 10)
+-Applied sitting infobubble hide to ammo/engine/gearbox/fuel
+-Fixed cannon rifling texture and m36 muzzle brake
+-Updated HMG model with 2 new bodies (mg-ff and mg151)
+-Updated SA model (better scale & proportions, side mag bodygroup)
+-Removed some unused models

@@ -59,9 +59,7 @@ if CLIENT then
 		end
         
 	end
-    
-    
-    
+
     function ACF_TrimInvalidRefillEffects(effectsTbl)
         
         local effect
@@ -75,12 +73,22 @@ if CLIENT then
         end
         
     end
-    
-    
-
+	
+	local ACF_AmmoInfoWhileSeated = CreateClientConVar("ACF_AmmoInfoWhileSeated", 0, true, false)
+	
 	function ENT:Draw()
 		
-		self.BaseClass.Draw( self )
+		local lply = LocalPlayer()
+		local hideBubble = not GetConVar("ACF_AmmoInfoWhileSeated"):GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
+		--self.BaseClass.Draw( self )
 		
 		if self.RefillAmmoEffect then
             ACF_TrimInvalidRefillEffects(self.RefillAmmoEffect)
@@ -89,8 +97,6 @@ if CLIENT then
 		
 	end
 	
-    
-    
 	usermessage.Hook("ACF_RefillEffect", function( msg )
 		local EntFrom, EntTo, Weapon = ents.GetByIndex( msg:ReadFloat() ), ents.GetByIndex( msg:ReadFloat() ), msg:ReadString()
 		if not IsValid( EntFrom ) or not IsValid( EntTo ) then return end

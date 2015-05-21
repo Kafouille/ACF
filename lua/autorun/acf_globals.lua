@@ -2,12 +2,12 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 545 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 546 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
 
-ACF.Threshold = 225	--Health Divisor
+ACF.Threshold = 337.5	--Health Divisor (don't forget to update cvar function down below)
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
 ACF.PenAreaMod = 0.85
 ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
@@ -24,13 +24,12 @@ ACF.HEPower = 8000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 1500		--Mean fragment number for equal weight TNT and casing
 ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
-ACF.HEDuctAdjust = 1	--changes how duct affects HE damage; 1.0 dealing the same damage regardless of duct, to 0 being old behavior where -duct decreased HE damage taken
-ACF.HEAreaExp = 0.5 	--exponent applied to area for calculating damage, helps normalize damage on large props
+ACF.HEFeatherExp = 0.5 	--exponent applied to HE dist/maxdist feathering, <1 will increasingly bias toward max damage until sharp falloff at outer edge of range
 
-ACF.HEATMVScale = 0.73	--Filler KE to HEAT slug KE conversion expotential
-ACF.HEATMulAmmo = 19.8 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
-ACF.HEATMulFuel = 19.8		--previously 16.5
-ACF.HEATMulEngine = 8.25
+ACF.HEATMVScale = 0.74	--Filler KE to HEAT slug KE conversion expotential
+ACF.HEATMulAmmo = 16.5 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
+ACF.HEATMulFuel = 8.25		--needs less multiplier, much less health than ammo
+ACF.HEATMulEngine = 8.25	--likewise
 
 ACF.DragDiv = 80		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
@@ -90,6 +89,7 @@ end
 
 
 CreateConVar('sbox_max_acf_gun', 12)
+CreateConVar('sbox_max_acf_smokelauncher', 10)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 CreateConVar('acf_meshvalue', 1)
@@ -305,7 +305,7 @@ CreateConVar("acf_gunfire", 1)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
-		ACF.Threshold = 150 / math.max(New, 0.01)
+		ACF.Threshold = 337.5 / math.max(New, 0.01)
 		print ("Health Mod changed to a factor of " .. New)
 	elseif( CVar == "acf_armormod" ) then
 		ACF.ArmorMod = 1 * math.max(New, 0)

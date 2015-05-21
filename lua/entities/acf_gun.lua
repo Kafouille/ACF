@@ -141,7 +141,16 @@ end
 
 function MakeACF_Gun(Owner, Pos, Angle, Id)
 
-	if not Owner:CheckLimit("_acf_gun") then return false end
+	local EID
+	local List = list.Get("ACFEnts")
+	if List.Guns[Id] then EID = Id else EID = "50mmC" end
+	local Lookup = List.Guns[EID]
+	
+	if Lookup.gunclass == "SL" then
+		if not Owner:CheckLimit("_acf_smokelauncher") then return false end
+	else
+		if not Owner:CheckLimit("_acf_gun") then return false end
+	end
 	
 	local Gun = ents.Create("acf_gun")
 	local List = list.Get("ACFEnts")
@@ -150,10 +159,6 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun:SetAngles(Angle)
 	Gun:SetPos(Pos)
 	Gun:Spawn()
-	
-	local EID
-	if List.Guns[Id] then EID = Id else EID = "50mmC" end
-	local Lookup = List.Guns[EID]
 
 	Gun:SetPlayer(Owner)
 	Gun.Owner = Owner
@@ -243,8 +248,13 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	Gun:UpdateOverlayText()
 	
-	Owner:AddCount("_acf_gun", Gun)
 	Owner:AddCleanup( "acfmenu", Gun )
+	
+	if Lookup.gunclass == "SL" then
+		Owner:AddCount("_acf_smokelauncher", Gun)
+	else
+		Owner:AddCount("_acf_gun", Gun)
+	end
 	
 	ACF_Activate(Gun, 0)
 	
@@ -353,6 +363,27 @@ function ENT:Unlink( Target )
 		return false, "That entity is not linked to this gun!"
 	end
 	
+end
+
+function ENT:CanProperty( ply, property )
+
+	if property == "bodygroups" then
+		local longbarrel = list.Get("ACFClasses").GunClass[self.Class].longbarrel
+		if longbarrel ~= nil then
+			timer.Simple(0.25, function() --need to wait until after the property is actually set
+				if self:GetBodygroup( longbarrel.index ) == longbarrel.submodel then
+					local Muzzle = self:GetAttachment( self:LookupAttachment( longbarrel.newpos ) )
+					self.Muzzle = self:WorldToLocal(Muzzle.Pos)
+				else
+					local Muzzle = self:GetAttachment( self:LookupAttachment( "muzzle" ) )
+					self.Muzzle = self:WorldToLocal(Muzzle.Pos)
+				end
+			end)
+		end
+	end 
+	
+	return true
+
 end
 
 local WireTable = { "gmod_wire_adv_pod", "gmod_wire_pod", "gmod_wire_keyboard", "gmod_wire_joystick", "gmod_wire_joystick_multi" }

@@ -84,6 +84,7 @@ function TOOL:LeftClick( trace )
 		else
 			-- Using the Duplicator entity register to find the right factory function
 			local Ent = DupeClass.Func( ply, unpack( ArgTable ) )
+			if not IsValid(Ent) then ACF_SendNotify(ply, false, "Couldn't create entity.") return false end
 			Ent:Activate()
 			--Ent:GetPhysicsObject():Wake()
 			Ent:DropToFloor()
