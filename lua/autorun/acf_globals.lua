@@ -2,12 +2,12 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 546 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 547 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
 
-ACF.Threshold = 337.5	--Health Divisor (don't forget to update cvar function down below)
+ACF.Threshold = 264.7	--Health Divisor (don't forget to update cvar function down below)
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
 ACF.PenAreaMod = 0.85
 ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
@@ -305,7 +305,7 @@ CreateConVar("acf_gunfire", 1)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
-		ACF.Threshold = 337.5 / math.max(New, 0.01)
+		ACF.Threshold = 264.7 / math.max(New, 0.01)
 		print ("Health Mod changed to a factor of " .. New)
 	elseif( CVar == "acf_armormod" ) then
 		ACF.ArmorMod = 1 * math.max(New, 0)

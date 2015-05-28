@@ -153,8 +153,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	end
 	
 	local Gun = ents.Create("acf_gun")
-	local List = list.Get("ACFEnts")
-	local Classes = list.Get("ACFClasses")
+	local ClassData = list.Get("ACFClasses").GunClass[Lookup.gunclass]
 	if not Gun:IsValid() then return false end
 	Gun:SetAngles(Angle)
 	Gun:SetPos(Pos)
@@ -189,12 +188,12 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	Gun:SetNWString( "WireName", Lookup.name )
 	Gun:SetNWString( "Class", Gun.Class )
 	Gun:SetNWString( "ID", Gun.Id )
-	Gun.Muzzleflash = Classes.GunClass[Gun.Class].muzzleflash
-	Gun.RoFmod = Classes.GunClass[Gun.Class].rofmod
+	Gun.Muzzleflash = ClassData.muzzleflash
+	Gun.RoFmod = ClassData.rofmod
 	Gun.RateOfFire = 1 --updated when gun is linked to ammo
-	Gun.Sound = Classes.GunClass[Gun.Class].sound
+	Gun.Sound = ClassData.sound
 	Gun:SetNWString( "Sound", Gun.Sound )
-	Gun.Inaccuracy = Classes.GunClass[Gun.Class].spread
+	Gun.Inaccuracy = ClassData.spread
 	Gun:SetModel( Gun.Model )	
 	
 	Gun:PhysicsInit( SOLID_VPHYSICS )      	
@@ -203,6 +202,16 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( "muzzle" ) )
 	Gun.Muzzle = Gun:WorldToLocal(Muzzle.Pos)
+	
+	local longbarrel = ClassData.longbarrel
+	if longbarrel ~= nil then
+		timer.Simple(0.25, function() --need to wait until after the property is actually set
+			if Gun:GetBodygroup( longbarrel.index ) == longbarrel.submodel then
+				local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( longbarrel.newpos ) )
+				Gun.Muzzle = Gun:WorldToLocal(Muzzle.Pos)
+			end
+		end)
+	end
 	
 	/*local Height = 30		--Damn you Garry
 	local Width = 30

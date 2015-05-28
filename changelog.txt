@@ -113,3 +113,7 @@ r500
 -Updated HMG model with 2 new bodies (mg-ff and mg151)
 -Updated SA model (better scale & proportions, side mag bodygroup)
 -Removed some unused models
+
+*r547
+-Reduced prop health nerf from 33% to 15%
+-Fixed HMG long barrel not firing from correct spot after paste
