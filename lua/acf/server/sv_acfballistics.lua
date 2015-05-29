@@ -57,6 +57,22 @@ function ACF_RemoveBullet( Index )
 	
 end
 
+function ACF_CheckClips(Index, Bullet, Ent, HitPos )
+	if not Ent:GetClass() == "prop_physics" or Ent.ClipData == nil then return false end
+	
+	local HitClip = false
+	local normal
+	local origin
+	for i=1, #Ent.ClipData do
+		normal = Ent:LocalToWorldAngles(Ent.ClipData[i]["n"]):Forward()
+		origin = Ent:LocalToWorld(Ent.ClipData[i]["n"]:Forward()*Ent.ClipData[i]["d"])
+		HitClip = HitClip or normal:Dot((origin - HitPos):GetNormalized()) > 0
+		if HitClip then return true end
+	end
+	
+	return HitClip
+end
+
 function ACF_CalcBulletFlight( Index, Bullet, BackTraceOverride )
 	
 	// perf concern: use direct function call stored on bullet over hook system.
@@ -130,10 +146,20 @@ function ACF_DoBulletsFlight( Index, Bullet )
 	end
 
 	local FlightTr = { }
+	local FlightRes
+	local RetryTrace = true
+	while RetryTrace do			--if trace hits clipped part of prop, add prop to trace filter and retry
+		RetryTrace = false
 		FlightTr.start = Bullet.StartTrace
 		FlightTr.endpos = Bullet.NextPos
 		FlightTr.filter = Bullet.Filter
-	local FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
+		FlightRes = util.TraceLine(FlightTr)					--Trace to see if it will hit anything
+		
+		if FlightRes.HitNonWorld and ACF_CheckClips(Index, Bullet, FlightRes.Entity, FlightRes.HitPos ) then
+			table.insert( Bullet.Filter , FlightRes.Entity )
+			RetryTrace = true
+		end
+	end
 	
 	if Bullet.SkipNextHit then
 		if not FlightRes.StartSolid and not FlightRes.HitNoDraw then Bullet.SkipNextHit = nil end
