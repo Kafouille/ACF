@@ -62,9 +62,9 @@ function TOOL:LeftClick( trace )
 	local ply = self:GetOwner()
 	local Type = self:GetClientInfo( "type" )
 	local Id = self:GetClientInfo( "id" )
-
-        local TypeId = ACF.Weapons[Type][Id]
-        if not TypeId then return false end
+	
+	local TypeId = ACF.Weapons[Type][Id]
+	if not TypeId then return false end
 	
 	local DupeClass = duplicator.FindEntityClass( TypeId["ent"] ) 
 	
