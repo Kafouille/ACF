@@ -63,7 +63,10 @@ function TOOL:LeftClick( trace )
 	local Type = self:GetClientInfo( "type" )
 	local Id = self:GetClientInfo( "id" )
 	
-	local DupeClass = duplicator.FindEntityClass( ACF.Weapons[Type][Id]["ent"] ) 
+	local TypeId = ACF.Weapons[Type][Id]
+	if not TypeId then return false end
+	
+	local DupeClass = duplicator.FindEntityClass( TypeId["ent"] ) 
 	
 	if DupeClass then
 		local ArgTable = {}
