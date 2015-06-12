@@ -120,3 +120,6 @@ r500
 
 *r548
 -ACF rounds now respect visual clips on props
+
+*r552
+-Fixed error with ACF menu tool, courtesy of brandonsturgeon
