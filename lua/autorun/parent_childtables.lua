@@ -9,10 +9,10 @@ local meta = FindMetaTable( "Entity" )
 
 if not meta.SetParentEngine then meta.SetParentEngine = meta.SetParent end
 
-function meta:SetParent( parent )
+function meta:SetParent( parent, att )
 	
 	local oldparent = self:GetParent()
-	self:SetParentEngine( parent )
+	self:SetParentEngine( parent, att )
 	
 	-- If we're unparenting or changing parent, remove the ent from the previous parent's childtable
 	if IsValid( oldparent ) and oldparent ~= parent and oldparent._children then

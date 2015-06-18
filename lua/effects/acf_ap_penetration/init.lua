@@ -8,7 +8,7 @@ local GunTable = ACFEnts["Guns"]
  function EFFECT:Init( data ) 
 	
 	self.Ent = data:GetEntity()
-	self.Caliber = self.Ent:GetNetworkedInt( "Caliber" ) or 10
+	self.Caliber = self.Ent:GetNWFloat( "Caliber", 10 )
 	self.Origin = data:GetOrigin()
 	self.DirVec = data:GetNormal() 
 	self.Velocity = data:GetScale() --Mass of the projectile in kg

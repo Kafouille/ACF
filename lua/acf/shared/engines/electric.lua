@@ -123,3 +123,26 @@ ACF_DefineEngine( "Electric-Large-NoBatt", {
 	elecpower = 272,
 	flywheeloverride = 6000
 } )
+
+
+ACF_DefineEngine( "Electric-Tiny-NoBatt", {
+	name = "Electric motor, Tiny, Standalone",
+	desc = "A pint-size electric motor, for the lightest of light utility work.  Can power electric razors, desk fans, or your hopes and dreams\n\nElectric motors provide huge amounts of torque, but are very heavy.\n\nStandalone electric motors don't have integrated batteries, saving on weight and volume, but require you to supply your own batteries.",
+	model = "models/engines/emotor-standalone-tiny.mdl",
+	sound = "acf_engines/electric_small.wav",
+	category = "Electric",
+	fuel = "Electric",
+	enginetype = "Electric",
+	requiresfuel = true,
+	weight = 50, --250
+	torque = 40,
+	flywheelmass = 0.025,
+	idlerpm = 10,
+	peakminrpm = 10,
+	peakmaxrpm = 10,
+	limitrpm = 10000,
+	iselec = true,
+	elecpower = 5,
+	flywheeloverride = 500
+} )
+

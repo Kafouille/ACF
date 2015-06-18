@@ -1,88 +1,6 @@
 r500
 --For an extended version history, please visit the github changelog.  https://github.com/nrlulz/ACF/commits/master
 
-*r503
--Partial workaround for HE bug; doesn't eliminate the problem, but helps catch some cases.
--Added 20mm machinegun
--20mm AC weight decreased to 225 kg, round length increased
--20mm and 30mm HMG rounds/min halved; round length increased to compensate.  20mm clip reduced from 120 to 75. Overall damage output is similar.
--Fix for quiet 203 howitzer
--Fix for ACF sound tool not resetting 1.0L i4 special to proper pitch
--Updated descriptions for i5/v10
--Slightly reduced torque for 3.9L i5
--Reduced flywheel inertia for 1.0L i4 special
--Reduced flywheel inertia for 5.3L v10 special
--Added 2.4L v6 special
--Added 3.0L v12 special
--Added gamerpaddy's new single, vtwin, and standalone electric models
--Added Lazermaniac's new MG and HMG models
-
-*r504
--Updated emotor standalone and single cylinder model bodygroups
--Fixed 7.62mm MG model size
--Fixed 20mm AC firing too fast
-
-*r506
--Added per-bullet callbacks OnPenetrated, OnRicochet, OnEndFlight, PreCalcFlight, PostCalcFlight.
--HandlesOwnIteration bullet key to disable bullet iteration.
--Battle DP mode can now optionally disable noclip.
-
-*r507
--Fixed v10 model physbox
--Added i3 engines
-
-*r508
--Fuel is now drained from all active tanks, instead of sequentially
--Slightly nerfed 4.1L i5 diesel torque
--Dropped 40mm HMG weight from 960 to 600, increased mag size from 30 to 35
--MG/HMG recoloring fixed
--Removed a few redundant sounds
-
-*r509
--Fixed engine bug in r508
-
-*r514
--ACF E2 funcs ported to starfall, courtesy of EpicG
--Fixed acfRPM() not reporting 0 rpm on inactive engine
--Fixed acfActive() not reporting the correct value for ammo
-
-*r515
--Fixed update checker failing
--Fixed refill crates not spawning correctly
--Fixed ACF_CalcMassRatio not working when called on a non-physical child
--Fixed E2/Starfall acfBlastRadius() returning incorrect values
--Fixed armor tool not handling unconstrained parenting
--Added physical mass, parented mass, and mass ratio output to armor tool reload
--Smoke launcher weight dropped from 55kg to 25kg
--Smoke launcher is now parentable
--Flechettes now use radial spread instead of square
--HE now takes ductility properly into account when dealing blast damage
--HE shove no longer ignores the scale convar "acf_hepush"
--HE now applies force to all props, not just physical props
--HE shove is less potent
--AP shove now takes parented mass into account
-
-*r521
--Added Looter's ACF tools subcategory (off by default)
--Fixed starfall permissions
-
-*r522
--Fixed issue caused by permissions change in r521
-
-*r525
--Fixed issue caused by permissions change in r521 again
--Added function acfInfoRestricted() to starfall library
-
-*r526
--Added _Beckett's new C/SC/AL muzzle brakes and SL tube
--Removed some broken sounds
-
-*r527
--Fix for new muzzle brakes, added bore evacuator bodygroup
-
-*r528
--Patched refill crates spamming the console when the recipient crate is removed.
-
 *r529
 -Added looter's fix for missing sound lag on guns
 -Added _Beckett's recolorable mortar models
@@ -127,3 +45,81 @@ r500
 -Buffed 105mm howitzer (1810 kg -> 1480 kg, longer round, higher max propellant)
 -Buffed 122mm howitzer (3520 kg -> 3420 kg, longer round, higher max propellant)
 -Rolled back change to MG; they can now fire APHE and HE again
+
+*r536
+-Added double clutch funtionality to double diff gearboxes
+
+*r537
+-Replaced instances of deprecated networking functions
+-Replaced instances of NWInt with NWFloat where needed
+-Added bit of text on ACF tool indicating when a gun is parentable
+-Added bit of text detailing crate info when setting up ammo
+-Added functions acfFlyInertia() and acfFlyMass(), courtesy of EpicG
+-Added functions acfLinkTo() and acfUnlinkFrom(), courtesy of Starkkz
+-Updated ACF tool to freeze ents on spawn
+-Updated smoke, can now adjust burst vs duration
+-APHE, HE blacklisted for MG and RAC (I mean it this time!!)
+-MG 7.62, 12.7, and 14.5 are now parentable
+-Gearbox reaction torque now accounts for nonphysical mass
+-Engines that require fuel now show fuelled stats on overlay
+-Electrics are now much more durable in combat
+-Fixed diesels losing torque faster than petrols when taking damage
+-Fixed HE detonating inside bounding box of a prop being automatic hit (unrelated to HE bug)
+-Fixed crate weight not updating if new ammo setup is lighter
+-Fixed typo in e2 func acfFuelUse() that caused it to always return 0
+
+*r542
+-Fixed some effect errors, courtesy of Python1320
+-Fixed issue with unitialized var in guns
+
+*r543
+-Added EA2 acf component, courtesy of FreeFry
+-Added ability for rounds to ricochet off brushwork/displacements
+-Updated tracer effect
+-Renamed "Any" fueltype to "Multifuel"
+-Fixed bug with parented mass lookup that caused massive lag on high rof weapons
+-Fixed bug with parented weapons applying too much force
+
+*r544
+-New engines and minor balancing by RedReaper
+--Added tiny electric and 2 multifuel boxers
+--Minor buffs to 5.0L B6, 4.5L V8
+--Minor nerfs to 4.3L V10, 8L V10, 22L V10
+--Adjusted 3L V12 flywheel inertia
+--Jerry can is now linkable
+--Added more fuel tank descriptions
+-Fixed issue caused by setparent function override, courtesy of thegrb93
+
+*r545
+-Fixed 2.4 B4 using wrong size model
+-Slight buff to 2.1L B4, 2.4L B4, 3.6L V6
+-Reduced turbine fuel use ~20%
+-HE damage normalized a bit on large props
+-Added distance feathering to HE damage
+-Overall HE damage reduced
+-Increased HEAT ammo/fuel damage multiplier 20%
+
+*r546
+-Reduced prop health by 33%
+-Reduced HE damage nerf
+-HEAT pen buffed 20%
+-Clamped HEAT penetrator travel distance
+-GL now has 6 round clip with 2.5s reload
+-60mm mortar rate of fire lowered
+-Improved handling of shells re-entering through skybox
+-Separated SL spawn limit from guns (max 10)
+-Applied sitting infobubble hide to ammo/engine/gearbox/fuel
+-Fixed cannon rifling texture and m36 muzzle brake
+-Updated HMG model with 2 new bodies (mg-ff and mg151)
+-Updated SA model (better scale & proportions, side mag bodygroup)
+-Removed some unused models
+
+*r547
+-Reduced prop health nerf from 33% to 15%
+-Fixed HMG long barrel not firing from correct spot after paste
+
+*r548
+-ACF rounds now respect visual clips on props
+
+*r552
+-Fixed error with ACF menu tool, courtesy of brandonsturgeon

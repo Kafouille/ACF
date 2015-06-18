@@ -194,7 +194,7 @@ ACF_DefineEngine( "3.0-V12", {
 	requiresfuel = true,
 	weight = 175,
 	torque = 248,
-	flywheelmass = 0.175,
+	flywheelmass = 0.125,
 	idlerpm = 1200,
 	peakminrpm = 6875,
 	peakmaxrpm = 11000,

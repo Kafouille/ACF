@@ -44,29 +44,27 @@ function EFFECT:Init( data )
 		--print("Creating Bullet Effect")
 		local BulletData = {}
 		BulletData.Crate = Entity(math.Round(data:GetMagnitude()))
+		--TODO: Check if it is actually a crate
+		if not IsValid(BulletData.Crate) then
+			self:Remove() 
+			return
+		end
 		BulletData.SimFlight = data:GetStart()*10
 		BulletData.SimPos = data:GetOrigin()
-		BulletData.Caliber = BulletData.Crate:GetNetworkedInt( "Caliber" ) or 10
-		BulletData.RoundMass = BulletData.Crate:GetNetworkedInt( "ProjMass" ) or 10
-		BulletData.FillerMass = BulletData.Crate:GetNetworkedInt( "FillerMass" ) or 0
-		BulletData.DragCoef = BulletData.Crate:GetNetworkedInt( "DragCoef" ) or 1
-		BulletData.AmmoType = BulletData.Crate:GetNetworkedString( "AmmoType" )
-		if BulletData.AmmoType == "" then BulletData.AmmoType = "AP" end
+		BulletData.Caliber = BulletData.Crate:GetNWFloat( "Caliber", 10 )
+		BulletData.RoundMass = BulletData.Crate:GetNWFloat( "ProjMass", 10 )
+		BulletData.FillerMass = BulletData.Crate:GetNWFloat( "FillerMass" )
+		BulletData.WPMass = BulletData.Crate:GetNWFloat( "WPMass" )
+		BulletData.DragCoef = BulletData.Crate:GetNWFloat( "DragCoef", 1 )
+		BulletData.AmmoType = BulletData.Crate:GetNWString( "AmmoType", "AP" )
 		
-		if BulletData.Crate:GetNetworkedInt( "Tracer" ) > 0 then
+		if BulletData.Crate:GetNWFloat( "Tracer" ) > 0 then
 			BulletData.Tracer = ParticleEmitter( BulletData.SimPos )
-			local vec, col = BulletData.Crate:GetNetworkedVector( "Color" ), BulletData.Crate:GetColor()
-			if vec then
-				if vec ~= Vector( 0, 0, 0) then
-					col = Color( vec.x, vec.y, vec.z )
-				end
-			end
-			BulletData.TracerColour = Vector(col.r,col.g,col.b)
-
+			BulletData.TracerColour = BulletData.Crate:GetNWVector( "TracerColour", BulletData.Crate:GetColor() ) or Vector(255,255,255)
 		end
 		
 		
-		BulletData.Accel = BulletData.Crate:GetNetworkedVector( "Accel" ) or Vector(0,0,600*-1)
+		BulletData.Accel = BulletData.Crate:GetNWVector( "Accel", Vector(0,0,-600))
 		
 		BulletData.LastThink = CurTime()
 		BulletData.Effect = self.Entity
@@ -118,14 +116,16 @@ function EFFECT:ApplyMovement( Bullet )
 		local DeltaTime = CurTime() - Bullet.LastThink
 		local DeltaPos = Bullet.SimFlight*DeltaTime
 		local Length =  math.max(DeltaPos:Length()*2,1)
-		for i=1, 1 do
-			--local Light = Bullet.Tracer:Add( "sprites/light_glow02_add.vmt", Bullet.SimPos - (DeltaPos*i/5) )
-			local Light = Bullet.Tracer:Add( "sprites/acf_tracer.vmt", Bullet.SimPos - (DeltaPos*i/5) )
+		local MaxSprites = 2 --math.min(math.floor(math.max(Bullet.Caliber/5,1)*1.333)+1,5)
+		--for i=1, MaxSprites do
+			--local Light = Bullet.Tracer:Add( "sprites/light_glow02_add.vmt", Bullet.SimPos - (DeltaPos*i/MaxSprites) )
+			--local Light = Bullet.Tracer:Add( "sprites/acf_tracer.vmt", Bullet.SimPos - (DeltaPos*i/MaxSprites) )
+			local Light = Bullet.Tracer:Add( "sprites/acf_tracer.vmt", Bullet.SimPos - DeltaPos )
 			if (Light) then		
 				Light:SetAngles( Bullet.SimFlight:Angle() )
 				Light:SetVelocity( Bullet.SimFlight:GetNormalized() )
 				Light:SetColor( Bullet.TracerColour.x, Bullet.TracerColour.y, Bullet.TracerColour.z )
-				Light:SetDieTime( 0.075 ) -- 0.1
+				Light:SetDieTime( math.Clamp(CurTime()-self.CreateTime,0.075,0.15) ) -- 0.075, 0.1
 				Light:SetStartAlpha( 255 )
 				Light:SetEndAlpha( 155 )
 				Light:SetStartSize( 15*Bullet.Caliber ) -- 5
@@ -133,10 +133,11 @@ function EFFECT:ApplyMovement( Bullet )
 				Light:SetStartLength( Length )
 				Light:SetEndLength( 1 )
 			end
-			local Smoke = Bullet.Tracer:Add( "particle/smokesprites_000"..math.random(1,9), Bullet.SimPos - (DeltaPos*i/5) )
+		for i=1, MaxSprites do
+			local Smoke = Bullet.Tracer:Add( "particle/smokesprites_000"..math.random(1,9), Bullet.SimPos - (DeltaPos*i/MaxSprites) )
 			if (Smoke) then		
 				Smoke:SetAngles( Bullet.SimFlight:Angle() )
-				--Smoke:SetVelocity( Vector(0,0,0) )
+				Smoke:SetVelocity( Bullet.SimFlight*0.05 )
 				Smoke:SetColor( 200 , 200 , 200 )
 				Smoke:SetDieTime( 0.6 ) -- 1.2
 				Smoke:SetStartAlpha( 10 )
@@ -144,8 +145,8 @@ function EFFECT:ApplyMovement( Bullet )
 				Smoke:SetStartSize( 1 )
 				Smoke:SetEndSize( Length/400*Bullet.Caliber )
 				Smoke:SetRollDelta( 0.1 )
-				Smoke:SetAirResistance( 100 )
-				--Smoke:SetGravity( VectorRand()*5 )
+				Smoke:SetAirResistance( 150 )
+				Smoke:SetGravity( Vector(0,0,20) )
 				--Smoke:SetCollide( 0 )
 				--Smoke:SetLighting( 0 )
 			end

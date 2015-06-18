@@ -133,18 +133,18 @@ end
 
 function Round.network( Crate, BulletData )
 
-	Crate:SetNetworkedString("AmmoType","FL")
-	Crate:SetNetworkedString("AmmoID",BulletData["Id"])
-	Crate:SetNetworkedInt("PropMass",BulletData["PropMass"])
-	Crate:SetNetworkedInt("MuzzleVel",BulletData["MuzzleVel"])
-	Crate:SetNetworkedInt("Tracer",BulletData["Tracer"])
+	Crate:SetNWString("AmmoType","FL")
+	Crate:SetNWString("AmmoID",BulletData["Id"])
+	Crate:SetNWFloat("PropMass",BulletData["PropMass"])
+	Crate:SetNWFloat("MuzzleVel",BulletData["MuzzleVel"])
+	Crate:SetNWFloat("Tracer",BulletData["Tracer"])
 	-- bullet effects use networked data, so set these to the flechette stats
-	Crate:SetNetworkedInt("Caliber",math.Round( BulletData["FlechetteRadius"]*0.2 ,2))
-	Crate:SetNetworkedInt("ProjMass",BulletData["FlechetteMass"])
-	Crate:SetNetworkedInt("DragCoef",BulletData["FlechetteDragCoef"])
-	--Crate:SetNetworkedInt("Caliber",BulletData["Caliber"])
-	--Crate:SetNetworkedInt("ProjMass",BulletData["ProjMass"])
-	--Crate:SetNetworkedInt("DragCoef",BulletData["DragCoef"])
+	Crate:SetNWFloat("Caliber",math.Round( BulletData["FlechetteRadius"]*0.2 ,2))
+	Crate:SetNWFloat("ProjMass",BulletData["FlechetteMass"])
+	Crate:SetNWFloat("DragCoef",BulletData["FlechetteDragCoef"])
+	--Crate:SetNWFloat("Caliber",BulletData["Caliber"])
+	--Crate:SetNWFloat("ProjMass",BulletData["ProjMass"])
+	--Crate:SetNWFloat("DragCoef",BulletData["DragCoef"])
 	
 end
 
@@ -198,11 +198,13 @@ function Round.propimpact( Index, Bullet, Target, HitNormal, HitPos, Bone )
 end
 
 function Round.worldimpact( Index, Bullet, HitPos, HitNormal )
-
-	local Energy = ACF_Kinetic( Bullet["Flight"]:Length() / ACF.VelScale, Bullet["ProjMass"], Bullet["LimitVel"] )
-	local Retry = ACF_PenetrateGround( Bullet, Energy, HitPos )
-	if Retry then
+	
+	local Energy = ACF_Kinetic( Bullet.Flight:Length() / ACF.VelScale, Bullet.ProjMass, Bullet.LimitVel )
+	local HitRes = ACF_PenetrateGround( Bullet, Energy, HitPos, HitNormal )
+	if HitRes.Penetrated then
 		return "Penetrated"
+	elseif HitRes.Ricochet then
+		return "Ricochet"
 	else
 		return false
 	end
@@ -257,6 +259,8 @@ end
 function Round.guicreate( Panel, Table )
 
 	acfmenupanel:AmmoSelect( ACF.AmmoBlacklist["FL"] )
+	
+	acfmenupanel:CPanelText("BonusDisplay", "")
 
 	acfmenupanel:CPanelText("Desc", "")	--Description (Name, Desc)
 	acfmenupanel:CPanelText("LengthDisplay", "")	--Total round length (Name, Desc)
@@ -300,6 +304,13 @@ function Round.guiupdate( Panel, Table )
 	RunConsoleCommand( "acfmenu_data5", Data.Flechettes )
 	RunConsoleCommand( "acfmenu_data6", Data.FlechetteSpread )
 	RunConsoleCommand( "acfmenu_data10", Data.Tracer )
+	
+	local vol = ACF.Weapons.Ammo[acfmenupanel.AmmoData["Id"]].volume
+	local CapMul = (vol > 46000) and ((math.log(vol*0.00066)/math.log(2)-4)*0.125+1) or 1
+	local RoFMul = (vol > 46000) and (1-(math.log(vol*0.00066)/math.log(2)-4)*0.05) or 1
+	local Cap = math.floor(CapMul * vol * 0.11 * ACF.AmmoMod * 16.38 / Data.RoundVolume)
+	
+	acfmenupanel:CPanelText("BonusDisplay", "Crate info: +"..(math.Round((CapMul-1)*100,1)).."% capacity, +"..(math.Round((RoFMul-1)*-100,1)).."% RoF\nContains "..Cap.." rounds")
 
 	acfmenupanel:AmmoSlider("PropLength",Data.PropLength,Data.MinPropLength,Data["MaxTotalLength"],3, "Propellant Length", "Propellant Mass : "..(math.floor(Data.PropMass*1000)).." g" )	--Propellant Length Slider (Name, Min, Max, Decimals, Title, Desc)
 	acfmenupanel:AmmoSlider("ProjLength",Data.ProjLength,Data.MinProjLength,Data["MaxTotalLength"],3, "Projectile Length", "Projectile Mass : "..(math.floor(Data.ProjMass*1000)).." g")	--Projectile Length Slider (Name, Min, Max, Decimals, Title, Desc)

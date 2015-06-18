@@ -63,7 +63,10 @@ function TOOL:LeftClick( trace )
 	local Type = self:GetClientInfo( "type" )
 	local Id = self:GetClientInfo( "id" )
 	
-	local DupeClass = duplicator.FindEntityClass( ACF.Weapons[Type][Id]["ent"] ) 
+	local TypeId = ACF.Weapons[Type][Id]
+	if not TypeId then return false end
+	
+	local DupeClass = duplicator.FindEntityClass( TypeId["ent"] ) 
 	
 	if DupeClass then
 		local ArgTable = {}
@@ -84,8 +87,11 @@ function TOOL:LeftClick( trace )
 		else
 			-- Using the Duplicator entity register to find the right factory function
 			local Ent = DupeClass.Func( ply, unpack( ArgTable ) )
+			if not IsValid(Ent) then ACF_SendNotify(ply, false, "Couldn't create entity.") return false end
 			Ent:Activate()
-			Ent:GetPhysicsObject():Wake()
+			--Ent:GetPhysicsObject():Wake()
+			Ent:DropToFloor()
+			Ent:GetPhysicsObject():EnableMotion( false )
 			
 			undo.Create( ACF.Weapons[Type][Id]["ent"] )
 				undo.AddEntity( Ent )

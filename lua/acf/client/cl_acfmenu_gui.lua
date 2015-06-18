@@ -365,6 +365,8 @@ function PANEL:AmmoSelect( Blacklist )
 		end
 		acfmenupanel.CData.CrateSelect.OnSelect = function( index , value , data )
 			RunConsoleCommand( "acfmenu_id", data )
+			acfmenupanel.AmmoData["Id"] = data
+			self:UpdateAttribs()
 		end
 		acfmenupanel.CData.CrateSelect:SetText(acfmenupanel.AmmoData["Id"])
 		RunConsoleCommand( "acfmenu_id", acfmenupanel.AmmoData["Id"] )

@@ -25,6 +25,7 @@ ACF_DefineGearbox( "DoubleDiff-T-S", {
 	maxtq = GearDDST,
 	gears = 1,
 	doublediff = true,
+	doubleclutch = true,
 	geartable = {
 		[ 0 ] = 0,
 		[ 1 ] = 1,
@@ -42,6 +43,7 @@ ACF_DefineGearbox( "DoubleDiff-T-M", {
 	maxtq = GearDDMT,
 	gears = 1,
 	doublediff = true,
+	doubleclutch = true,
 	geartable = {
 		[ 0 ] = 0,
 		[ 1 ] = 1,
@@ -59,6 +61,7 @@ ACF_DefineGearbox( "DoubleDiff-T-L", {
 	maxtq = GearDDLT,
 	gears = 1,
 	doublediff = true,
+	doubleclutch = true,
 	geartable = {
 		[ 0 ] = 0,
 		[ 1 ] = 1,

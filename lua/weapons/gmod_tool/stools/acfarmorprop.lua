@@ -193,20 +193,20 @@ function TOOL:Think()
 	if ACF_Check( ent ) then
 		
 		ply:ConCommand( "acfarmorprop_area " .. ent.ACF.Aera )
-		self.Weapon:SetNetworkedInt( "WeightMass", ent:GetPhysicsObject():GetMass() )
-		self.Weapon:SetNetworkedInt( "HP", ent.ACF.Health )
-		self.Weapon:SetNetworkedInt( "Armour", ent.ACF.Armour )
-		self.Weapon:SetNetworkedInt( "MaxHP", ent.ACF.MaxHealth )
-		self.Weapon:SetNetworkedInt( "MaxArmour", ent.ACF.MaxArmour )
+		self.Weapon:SetNWFloat( "WeightMass", ent:GetPhysicsObject():GetMass() )
+		self.Weapon:SetNWFloat( "HP", ent.ACF.Health )
+		self.Weapon:SetNWFloat( "Armour", ent.ACF.Armour )
+		self.Weapon:SetNWFloat( "MaxHP", ent.ACF.MaxHealth )
+		self.Weapon:SetNWFloat( "MaxArmour", ent.ACF.MaxArmour )
 		
 	else
 	
 		ply:ConCommand( "acfarmorprop_area 0" )
-		self.Weapon:SetNetworkedInt( "WeightMass", 0 )
-		self.Weapon:SetNetworkedInt( "HP", 0 )
-		self.Weapon:SetNetworkedInt( "Armour", 0 )
-		self.Weapon:SetNetworkedInt( "MaxHP", 0 )
-		self.Weapon:SetNetworkedInt( "MaxArmour", 0 )
+		self.Weapon:SetNWFloat( "WeightMass", 0 )
+		self.Weapon:SetNWFloat( "HP", 0 )
+		self.Weapon:SetNWFloat( "Armour", 0 )
+		self.Weapon:SetNWFloat( "MaxHP", 0 )
+		self.Weapon:SetNWFloat( "MaxArmour", 0 )
 		
 	end
 	
@@ -221,9 +221,9 @@ function TOOL:DrawHUD()
 	local ent = self:GetOwner():GetEyeTrace().Entity
 	if not IsValid( ent ) or ent:IsPlayer() then return end
 	
-	local curmass = self.Weapon:GetNetworkedInt( "WeightMass" )
-	local curarmor = self.Weapon:GetNetworkedInt( "MaxArmour" )
-	local curhealth = self.Weapon:GetNetworkedInt( "MaxHP" )
+	local curmass = self.Weapon:GetNWFloat( "WeightMass" )
+	local curarmor = self.Weapon:GetNWFloat( "MaxArmour" )
+	local curhealth = self.Weapon:GetNWFloat( "MaxHP" )
 	
 	local area = GetConVarNumber( "acfarmorprop_area" )
 	local ductility = GetConVarNumber( "acfarmorprop_ductility" )
@@ -248,10 +248,10 @@ function TOOL:DrawToolScreen( w, h )
 	
 	if not CLIENT then return end
 	
-	local Health = math.Round( self.Weapon:GetNetworkedInt( "HP" ) or 0, 2 )
-	local MaxHealth = math.Round( self.Weapon:GetNetworkedInt( "MaxHP" ) or 0, 2 )
-	local Armour = math.Round( self.Weapon:GetNetworkedInt( "Armour" ) or 0, 2 )
-	local MaxArmour = math.Round( self.Weapon:GetNetworkedInt( "MaxArmour" ) or 0, 2 )
+	local Health = math.Round( self.Weapon:GetNWFloat( "HP", 0 ), 2 )
+	local MaxHealth = math.Round( self.Weapon:GetNWFloat( "MaxHP", 0 ), 2 )
+	local Armour = math.Round( self.Weapon:GetNWFloat( "Armour", 0 ), 2 )
+	local MaxArmour = math.Round( self.Weapon:GetNWFloat( "MaxArmour", 0 ), 2 )
 	
 	local HealthTxt = Health .. "/" .. MaxHealth
 	local ArmourTxt = Armour .. "/" .. MaxArmour

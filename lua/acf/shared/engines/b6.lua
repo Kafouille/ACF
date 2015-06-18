@@ -27,8 +27,8 @@ ACF_DefineEngine( "5.0-B6", {
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
 	weight = 240,
-	torque = 288,
-	flywheelmass = 0.1,
+	torque = 330,
+	flywheelmass = 0.11,
 	idlerpm = 900,
 	peakminrpm = 3500,
 	peakmaxrpm = 6000,
@@ -43,11 +43,28 @@ ACF_DefineEngine( "10.0-B6", {
 	category = "B6",
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	weight = 630,
-	torque = 870,
+	weight = 650,
+	torque = 1050,
 	flywheelmass = 1,
 	idlerpm = 620,
 	peakminrpm = 2500,
 	peakmaxrpm = 4100,
 	limitrpm = 4500
+} )
+
+ACF_DefineEngine( "5.4-B6", {
+	name = "5.4 Flat 6 Multifuel",
+	desc = "Military-grade multifuel boxer engine.  Although heavy, it is compact, durable, and has excellent performance under adverse conditions.",
+	model = "models/engines/b6med.mdl",
+	sound = "acf_engines/v8_diesel.wav",
+	category = "B6",
+	fuel = "Multifuel",
+	enginetype = "GenericDiesel",
+	weight = 380,
+	torque = 550,
+	flywheelmass = 0.65,
+	idlerpm = 500,
+	peakminrpm = 1600,
+	peakmaxrpm = 3300,
+	limitrpm = 3500
 } )

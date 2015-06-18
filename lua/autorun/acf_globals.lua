@@ -2,12 +2,12 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 535 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
+ACF.Version = 552 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex   Update the changelog too! -Ferv
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 
 ACF.Year = 1945
 
-ACF.Threshold = 225	--Health Divisor
+ACF.Threshold = 264.7	--Health Divisor (don't forget to update cvar function down below)
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
 ACF.PenAreaMod = 0.85
 ACF.KinFudgeFactor = 2.1	--True kinetic would be 2, over that it's speed biaised, below it's mass biaised
@@ -24,12 +24,12 @@ ACF.HEPower = 8000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 1500		--Mean fragment number for equal weight TNT and casing
 ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
-ACF.HEDuctAdjust = 0.8	--changes how duct affects HE damage; 1.0 dealing the same damage regardless of duct, to 0 being old behavior where -duct decreased HE damage taken
+ACF.HEFeatherExp = 0.5 	--exponent applied to HE dist/maxdist feathering, <1 will increasingly bias toward max damage until sharp falloff at outer edge of range
 
-ACF.HEATMVScale = 0.73	--Filler KE to HEAT slug KE conversion expotential
+ACF.HEATMVScale = 0.74	--Filler KE to HEAT slug KE conversion expotential
 ACF.HEATMulAmmo = 16.5 		--HEAT slug damage multiplier; 13.2x roughly equal to AP damage
-ACF.HEATMulFuel = 16.5
-ACF.HEATMulEngine = 8.25
+ACF.HEATMulFuel = 8.25		--needs less multiplier, much less health than ammo
+ACF.HEATMulEngine = 8.25	--likewise
 
 ACF.DragDiv = 80		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
@@ -55,7 +55,7 @@ ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 ACF.Efficiency = {} --how efficient various engine types are, higher is worse
 ACF.Efficiency["GenericPetrol"] = 0.304 --kg per kw hr
 ACF.Efficiency["GenericDiesel"] = 0.243 --up to 0.274
-ACF.Efficiency["Turbine"] = 0.46 -- previously 0.231
+ACF.Efficiency["Turbine"] = 0.375 -- previously 0.231
 ACF.Efficiency["Wankel"] = 0.335
 ACF.Efficiency["Radial"] = 0.4 -- 0.38 to 0.53
 ACF.Efficiency["Electric"] = 0.85 --percent efficiency converting chemical kw into mechanical kw
@@ -71,10 +71,14 @@ ACF.SpreadScale = 4		-- The maximum amount that damage can decrease a gun's accu
 ACF.GunInaccuracyScale = 1 -- A multiplier for gun accuracy.
 ACF.GunInaccuracyBias = 2  -- Higher numbers make shots more likely to be inaccurate.  Choose between 0.5 to 4. Default is 2 (unbiased).
 
-ACF.TorqueScale = 1/4
-ACF.DieselTorqueScale = 1/10
-ACF.EngineHPMult = 1/8
-ACF.DieselEngineHPMult = 1/2
+--how fast damage drops torque, lower loses more % torque
+ACF.TorqueScale = 0.25
+ACF.DieselTorqueScale = 0.35
+ACF.ElectricTorqueScale = 0.5
+
+ACF.EngineHPMult = 0.125
+ACF.DieselEngineHPMult = 0.5
+ACF.ElectricEngineHPMult = 0.75
 
 ACF.EnableDefaultDP = false -- Enable the inbuilt damage protection system.
 
@@ -85,6 +89,7 @@ end
 
 
 CreateConVar('sbox_max_acf_gun', 12)
+CreateConVar('sbox_max_acf_smokelauncher', 10)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 CreateConVar('acf_meshvalue', 1)
@@ -300,7 +305,7 @@ CreateConVar("acf_gunfire", 1)
 
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
-		ACF.Threshold = 150 / math.max(New, 0.01)
+		ACF.Threshold = 264.7 / math.max(New, 0.01)
 		print ("Health Mod changed to a factor of " .. New)
 	elseif( CVar == "acf_armormod" ) then
 		ACF.ArmorMod = 1 * math.max(New, 0)

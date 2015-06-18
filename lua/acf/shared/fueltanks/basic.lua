@@ -65,7 +65,7 @@ ACF_DefineFuelTankSize( "Tank_1x4x2", {
 
 ACF_DefineFuelTankSize( "Tank_1x4x4", {
 	name = "1x4x4",
-	desc = "",
+	desc = "Fuel pancake.",
 	model = "models/fueltank/fueltank_1x4x4.mdl",
 	dims = { 41.1, 11, 40.4 }
 } )
@@ -79,14 +79,14 @@ ACF_DefineFuelTankSize( "Tank_1x6x1", {
 
 ACF_DefineFuelTankSize( "Tank_1x6x2", {
 	name = "1x6x2",
-	desc = "",
+	desc = "Small tractor tank.",
 	model = "models/fueltank/fueltank_1x6x2.mdl",
 	dims = { 61.2, 11, 20.5 }
 } )
 
 ACF_DefineFuelTankSize( "Tank_1x6x4", {
 	name = "1x6x4",
-	desc = "",
+	desc = "Fuel.  Will keep you going for awhile.",
 	model = "models/fueltank/fueltank_1x6x4.mdl",
 	dims = { 61.2, 11, 40.3 }
 } )
@@ -100,14 +100,14 @@ ACF_DefineFuelTankSize( "Tank_1x8x1", {
 
 ACF_DefineFuelTankSize( "Tank_1x8x2", {
 	name = "1x8x2",
-	desc = "",
+	desc = "Gas stations?  We don't need no stinking gas stations!",
 	model = "models/fueltank/fueltank_1x8x2.mdl",
 	dims = { 81.1, 11, 20.8 }
 } )
 
 ACF_DefineFuelTankSize( "Tank_1x8x4", {
 	name = "1x8x4",
-	desc = "",
+	desc = "Beep beep.",
 	model = "models/fueltank/fueltank_1x8x4.mdl",
 	dims = { 81.1, 11, 40.4 }
 } )
@@ -135,7 +135,7 @@ ACF_DefineFuelTankSize( "Tank_2x2x4", {
 
 ACF_DefineFuelTankSize( "Tank_2x4x1", {
 	name = "2x4x1",
-	desc = "",
+	desc = "Good bit of go-juice.",
 	model = "models/fueltank/fueltank_2x4x1.mdl",
 	dims = { 41.7, 21.7, 11.6 }
 } )
@@ -156,7 +156,7 @@ ACF_DefineFuelTankSize( "Tank_2x4x4", {
 
 ACF_DefineFuelTankSize( "Tank_2x6x1", {
 	name = "2x6x1",
-	desc = "",
+	desc = "Conformal fuel tank, fits narrow spaces.",
 	model = "models/fueltank/fueltank_2x6x1.mdl",
 	dims = { 61.4, 21.6, 11.6 }
 } )
@@ -177,7 +177,7 @@ ACF_DefineFuelTankSize( "Tank_2x6x4", {
 
 ACF_DefineFuelTankSize( "Tank_2x8x1", {
 	name = "2x8x1",
-	desc = "",
+	desc = "Conformal fuel tank, fits into tight spaces",
 	model = "models/fueltank/fueltank_2x8x1.mdl",
 	dims = { 81.6, 21.7, 11.6 }
 } )
@@ -191,7 +191,7 @@ ACF_DefineFuelTankSize( "Tank_2x8x2", {
 
 ACF_DefineFuelTankSize( "Tank_2x8x4", {
 	name = "2x8x4",
-	desc = "",
+	desc = "With great capacity, comes great responsibili--VROOOOM",
 	model = "models/fueltank/fueltank_2x8x4.mdl",
 	dims = { 81.6, 21.6, 41.8 }
 } )
@@ -219,14 +219,14 @@ ACF_DefineFuelTankSize( "Tank_4x4x4", {
 
 ACF_DefineFuelTankSize( "Tank_4x6x1", {
 	name = "4x6x1",
-	desc = "",
+	desc = "Conformal fuel tank, fits in tight spaces.",
 	model = "models/fueltank/fueltank_4x6x1.mdl",
 	dims = { 62.5, 43, 11.7 }
 } )
 
 ACF_DefineFuelTankSize( "Tank_4x6x2", {
 	name = "4x6x2",
-	desc = "",
+	desc = "Fire juice.",
 	model = "models/fueltank/fueltank_4x6x2.mdl",
 	dims = { 62.5, 43, 21.4 }
 } )
@@ -240,14 +240,14 @@ ACF_DefineFuelTankSize( "Tank_4x6x4", {
 
 ACF_DefineFuelTankSize( "Tank_4x8x1", {
 	name = "4x8x1",
-	desc = "",
+	desc = "Arson material.",
 	model = "models/fueltank/fueltank_4x8x1.mdl",
 	dims = { 82.2, 43, 11.7 }
 } )
 
 ACF_DefineFuelTankSize( "Tank_4x8x2", {
 	name = "4x8x2",
-	desc = "",
+	desc = "What's a gas station?",
 	model = "models/fueltank/fueltank_4x8x2.mdl",
 	dims = { 82.2, 43, 21.7 }
 } )
@@ -261,14 +261,14 @@ ACF_DefineFuelTankSize( "Tank_4x8x4", {
 
 ACF_DefineFuelTankSize( "Tank_6x6x1", {
 	name = "6x6x1",
-	desc = "",
+	desc = "Got gas?",
 	model = "models/fueltank/fueltank_6x6x1.mdl",
 	dims = { 64.1, 64, 11.6 }
 } )
 
 ACF_DefineFuelTankSize( "Tank_6x6x2", {
 	name = "6x6x2",
-	desc = "",
+	desc = "Drive across the desert without a fuck to give.",
 	model = "models/fueltank/fueltank_6x6x2.mdl",
 	dims = { 64.1, 64, 21.8 }
 } )
@@ -282,7 +282,7 @@ ACF_DefineFuelTankSize( "Tank_6x6x4", {
 
 ACF_DefineFuelTankSize( "Tank_6x8x1", {
 	name = "6x8x1",
-	desc = "",
+	desc = "Conformal fuel tank, does what all its friends do.",
 	model = "models/fueltank/fueltank_6x8x1.mdl",
 	dims = { 83.4, 64, 11.2 }
 } )
@@ -303,7 +303,7 @@ ACF_DefineFuelTankSize( "Tank_6x8x4", {
 
 ACF_DefineFuelTankSize( "Tank_8x8x1", {
 	name = "8x8x1",
-	desc = "",
+	desc = "Sloshy sloshy!",
 	model = "models/fueltank/fueltank_8x8x1.mdl",
 	dims = { 83.4, 83.1, 11.3 }
 } )
@@ -334,7 +334,7 @@ ACF_DefineFuelTankSize( "Jerry_Can", {
 	desc = "Handy portable fuel container.",
 	model = "models/props_junk/gascan001a.mdl",
 	dims = { 8.6, 20.2, 30.2 },
-	nolinks = true
+	--nolinks = true
 } )
 
 ACF_DefineFuelTankSize( "Transport_Tank", {

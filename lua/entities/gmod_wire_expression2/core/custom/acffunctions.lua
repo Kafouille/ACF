@@ -201,6 +201,38 @@ e2function string entity:acfType()
 	return ""
 end
 
+--allows e2 to perform ACF links
+e2function number entity:acfLinkTo(entity target, number notify)
+	if not ((isGun(this) or isEngine(this) or isGearbox(this)) and (isOwner(self, this) and isOwner(self, target))) then
+		if notify > 0 then
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Link(target)
+    if notify > 0 then
+        ACF_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
+--allows e2 to perform ACF unlinks
+e2function number entity:acfUnlinkFrom(entity target, number notify)
+	if not ((isGun(this) or isEngine(this) or isGearbox(this)) and (isOwner(self, this) and isOwner(self, target))) then
+		if notify > 0 then
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Unlink(target)
+    if notify > 0 then
+        ACF_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
 
 -- [ Engine Functions ] --
 
@@ -266,6 +298,20 @@ e2function number entity:acfTorque()
 	if not isEngine(this) then return 0 end
 	if restrictInfo(self, this) then return 0 end
 	return math.floor(this.Torque or 0)
+end
+
+-- Returns the inertia of an ACF engine's flywheel
+e2function number entity:acfFlyInertia()
+	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this ) then return 0 end
+	return this.Inertia or 0
+end
+
+-- Returns the mass of an ACF engine's flywheel
+e2function number entity:acfFlyMass()
+	if not isEngine(this) then return 0 end
+	if restrictInfo(self, this ) then return 0 end
+	return this.Inertia / (3.1416)^2 or 0
 end
 
 -- Returns the current power of an ACF engine
@@ -817,7 +863,7 @@ e2function number entity:acfFuelUse()
 		if not validPhysics(fueltank) then continue end
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
 	end
-	if not tank then return 0 end
+	if not Tank then return 0 end
 	
 	local Consumption
 	if this.FuelType == "Electric" then

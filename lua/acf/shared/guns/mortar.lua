@@ -18,6 +18,7 @@ ACF_defineGun("60mmM", { --id
 	gunclass = "MO",
 	caliber = 6.0,
 	weight = 60,
+	rofmod = 1.25,
 	year = 1930,
 	round = {
 		maxlength = 20,

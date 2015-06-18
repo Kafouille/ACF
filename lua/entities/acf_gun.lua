@@ -96,6 +96,10 @@ if CLIENT then
 		acfmenupanel:CPanelText("Caliber", "Caliber : "..(Table.caliber*10).."mm")
 		acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 		
+		if Table.canparent then
+			acfmenupanel:CPanelText("GunParentable", "\nThis weapon can be parented.")
+		end
+		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
 	end
@@ -137,19 +141,23 @@ end
 
 function MakeACF_Gun(Owner, Pos, Angle, Id)
 
-	if not Owner:CheckLimit("_acf_gun") then return false end
+	local EID
+	local List = list.Get("ACFEnts")
+	if List.Guns[Id] then EID = Id else EID = "50mmC" end
+	local Lookup = List.Guns[EID]
+	
+	if Lookup.gunclass == "SL" then
+		if not Owner:CheckLimit("_acf_smokelauncher") then return false end
+	else
+		if not Owner:CheckLimit("_acf_gun") then return false end
+	end
 	
 	local Gun = ents.Create("acf_gun")
-	local List = list.Get("ACFEnts")
-	local Classes = list.Get("ACFClasses")
+	local ClassData = list.Get("ACFClasses").GunClass[Lookup.gunclass]
 	if not Gun:IsValid() then return false end
 	Gun:SetAngles(Angle)
 	Gun:SetPos(Pos)
 	Gun:Spawn()
-	
-	local EID
-	if List.Guns[Id] then EID = Id else EID = "50mmC" end
-	local Lookup = List.Guns[EID]
 
 	Gun:SetPlayer(Owner)
 	Gun.Owner = Owner
@@ -177,14 +185,15 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 		Gun.MagReload = math.max(Gun.MagReload, Lookup.magreload)
 	end
 	
-	Gun:SetNetworkedString( "WireName", Lookup.name )
+	Gun:SetNWString( "WireName", Lookup.name )
 	Gun:SetNWString( "Class", Gun.Class )
 	Gun:SetNWString( "ID", Gun.Id )
-	Gun.Muzzleflash = Classes.GunClass[Gun.Class].muzzleflash
-	Gun.RoFmod = Classes.GunClass[Gun.Class].rofmod
-	Gun.Sound = Classes.GunClass[Gun.Class].sound
+	Gun.Muzzleflash = ClassData.muzzleflash
+	Gun.RoFmod = ClassData.rofmod
+	Gun.RateOfFire = 1 --updated when gun is linked to ammo
+	Gun.Sound = ClassData.sound
 	Gun:SetNWString( "Sound", Gun.Sound )
-	Gun.Inaccuracy = Classes.GunClass[Gun.Class].spread
+	Gun.Inaccuracy = ClassData.spread
 	Gun:SetModel( Gun.Model )	
 	
 	Gun:PhysicsInit( SOLID_VPHYSICS )      	
@@ -193,6 +202,16 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( "muzzle" ) )
 	Gun.Muzzle = Gun:WorldToLocal(Muzzle.Pos)
+	
+	local longbarrel = ClassData.longbarrel
+	if longbarrel ~= nil then
+		timer.Simple(0.25, function() --need to wait until after the property is actually set
+			if Gun:GetBodygroup( longbarrel.index ) == longbarrel.submodel then
+				local Muzzle = Gun:GetAttachment( Gun:LookupAttachment( longbarrel.newpos ) )
+				Gun.Muzzle = Gun:WorldToLocal(Muzzle.Pos)
+			end
+		end)
+	end
 	
 	/*local Height = 30		--Damn you Garry
 	local Width = 30
@@ -238,8 +257,13 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	Gun:UpdateOverlayText()
 	
-	Owner:AddCount("_acf_gun", Gun)
 	Owner:AddCleanup( "acfmenu", Gun )
+	
+	if Lookup.gunclass == "SL" then
+		Owner:AddCount("_acf_smokelauncher", Gun)
+	else
+		Owner:AddCount("_acf_gun", Gun)
+	end
 	
 	ACF_Activate(Gun, 0)
 	
@@ -348,6 +372,27 @@ function ENT:Unlink( Target )
 		return false, "That entity is not linked to this gun!"
 	end
 	
+end
+
+function ENT:CanProperty( ply, property )
+
+	if property == "bodygroups" then
+		local longbarrel = list.Get("ACFClasses").GunClass[self.Class].longbarrel
+		if longbarrel ~= nil then
+			timer.Simple(0.25, function() --need to wait until after the property is actually set
+				if self:GetBodygroup( longbarrel.index ) == longbarrel.submodel then
+					local Muzzle = self:GetAttachment( self:LookupAttachment( longbarrel.newpos ) )
+					self.Muzzle = self:WorldToLocal(Muzzle.Pos)
+				else
+					local Muzzle = self:GetAttachment( self:LookupAttachment( "muzzle" ) )
+					self.Muzzle = self:WorldToLocal(Muzzle.Pos)
+				end
+			end)
+		end
+	end 
+	
+	return true
+
 end
 
 local WireTable = { "gmod_wire_adv_pod", "gmod_wire_pod", "gmod_wire_keyboard", "gmod_wire_joystick", "gmod_wire_joystick_multi" }
@@ -459,12 +504,12 @@ function ENT:Think()
 			Wire_TriggerOutput(self, "Shots Left", 1)
 		end
 		
-		self:SetNetworkedBeamString("GunType",self.Id)
-		self:SetNetworkedBeamInt("Ammo",Ammo)
-		self:SetNetworkedBeamString("Type",self.BulletData.Type)
-		self:SetNetworkedBeamInt("Mass",self.BulletData.ProjMass*100)
-		self:SetNetworkedBeamInt("Propellant",self.BulletData.PropMass*1000)
-		self:SetNetworkedBeamInt("FireRate",self.RateOfFire)
+		self:SetNWString("GunType",self.Id)
+		self:SetNWInt("Ammo",Ammo)
+		self:SetNWString("Type",self.BulletData.Type)
+		self:SetNWFloat("Mass",self.BulletData.ProjMass*100)
+		self:SetNWFloat("Propellant",self.BulletData.PropMass*1000)
+		self:SetNWFloat("FireRate",self.RateOfFire)
 		
 		self.LastSend = Time
 	
@@ -596,8 +641,9 @@ function ENT:FireShell()
 			self.BulletData.Gun = self
 			self.CreateShell = ACF.RoundTypes[self.BulletData.Type].create
 			self:CreateShell( self.BulletData )
-		
-			ACF_KEShove(self, util.LocalToWorld(self, self:GetPhysicsObject():GetMassCenter(), 0), -self:GetForward(), (self.BulletData.ProjMass * self.BulletData.MuzzleVel * 39.37 + self.BulletData.PropMass * 3000 * 39.37)*(GetConVarNumber("acf_recoilpush") or 1) )
+			
+			local HasPhys = constraint.FindConstraintEntity(self, "Weld"):IsValid() or not self:GetParent():IsValid()
+			ACF_KEShove(self, HasPhys and util.LocalToWorld(self, self:GetPhysicsObject():GetMassCenter(), 0) or self:GetPos(), -self:GetForward(), (self.BulletData.ProjMass * self.BulletData.MuzzleVel * 39.37 + self.BulletData.PropMass * 3000 * 39.37)*(GetConVarNumber("acf_recoilpush") or 1) )
 			
 			self.Ready = false
 			self.CurrentShot = math.min(self.CurrentShot + 1, self.MagSize)
