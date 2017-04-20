@@ -316,10 +316,10 @@ end
 
 function ENT:Calc( InputRPM, InputInertia )
 
-	if self.LastActive == CurTime() then return self.CurRPM end
+	if self.LastActive == CurTime() then return math.min(self.TotalReqTq, self.MaxTorque) end
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
-	end
+	else return 0 end
 
 	self:CheckEnts()
 
@@ -339,12 +339,12 @@ function ENT:Calc( InputRPM, InputInertia )
 		
 			self.WheelReqTq[Key] = 0
 			if WheelEnt.IsGeartrain then
-				self.WheelReqTq[Key] = WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio
+				self.WheelReqTq[Key] = math.abs(WheelEnt:Calc( InputRPM*self.GearRatio, InputInertia/self.GearRatio )*self.GearRatio)
 			else
 				local RPM = self:CalcWheel( Key, WheelEnt, SelfWorld )
-				if RPM < InputRPM then
-					self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
-				end
+				if (InputRPM > 0 and RPM < InputRPM) or (InputRPM < 0 and RPM > InputRPM) then
+                    self.WheelReqTq[Key] = math.min(Clutch, (InputRPM - RPM)*InputInertia )
+                end
 			end
 			self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
 		else
